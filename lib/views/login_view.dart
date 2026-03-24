@@ -34,10 +34,12 @@ class LoginView extends StatelessWidget {
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.normal),
             ),
 
+            SizedBox(height: 26),
+
             // TextField para email
             TextField(
               decoration: InputDecoration(
-                labelText: 'Email',
+                labelText: 'correoelectrónico@dominio.com',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
@@ -53,7 +55,7 @@ class LoginView extends StatelessWidget {
             // TextField para password
             TextField(
               decoration: InputDecoration(
-                labelText: 'Password',
+                labelText: 'Contraseña',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
@@ -71,7 +73,7 @@ class LoginView extends StatelessWidget {
                 ? CircularProgressIndicator()
                 : ElevatedButton(
                     onPressed: () => vm.login(),
-                    child: Text('Login'),
+                    child: Text('Continuar'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
@@ -83,6 +85,21 @@ class LoginView extends StatelessWidget {
                   ),
 
             SizedBox(height: 24),
+
+            const Text.rich(
+              TextSpan(
+                text: '¿No tienes cuenta aún',
+                children: [
+                  TextSpan(
+                    text: ' Regístrate aquí',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
             // Mostrar mensaje de bienvenida si hay un usuario logueado
             if (vm.user != null)
