@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/login_viewmodel.dart';
+import '../viewmodels/RegisterUser_viewmodel.dart';
 import 'package:flutter/gestures.dart';
 
-class LoginView extends StatelessWidget {
+class RegisterView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Obtenemos el ViewModel usando Provider
-    final vm = context.watch<LoginViewModel>();
+    final vm = context.watch<RegisterUserViewModel>();
 
     return Scaffold(
       appBar: AppBar(
@@ -25,50 +25,95 @@ class LoginView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const SizedBox(height: 90),
+            const SizedBox(height: 10),
             const Text(
-              'Inicar sesión',
+              'Crear cuenta',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const Text(
               textAlign: TextAlign.center,
-              'Ingresa tu correo electronico y contraseña para iniciar tu sesión',
+              'Crea una cuenta para ingresar',
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.normal),
             ),
 
-            SizedBox(height: 26),
+            SizedBox(height: 8),
 
             // TextField para email
             TextField(
               decoration: InputDecoration(
                 labelText: 'correoelectrónico@dominio.com',
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(7),
+                ),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 8,
                 ),
               ),
 
-              onChanged: vm.setEmail,
+              //onChanged: vm.setEmail,
             ),
 
-            SizedBox(height: 16),
+            SizedBox(height: 13),
 
             // TextField para password
             TextField(
               decoration: InputDecoration(
-                labelText: 'Contraseña',
+                labelText: 'Nombres',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 8,
                 ),
               ),
-              obscureText: true,
-              onChanged: vm.setPassword,
+
+              //onChanged: vm.setPassword,
             ),
 
-            SizedBox(height: 24),
+            SizedBox(height: 13),
+
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Apellidos',
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+              ),
+
+              //onChanged: vm.setPassword,
+            ),
+            SizedBox(height: 13),
+
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Cedula',
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+              ),
+
+              //onChanged: vm.setPassword,
+            ),
+            SizedBox(height: 13),
+
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Número de celular',
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+              ),
+
+              //onChanged: vm.setPassword,
+            ),
+
+            SizedBox(height: 13),
 
             // Botón de login o indicador de carga
             vm.isLoading
@@ -90,17 +135,17 @@ class LoginView extends StatelessWidget {
 
             Text.rich(
               TextSpan(
-                text: '¿No tienes cuenta aún',
+                text: 'Ya tienes una cuenta?',
                 children: [
                   TextSpan(
-                    text: ' Regístrate aquí',
+                    text: ' Inicia sesión aquí',
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
-                        Navigator.pushNamed(context, '/register');
+                        Navigator.pushNamed(context, '/login');
                         print("dfffd");
                       },
                   ),
@@ -152,7 +197,7 @@ class LoginView extends StatelessWidget {
 
             SizedBox(height: 24),
 
-            const Text.rich(
+            Text.rich(
               TextSpan(
                 text: 'Al hacer clic en continuar, aceptas nuestros',
                 style: TextStyle(
