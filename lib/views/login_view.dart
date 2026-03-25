@@ -27,7 +27,7 @@ class LoginView extends StatelessWidget {
           children: [
             const SizedBox(height: 90),
             const Text(
-              'Inicar sesión',
+              'Iniciar sesión',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const Text(

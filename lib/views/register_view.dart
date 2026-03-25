@@ -59,7 +59,7 @@ class RegisterView extends StatelessWidget {
             // TextField para password
             TextField(
               decoration: InputDecoration(
-                labelText: 'Nombres',
+                labelText: 'mombres',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
@@ -74,7 +74,7 @@ class RegisterView extends StatelessWidget {
 
             TextField(
               decoration: InputDecoration(
-                labelText: 'Apellidos',
+                labelText: 'apellidos',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
@@ -88,7 +88,7 @@ class RegisterView extends StatelessWidget {
 
             TextField(
               decoration: InputDecoration(
-                labelText: 'Cedula',
+                labelText: 'cedula',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
@@ -102,7 +102,7 @@ class RegisterView extends StatelessWidget {
 
             TextField(
               decoration: InputDecoration(
-                labelText: 'Número de celular',
+                labelText: 'número de celular',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
@@ -120,7 +120,7 @@ class RegisterView extends StatelessWidget {
                 ? CircularProgressIndicator()
                 : ElevatedButton(
                     onPressed: () => vm.login(),
-                    child: Text('Continuar'),
+                    child: Text('continuar'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
