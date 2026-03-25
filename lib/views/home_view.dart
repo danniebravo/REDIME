@@ -45,10 +45,45 @@ class HomeView extends StatelessWidget {
 
       ),
 
-
-
-
       
+      
+      body: ListView(
+        
+        children: [
+          SizedBox(height: 34),
+          ExpansionTile(
+            title : Text("Dispositivos Redimidos" ),
+            children: [
+              ListTile(title: Text('Opción 1')),
+              
+            ],
+            
+          ),
+          ExpansionTile(
+            title : Text("Tu Información"),
+            children: [
+              ListTile(title: Text('Opción 1')),
+              
+            ],
+            
+          ),
+          ExpansionTile(
+            title : Text("Cuenta"),
+            children: [
+              ListTile(title: Text('Opción 1')),
+              
+            ],
+            
+          )
+
+        ],
+      ),
+
+    
+
+
+
+
     );
   }
 

@@ -146,7 +146,7 @@ class RegisterView extends StatelessWidget {
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         Navigator.pushNamed(context, '/login');
-                        print("dfffd");
+                        
                       },
                   ),
                 ],
