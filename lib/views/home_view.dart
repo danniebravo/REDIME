@@ -9,7 +9,7 @@ class HomeView extends StatelessWidget {
      
     return Scaffold(
       appBar:AppBar(
-       leadingWidth: 260,   
+       leadingWidth: 250,   
        leading: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
