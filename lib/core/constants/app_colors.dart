@@ -22,6 +22,11 @@ class AppColors {
   static const Color confirmationGreen = Color(0xFF4CAF50);
   static const Color errorRed = Color(0xFFE53935);
 
+  // Welcome screen circles
+  static const Color welcomeDarkCircle = Color(0xFF344E47);
+  static const Color welcomeMediumCircle = Color(0xFF4A8B7C);
+  static const Color welcomeMintBg = Color(0xFFA8D5C8);
+
   // Card backgrounds (from Figma grid)
   static const Color cardLightMint = Color(0xFFB8DED5);
   static const Color cardMediumTeal = Color(0xFF7AB8A8);

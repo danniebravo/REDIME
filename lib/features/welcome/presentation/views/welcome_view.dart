@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/primary_button.dart';
 
 class WelcomeView extends StatelessWidget {
   const WelcomeView({super.key});
@@ -13,118 +11,157 @@ class WelcomeView extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
+    // Circle sizes based on screen proportions (matched to Figma)
+    final bigCircleDiameter = screenWidth * 1.15;
+    final medCircleDiameter = screenWidth * 0.95;
+
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: Column(
-        children: [
-          // ── Top hero section with overlapping circles ──
-          SizedBox(
-            height: screenHeight * 0.55,
-            width: double.infinity,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                // Background mint rectangle
-                Positioned.fill(
-                  child: Container(color: AppColors.lightMint),
-                ),
-
-                // Large dark circle (left-center)
-                Positioned(
-                  top: -screenWidth * 0.15,
-                  left: -screenWidth * 0.25,
-                  child: Container(
-                    width: screenWidth * 1.0,
-                    height: screenWidth * 1.0,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.darkTeal,
+      body: SafeArea(
+        top: false, // let circles bleed into status bar
+        child: Column(
+          children: [
+            // ═══════════════════════════════════════════
+            // Top hero: mint background + 2 overlapping circles + title
+            // ═══════════════════════════════════════════
+            ClipRect(
+              child: SizedBox(
+                height: screenHeight * 0.62,
+                width: double.infinity,
+                child: Stack(
+                  children: [
+                    // ── Mint background ──
+                    Positioned.fill(
+                      child: Container(
+                        color: AppColors.welcomeMintBg,
+                      ),
                     ),
-                  ),
-                ),
 
-                // Medium teal circle (overlapping right)
-                Positioned(
-                  top: screenHeight * 0.08,
-                  left: screenWidth * 0.15,
-                  child: Container(
-                    width: screenWidth * 0.85,
-                    height: screenWidth * 0.85,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.tealSurface.withOpacity(0.85),
-                    ),
-                  ),
-                ),
-
-                // Title text centered on circles
-                Positioned(
-                  bottom: screenHeight * 0.06,
-                  left: 0,
-                  right: 0,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        AppStrings.appName,
-                        style: const TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.white,
-                          letterSpacing: 2,
+                    // ── Large dark circle (upper-left, bleeds off screen) ──
+                    Positioned(
+                      top: -bigCircleDiameter * 0.18,
+                      left: -bigCircleDiameter * 0.28,
+                      child: Container(
+                        width: bigCircleDiameter,
+                        height: bigCircleDiameter,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.welcomeDarkCircle,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        AppStrings.welcomeGreeting,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.white,
+                    ),
+
+                    // ── Medium teal circle (overlapping, center-right) ──
+                    Positioned(
+                      top: screenHeight * 0.10,
+                      left: screenWidth * 0.18,
+                      child: Container(
+                        width: medCircleDiameter,
+                        height: medCircleDiameter,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.welcomeMediumCircle,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // ── Body content ──
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Spacer(flex: 2),
-                  Text(
-                    AppStrings.welcomeBody,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.screenSubtitle.copyWith(
-                      fontSize: 15,
-                      height: 1.5,
-                      color: AppColors.darkText,
                     ),
-                  ),
-                  const Spacer(flex: 3),
 
-                  // ── Continue button ──
-                  PrimaryButton(
-                    label: AppStrings.continueButton,
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(
-                        context,
-                        AppRoutes.login,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                ],
+                    // ── REDIME + ¡Bienvenido! ──
+                    Positioned(
+                      bottom: screenHeight * 0.07,
+                      left: 0,
+                      right: 0,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Text(
+                            'REDIME',
+                            style: TextStyle(
+                              fontSize: 42,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.white,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            '¡Bienvenido!',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+
+            // ═══════════════════════════════════════════
+            // Bottom section: body text + button
+            // ═══════════════════════════════════════════
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 36),
+                child: Column(
+                  children: [
+                    const Spacer(flex: 3),
+
+                    // ── Description text ──
+                    const Text(
+                      'Tus dispositivos tienen historia y nosotros la\n'
+                      'preservamos. Conoce las opciones que REDIME te\n'
+                      'ofrece y comienza tu proceso ahora',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.darkText,
+                        height: 1.55,
+                      ),
+                    ),
+
+                    const Spacer(flex: 5),
+
+                    // ── Continuar button (sin flecha, tal como el diseño) ──
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(
+                            context,
+                            AppRoutes.login,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryTeal,
+                          foregroundColor: AppColors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: const Text(
+                          'Continuar',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 48),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
