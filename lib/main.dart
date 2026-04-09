@@ -20,6 +20,9 @@ import 'features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dar
 import 'features/device_pickup/presentation/views/pickup_flow_page.dart';
 import 'features/device_pickup/presentation/views/pickup_confirmation_view.dart';
 
+// Welcome feature
+import 'features/welcome/presentation/views/welcome_view.dart';
+
 // Device Status feature
 import 'features/device_status/data/datasources/status_local_datasource.dart';
 import 'features/device_status/data/repositories/status_repository_impl.dart';
@@ -65,8 +68,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'REDIME',
       theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.welcome,
       routes: {
+        // Welcome
+        AppRoutes.welcome: (context) => const WelcomeView(),
+
         // Existing routes
         AppRoutes.login: (context) => LoginView(),
         AppRoutes.register: (context) => RegisterView(),

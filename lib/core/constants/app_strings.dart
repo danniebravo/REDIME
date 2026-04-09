@@ -6,6 +6,13 @@ class AppStrings {
   static const String continueButton = 'Continuar';
   static const String back = 'Volver';
 
+  // Welcome
+  static const String welcomeGreeting = '¡Bienvenido!';
+  static const String welcomeBody =
+      'Tus dispositivos tienen historia y nosotros la '
+      'preservamos. Conoce las opciones que REDIME te '
+      'ofrece y comienza tu proceso ahora';
+
   // Step 1 - Device Type
   static const String step1Label = 'Paso 1';
   static const String step1Title = 'Empecemos\ncon la redenci\u00f3n';
