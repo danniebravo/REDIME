@@ -10,6 +10,7 @@ import 'viewmodels/RegisterUser_viewmodel.dart';
 
 // Core
 import 'core/constants/app_routes.dart';
+import 'core/database/redime_db.dart';
 import 'core/theme/app_theme.dart';
 
 // Device Pickup feature
@@ -30,7 +31,16 @@ import 'features/device_status/domain/usecases/get_device_status.dart';
 import 'features/device_status/presentation/viewmodels/device_status_viewmodel.dart';
 import 'features/device_status/presentation/views/device_status_view.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Open (and, on first run, create + seed) the local SQLite database before
+  // the UI asks for any data. Failing here surfaces the error early.
+  try {
+    await RedimeDb.instance.ensureReady();
+  } catch (e, s) {
+    debugPrint('REDIME DB init failed: $e\n$s');
+  }
+
   runApp(
     MultiProvider(
       providers: [

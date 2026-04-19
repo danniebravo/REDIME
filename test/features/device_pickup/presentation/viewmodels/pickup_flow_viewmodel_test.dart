@@ -5,14 +5,21 @@ import 'package:redime/features/device_pickup/domain/entities/enums.dart';
 import 'package:redime/features/device_pickup/domain/usecases/submit_pickup_request.dart';
 import 'package:redime/features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
 
+import '../../../../helpers/db_test_helper.dart';
+
 void main() {
   late PickupFlowViewModel vm;
 
-  setUp(() {
+  setUp(() async {
+    await initTestDatabase();
     final ds = PickupLocalDataSource();
     final repo = PickupRepositoryImpl(ds);
     final uc = SubmitPickupRequestUseCase(repo);
     vm = PickupFlowViewModel(submitUseCase: uc);
+  });
+
+  tearDown(() async {
+    await tearDownTestDatabase();
   });
 
   group('Step navigation', () {
