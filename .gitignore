@@ -1,3 +1,14 @@
+# Editor / herramientas locales
+.claude/
+
+# Archivos de BD local generados por la app
+*.db
+*.sqlite
+*.sqlite3
+
+# No es un proyecto Node
+package-lock.json
+
 # Miscellaneous
 *.class
 *.log
