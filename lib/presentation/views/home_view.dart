@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'mapa_recoleccion_view.dart';
 import 'chat_view.dart';
-import 'profile_view.dart'; // ✅ importar perfil
+import '../../features/profile/profile_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -11,12 +11,12 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  int _index = 0; // ✅ empieza en Inicio
+  int _index = 2; // ✅ empieza en Inicio
 
   final List<Widget> _pantallas = [
     const Center(child: Text('Inicio')),
-    const MapaRecoleccionView(),
-    const ProfileView(), // ✅ perfil en índice 2
+    const ChatView(),
+    const ProfileView(),
   ];
 
   @override
@@ -58,12 +58,9 @@ class _HomeViewState extends State<HomeView> {
         unselectedItemColor: Colors.grey,
         onTap: (i) => setState(() => _index = i),
         items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.qr_code_scanner), label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: ''), // ✅ perfil
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
         ],
       ),
     );

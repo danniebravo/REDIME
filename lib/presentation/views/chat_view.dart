@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView({super.key});
@@ -58,25 +59,72 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F0),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'REDIME',
-          style: TextStyle(
-            color: primaryColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: primaryColor,
+        statusBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF5F5F0),
+        appBar: AppBar(
+          backgroundColor: primaryColor,
+          elevation: 0,
+          toolbarHeight: 110,
+          automaticallyImplyLeading: false,
+          titleSpacing: 0,
+          title: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text(
+                        '9:41',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.signal_cellular_4_bar,
+                              color: Colors.white, size: 18),
+                          SizedBox(width: 8),
+                          Icon(Icons.wifi, color: Colors.white, size: 18),
+                          SizedBox(width: 8),
+                          Icon(Icons.battery_full,
+                              color: Colors.white, size: 18),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'REDIME',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
-        centerTitle: true,
-      ),
       body: Column(
         children: [
           // Encabezado
@@ -127,6 +175,36 @@ class _ChatViewState extends State<ChatView> {
           // Campo de texto
           _buildInputBar(),
         ],
+      ),
+      bottomNavigationBar: Container(
+        color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildNavItem(Icons.home, '/home', false),
+            _buildNavItem(Icons.qr_code_scanner, '/home', false),
+            _buildNavItem(Icons.person, '/profile', false),
+          ],
+        ),
+      ),
+    ),
+  );
+  }
+
+  Widget _buildNavItem(IconData icon, String route, bool active) {
+    return IconButton(
+      onPressed: () {
+        if (route == '/profile') {
+          Navigator.pushReplacementNamed(context, route);
+        } else if (route == '/home') {
+          Navigator.pushReplacementNamed(context, route);
+        }
+      },
+      icon: Icon(
+        icon,
+        color: active ? primaryColor : Colors.grey[600],
+        size: 28,
       ),
     );
   }

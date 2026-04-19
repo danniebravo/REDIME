@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import '../models/user_model.dart';
+import '../../data/models/user_model.dart';
 
-class RegisterUserViewModel extends ChangeNotifier {
+
+class LoginViewModel extends ChangeNotifier {
+  
+
   String email = '';
   String password = '';
   bool isLoading = false;
@@ -21,6 +24,7 @@ class RegisterUserViewModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
+    
     isLoading = false;
     notifyListeners();
   }

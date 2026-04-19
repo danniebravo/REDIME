@@ -1,10 +1,14 @@
-# redime
+# REDIME
 
-A new Flutter project.
+Aplicación Flutter para manejo de sesión de usuarios, perfil y navegación de funcionalidades.
 
-## Getting Started
+## Estructura principal
 
-This project is a starting point for a Flutter application.
+- `lib/core/` - utilidades, constantes y servicios comunes.
+- `lib/data/` - datasources, modelos y repositorios.
+- `lib/domain/` - entidades, repositorios abstractos y casos de uso.
+- `lib/features/` - pantallas y lógica específica de cada funcionalidad.
+- `lib/presentation/` - vistas, viewmodels y configuración de UI.
 
 A few resources to get you started if this is your first Flutter project:
 
