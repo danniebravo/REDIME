@@ -32,7 +32,7 @@ class LoginView extends StatelessWidget {
             ),
             const Text(
               textAlign: TextAlign.center,
-              'Ingresa tu correo electronico y contraseña para iniciar tu sesión',
+              'Ingresa tu correo electronico y contraseña para iniciar sesión',
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.normal),
             ),
 
@@ -41,7 +41,7 @@ class LoginView extends StatelessWidget {
             // TextField para email
             TextField(
               decoration: InputDecoration(
-                labelText: 'correoelectrónico@dominio.com',
+                labelText: 'usuario / correo',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
@@ -101,7 +101,6 @@ class LoginView extends StatelessWidget {
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         Navigator.pushNamed(context, '/register');
-                        
                       },
                   ),
                 ],

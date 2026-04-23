@@ -59,7 +59,7 @@ class RegisterView extends StatelessWidget {
             // TextField para password
             TextField(
               decoration: InputDecoration(
-                labelText: 'mombres',
+                labelText: 'Nombres',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
@@ -74,7 +74,7 @@ class RegisterView extends StatelessWidget {
 
             TextField(
               decoration: InputDecoration(
-                labelText: 'apellidos',
+                labelText: 'Apellidos',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
@@ -88,7 +88,7 @@ class RegisterView extends StatelessWidget {
 
             TextField(
               decoration: InputDecoration(
-                labelText: 'cedula',
+                labelText: 'Cedula',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
@@ -102,7 +102,7 @@ class RegisterView extends StatelessWidget {
 
             TextField(
               decoration: InputDecoration(
-                labelText: 'número de celular',
+                labelText: 'Número de celular',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
@@ -120,7 +120,7 @@ class RegisterView extends StatelessWidget {
                 ? CircularProgressIndicator()
                 : ElevatedButton(
                     onPressed: () => vm.login(),
-                    child: Text('continuar'),
+                    child: Text('Continuar'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
@@ -146,7 +146,6 @@ class RegisterView extends StatelessWidget {
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         Navigator.pushNamed(context, '/login');
-                        
                       },
                   ),
                 ],
