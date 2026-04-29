@@ -32,9 +32,7 @@ class WelcomeView extends StatelessWidget {
                   children: [
                     // ── Mint background ──
                     Positioned.fill(
-                      child: Container(
-                        color: AppColors.welcomeMintBg,
-                      ),
+                      child: Container(color: AppColors.welcomeMintBg),
                     ),
 
                     // ── Large dark circle (upper-left, bleeds off screen) ──
