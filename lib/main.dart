@@ -31,8 +31,14 @@ import 'features/device_status/domain/usecases/get_device_status.dart';
 import 'features/device_status/presentation/viewmodels/device_status_viewmodel.dart';
 import 'features/device_status/presentation/views/device_status_view.dart';
 
+// QR feature
+import 'features/qr/presentation/viewmodels/qr_scan_viewmodel.dart';
+import 'features/qr/presentation/views/qr_scan_view.dart';
+import 'features/qr/presentation/views/qr_content_view.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   // Open (and, on first run, create + seed) the local SQLite database before
   // the UI asks for any data. Failing here surfaces the error early.
   try {
@@ -47,6 +53,7 @@ Future<void> main() async {
         // ── Existing auth providers (untouched) ──
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => RegisterUserViewModel()),
+
         // ── Device Pickup provider ──
         ChangeNotifierProvider(
           create: (_) {
@@ -66,6 +73,9 @@ Future<void> main() async {
             return DeviceStatusViewModel(getStatusUseCase: useCase);
           },
         ),
+
+        // ── QR provider ──
+        ChangeNotifierProvider(create: (_) => QrScanViewModel()),
       ],
       child: const MyApp(),
     ),
@@ -91,11 +101,17 @@ class MyApp extends StatelessWidget {
         AppRoutes.register: (context) => RegisterView(),
         AppRoutes.home: (context) => HomeView(),
 
-        // New feature routes
+        // Device Pickup routes
         AppRoutes.pickupFlow: (context) => const PickupFlowPage(),
         AppRoutes.pickupConfirmation: (context) =>
             const PickupConfirmationView(),
+
+        // Device Status routes
         AppRoutes.deviceStatus: (context) => const DeviceStatusView(),
+
+        // QR routes
+        AppRoutes.qrScan: (context) => const QrScanView(),
+        AppRoutes.qrContent: (context) => const QrContentView(),
       },
     );
   }
