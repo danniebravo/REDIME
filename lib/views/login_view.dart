@@ -8,22 +8,11 @@ import '../viewmodels/login_viewmodel.dart';
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
-  Future<void> _handleLogin(BuildContext context, LoginViewModel vm) async {
-    final success = await vm.login();
-
-    if (!context.mounted) return;
-
-    if (success) {
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        AppRoutes.home,
-        (route) => false,
-      );
-      return;
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(vm.errorMessage ?? 'No se pudo iniciar sesión')),
+  void _goToHome(BuildContext context) {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRoutes.home,
+      (route) => false,
     );
   }
 
@@ -92,7 +81,7 @@ class LoginView extends StatelessWidget {
             vm.isLoading
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
-                    onPressed: () => _handleLogin(context, vm),
+                    onPressed: () => _goToHome(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
@@ -143,31 +132,9 @@ class LoginView extends StatelessWidget {
             vm.isLoading
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
-                    onPressed: () async {
-                      final success = await vm.login();
-
-                      if (!context.mounted) return;
-
-                      if (success) {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          AppRoutes.home,
-                          (route) => false,
-                        );
-                        return;
-                      }
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            vm.errorMessage ??
-                                'No se pudo iniciar sesión con Google',
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: () => _goToHome(context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 232, 240, 245),
+                      backgroundColor: Color.fromARGB(255, 232, 240, 245),
                       foregroundColor: Colors.black,
                       minimumSize: const Size(double.infinity, 40),
                       shape: RoundedRectangleBorder(
