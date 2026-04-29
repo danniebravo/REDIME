@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import 'package:flutter/gestures.dart';
+import '../core/constants/app_routes.dart';
 
 class HomeView extends StatelessWidget {
+  const HomeView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 250,
-        leading: Row(
+        leading: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.account_circle, color: Colors.white, size: 90.0),
@@ -20,40 +21,57 @@ class HomeView extends StatelessWidget {
             ),
           ],
         ),
-
-        title: Padding(
-          padding: const EdgeInsets.only(
-            bottom: 130,
-          ), // empuja el texto hacia arriba
+        title: const Padding(
+          padding: EdgeInsets.only(bottom: 130),
           child: Text('REDIME'),
         ),
         toolbarHeight: 190,
         backgroundColor: const Color.fromARGB(255, 65, 141, 204),
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(50)),
         ),
-
         automaticallyImplyLeading: false,
         centerTitle: true,
-        titleTextStyle: TextStyle(
+        titleTextStyle: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
-          color: const Color.fromARGB(255, 255, 255, 255),
+          color: Color.fromARGB(255, 255, 255, 255),
         ),
       ),
-
       body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          SizedBox(height: 34),
-          ExpansionTile(
+          const SizedBox(height: 34),
+
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: ListTile(
+              leading: const Icon(Icons.qr_code_scanner),
+              title: const Text('Escanear código QR'),
+              subtitle: const Text(
+                'Lee el código de una tarjeta, historia o dispositivo REDIME.',
+              ),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () {
+                Navigator.pushNamed(context, AppRoutes.qrScan);
+              },
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          const ExpansionTile(
             title: Text("Dispositivos Redimidos"),
             children: [ListTile(title: Text('Opción 1'))],
           ),
-          ExpansionTile(
+          const ExpansionTile(
             title: Text("Tu Información"),
             children: [ListTile(title: Text('Opción 1'))],
           ),
-          ExpansionTile(
+          const ExpansionTile(
             title: Text("Cuenta"),
             children: [ListTile(title: Text('Opción 1'))],
           ),
