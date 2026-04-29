@@ -41,18 +41,23 @@ class HomeView extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 58),
             child: Row(
-              children: const [
-                CircleAvatar(
-                  radius: 32,
-                  backgroundColor: Colors.white24,
-                  child: Icon(
-                    Icons.account_circle,
-                    color: Colors.white,
-                    size: 52,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.profile);
+                  },
+                  child: const CircleAvatar(
+                    radius: 32,
+                    backgroundColor: Colors.white24,
+                    child: Icon(
+                      Icons.account_circle,
+                      color: Colors.white,
+                      size: 52,
+                    ),
                   ),
                 ),
-                SizedBox(width: 12),
-                Expanded(
+                const SizedBox(width: 12),
+                const Expanded(
                   child: Text(
                     'Nombre de usuario',
                     style: TextStyle(
@@ -84,6 +89,16 @@ class HomeView extends StatelessWidget {
             style: TextStyle(fontSize: 14, color: Colors.black54, height: 1.35),
           ),
           const SizedBox(height: 20),
+
+          _HomeActionCard(
+            icon: Icons.person,
+            title: 'Mi perfil',
+            subtitle: 'Consulta y actualiza tu información personal.',
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.profile);
+            },
+          ),
+          const SizedBox(height: 12),
 
           _HomeActionCard(
             icon: Icons.local_shipping,
@@ -134,25 +149,48 @@ class HomeView extends StatelessWidget {
           ExpansionTile(
             title: const Text('Dispositivos Redimidos'),
             subtitle: const Text('Historial de dispositivos registrados'),
-            children: const [
-              ListTile(title: Text('Aún no hay dispositivos para mostrar')),
+            children: [
+              ListTile(
+                title: const Text('Ver mi perfil'),
+                subtitle: const Text(
+                  'Consulta tus dispositivos redimidos desde tu perfil.',
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.profile);
+                },
+              ),
             ],
           ),
           ExpansionTile(
             title: const Text('Tu Información'),
             subtitle: const Text('Datos básicos del usuario'),
-            children: const [
+            children: [
               ListTile(
-                title: Text('Información del usuario pendiente de conectar'),
+                title: const Text('Editar información personal'),
+                subtitle: const Text(
+                  'Actualiza nombre, celular y correo en tu perfil.',
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.profile);
+                },
               ),
             ],
           ),
           ExpansionTile(
             title: const Text('Cuenta'),
             subtitle: const Text('Configuración y cierre de sesión'),
-            children: const [
+            children: [
               ListTile(
-                title: Text('Opciones de cuenta pendientes de conectar'),
+                title: const Text('Administrar cuenta'),
+                subtitle: const Text(
+                  'Cerrar sesión o solicitar eliminación de cuenta.',
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.profile);
+                },
               ),
             ],
           ),

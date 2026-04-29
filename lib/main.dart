@@ -39,6 +39,10 @@ import 'features/qr/presentation/views/qr_content_view.dart';
 // Support feature
 import 'features/support/presentation/views/chat_view.dart';
 
+// Profile feature
+import 'features/profile/presentation/views/profile_view.dart';
+import 'features/profile/presentation/views/delete_account_view.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -118,6 +122,10 @@ class MyApp extends StatelessWidget {
 
         // Support routes
         AppRoutes.chat: (context) => const ChatView(),
+
+        // Profile routes
+        AppRoutes.profile: (context) => const ProfileView(),
+        AppRoutes.deleteAccount: (context) => const DeleteAccountView(),
       },
     );
   }

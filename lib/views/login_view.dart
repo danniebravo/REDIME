@@ -1,27 +1,37 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/login_viewmodel.dart';
+
 import '../core/constants/app_routes.dart';
-import 'package:flutter/gestures.dart';
+import '../viewmodels/login_viewmodel.dart';
 
 class LoginView extends StatelessWidget {
+  const LoginView({super.key});
+
+  void _goToHome(BuildContext context) {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRoutes.home,
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Obtenemos el ViewModel usando Provider
     final vm = context.watch<LoginViewModel>();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('REDIME'),
+        title: const Text('REDIME'),
         automaticallyImplyLeading: false,
         centerTitle: true,
-        titleTextStyle: TextStyle(
+        titleTextStyle: const TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
           color: Colors.black,
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -32,16 +42,14 @@ class LoginView extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const Text(
+              'Ingresa tu correo electrónico y contraseña para iniciar sesión',
               textAlign: TextAlign.center,
-              'Ingresa tu correo electronico y contraseña para iniciar sesión',
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.normal),
             ),
+            const SizedBox(height: 26),
 
-            SizedBox(height: 26),
-
-            // TextField para email
             TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'usuario / correo',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
@@ -49,15 +57,14 @@ class LoginView extends StatelessWidget {
                   vertical: 8,
                 ),
               ),
-
+              keyboardType: TextInputType.emailAddress,
               onChanged: vm.setEmail,
             ),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-            // TextField para password
             TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Contraseña',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
@@ -69,67 +76,71 @@ class LoginView extends StatelessWidget {
               onChanged: vm.setPassword,
             ),
 
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-           
-          vm.isLoading
-          ? CircularProgressIndicator()
-          : ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.pickupFlow);
-              },
-              child: Text('Continuar'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                minimumSize: Size(double.infinity, 40),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7),
-                ),
-              ),
-            ),  
+            vm.isLoading
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: () => _goToHome(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(double.infinity, 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                    ),
+                    child: const Text('Continuar'),
+                  ),
 
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             Text.rich(
               TextSpan(
-                text: '¿No tienes cuenta aún',
+                text: '¿No tienes cuenta aún?',
                 children: [
                   TextSpan(
                     text: ' Regístrate aquí',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
-                        Navigator.pushNamed(context, '/register');
+                        Navigator.pushNamed(context, AppRoutes.register);
                       },
                   ),
                 ],
               ),
             ),
 
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-            Row(
+            const Row(
               children: [
                 Expanded(child: Divider(color: Colors.grey)),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text('o'),
                 ),
                 Expanded(child: Divider()),
               ],
             ),
 
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-            // Botón de google
             vm.isLoading
-                ? CircularProgressIndicator()
+                ? const CircularProgressIndicator()
                 : ElevatedButton(
-                    onPressed: () => vm.login(),
+                    onPressed: () => _goToHome(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 232, 240, 245),
+                      foregroundColor: Colors.black,
+                      minimumSize: const Size(double.infinity, 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -137,22 +148,13 @@ class LoginView extends StatelessWidget {
                           'https://cdn-icons-png.flaticon.com/512/2504/2504739.png',
                           height: 20,
                         ),
-                        SizedBox(width: 8),
-                        Text('Continuar con Google'),
+                        const SizedBox(width: 8),
+                        const Text('Continuar con Google'),
                       ],
-                    ),
-
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 232, 240, 245),
-                      foregroundColor: Colors.black,
-                      minimumSize: Size(double.infinity, 40),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(7),
-                      ),
                     ),
                   ),
 
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             const Text.rich(
               TextSpan(
@@ -164,7 +166,7 @@ class LoginView extends StatelessWidget {
                 ),
                 children: [
                   TextSpan(
-                    text: ' Terminos de servicio y Politica de privacidad',
+                    text: ' Términos de servicio y Política de privacidad',
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,

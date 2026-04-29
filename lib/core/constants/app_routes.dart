@@ -11,4 +11,6 @@ class AppRoutes {
   static const String qrScan = '/qr-scan';
   static const String qrContent = '/qr-content';
   static const String chat = '/chat';
+  static const String profile = '/profile';
+  static const String deleteAccount = '/delete-account';
 }
