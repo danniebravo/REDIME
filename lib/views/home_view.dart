@@ -187,18 +187,22 @@ class _HomeHeader extends StatelessWidget {
                 ),
                 Positioned(
                   right: 0,
-                  child: GestureDetector(
-                    onTap: onSupportTap,
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        color: _darkPrimaryColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.help_outline,
-                        color: Colors.white,
+                  child: ClipOval(
+                    child: Material(
+                      color: _darkPrimaryColor,
+                      child: InkWell(
+                        onTap: onSupportTap,
+                        child: const SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: Center(
+                            child: Icon(
+                              Icons.help_outline,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
