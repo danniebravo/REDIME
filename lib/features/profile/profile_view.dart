@@ -227,31 +227,7 @@ class _ProfileBodyState extends State<_ProfileBody> {
               left: 20, right: 20, bottom: 24, top: 4),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    '9:41',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.signal_cellular_4_bar,
-                          color: Colors.white, size: 18),
-                      SizedBox(width: 8),
-                      Icon(Icons.wifi, color: Colors.white, size: 18),
-                      SizedBox(width: 8),
-                      Icon(Icons.battery_full,
-                          color: Colors.white, size: 18),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
