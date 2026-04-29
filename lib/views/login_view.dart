@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/login_viewmodel.dart';
+import '../core/constants/app_routes.dart';
 import 'package:flutter/gestures.dart';
 
 class LoginView extends StatelessWidget {
@@ -70,21 +71,23 @@ class LoginView extends StatelessWidget {
 
             SizedBox(height: 24),
 
-            // Botón de login o indicador de carga
-            vm.isLoading
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: () => vm.login(),
-                    child: Text('Continuar'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      minimumSize: Size(double.infinity, 40),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(7),
-                      ),
-                    ),
-                  ),
+           
+          vm.isLoading
+          ? CircularProgressIndicator()
+          : ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.pickupFlow);
+              },
+              child: Text('Continuar'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                minimumSize: Size(double.infinity, 40),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7),
+                ),
+              ),
+            ),  
 
             SizedBox(height: 24),
 
