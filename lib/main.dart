@@ -36,6 +36,9 @@ import 'features/qr/presentation/viewmodels/qr_scan_viewmodel.dart';
 import 'features/qr/presentation/views/qr_scan_view.dart';
 import 'features/qr/presentation/views/qr_content_view.dart';
 
+// Support feature
+import 'features/support/presentation/views/chat_view.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -112,6 +115,9 @@ class MyApp extends StatelessWidget {
         // QR routes
         AppRoutes.qrScan: (context) => const QrScanView(),
         AppRoutes.qrContent: (context) => const QrContentView(),
+
+        // Support routes
+        AppRoutes.chat: (context) => const ChatView(),
       },
     );
   }

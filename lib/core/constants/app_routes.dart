@@ -10,4 +10,5 @@ class AppRoutes {
   static const String deviceStatus = '/device-status';
   static const String qrScan = '/qr-scan';
   static const String qrContent = '/qr-content';
+  static const String chat = '/chat';
 }
