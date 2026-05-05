@@ -3,29 +3,35 @@ import '../constants/app_colors.dart';
 import '../theme/app_text_styles.dart';
 
 class PrimaryButton extends StatelessWidget {
-  final String label;
+  final String? label;
+  final String? text;
   final VoidCallback? onPressed;
   final bool isLoading;
+  final bool isEnabled;
 
   const PrimaryButton({
     super.key,
-    required this.label,
+    this.label,
+    this.text,
     this.onPressed,
     this.isLoading = false,
+    this.isEnabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isEnabled = onPressed != null && !isLoading;
+    final buttonText = label ?? text ?? '';
+    final canPress = onPressed != null && !isLoading && isEnabled;
 
     return SizedBox(
       width: double.infinity,
       height: 52,
       child: ElevatedButton(
-        onPressed: isEnabled ? onPressed : null,
+        onPressed: canPress ? onPressed : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              isEnabled ? AppColors.primaryTeal : AppColors.disabledGrey,
+          backgroundColor: canPress
+              ? AppColors.primaryTeal
+              : AppColors.disabledGrey,
           foregroundColor: AppColors.white,
           disabledBackgroundColor: AppColors.borderGrey,
           disabledForegroundColor: AppColors.disabledGrey,
@@ -46,9 +52,13 @@ class PrimaryButton extends StatelessWidget {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(label, style: AppTextStyles.buttonLabel),
+                  Text(buttonText, style: AppTextStyles.buttonLabel),
                   const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward, size: 20, color: AppColors.white),
+                  const Icon(
+                    Icons.arrow_forward,
+                    size: 20,
+                    color: AppColors.white,
+                  ),
                 ],
               ),
       ),

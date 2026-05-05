@@ -13,6 +13,12 @@ class AppColors {
   // Aliases used by Alex's pickup/recycling flow
   static const Color teal = primaryTeal;
   static const Color darkestTeal = darkTeal;
+  static const Color background = mintBackground;
+  static const Color textMain = darkText;
+  static const Color lightTeal = lightMint;
+  static const Color otherSelectedBg = cardSelected;
+  static const Color disabledButton = disabledGrey;
+  static const Color disabledText = greySubtitle;
 
   // Neutrals
   static const Color white = Color(0xFFFFFFFF);

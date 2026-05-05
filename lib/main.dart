@@ -21,6 +21,13 @@ import 'features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dar
 import 'features/device_pickup/presentation/views/pickup_flow_page.dart';
 import 'features/device_pickup/presentation/views/pickup_confirmation_view.dart';
 
+// Alex Device Pickup / Recycling flow views
+import 'features/device_pickup/presentation/views/pickup_step_1_map_view.dart';
+import 'features/device_pickup/presentation/views/pickup_step_2_type_view.dart';
+import 'features/device_pickup/presentation/views/pickup_step_3_details_view.dart';
+import 'features/device_pickup/presentation/views/pickup_step_4_story_view.dart';
+import 'features/device_pickup/presentation/views/pickup_confirm_view.dart';
+
 // Welcome feature
 import 'features/welcome/presentation/views/welcome_view.dart';
 
@@ -108,10 +115,17 @@ class MyApp extends StatelessWidget {
         AppRoutes.register: (context) => RegisterView(),
         AppRoutes.home: (context) => HomeView(),
 
-        // Device Pickup routes
+        // Device Pickup routes - current flow
         AppRoutes.pickupFlow: (context) => const PickupFlowPage(),
         AppRoutes.pickupConfirmation: (context) =>
             const PickupConfirmationView(),
+
+        // Device Pickup / Recycling flow routes - Alex
+        AppRoutes.pickupStep1: (context) => const PickupStep1MapView(),
+        AppRoutes.pickupStep2: (context) => const PickupStep2TypeView(),
+        AppRoutes.pickupStep3: (context) => const PickupStep3DetailsView(),
+        AppRoutes.pickupStep4: (context) => const PickupStep4StoryView(),
+        AppRoutes.pickupConfirm: (context) => const PickupConfirmView(),
 
         // Device Status routes
         AppRoutes.deviceStatus: (context) => const DeviceStatusView(),
