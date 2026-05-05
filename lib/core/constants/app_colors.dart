@@ -10,6 +10,10 @@ class AppColors {
   static const Color mintBackground = Color(0xFFE8F5F1);
   static const Color tealSurface = Color(0xFF3D8B7A);
 
+  // Aliases used by Alex's pickup/recycling flow
+  static const Color teal = primaryTeal;
+  static const Color darkestTeal = darkTeal;
+
   // Neutrals
   static const Color white = Color(0xFFFFFFFF);
   static const Color darkText = Color(0xFF1A1A1A);
