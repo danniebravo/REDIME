@@ -36,7 +36,7 @@ class HomeView extends StatelessWidget {
         ),
         
         automaticallyImplyLeading: false,
-        centerTitle: true,
+        centerTitle: false,
         titleTextStyle: TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
