@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
-import 'stepper_widget.dart';
+
 import '../constants/app_colors.dart';
+import 'stepper_widget.dart';
 
 class CurvedBottomClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    var path = Path();
+    final path = Path();
+
     path.lineTo(0, size.height - 35);
     path.quadraticBezierTo(
-        size.width / 2, size.height, size.width, size.height - 35);
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 35,
+    );
     path.lineTo(size.width, 0);
     path.close();
+
     return path;
   }
 
@@ -33,7 +40,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showBackButton = true,
     this.bottomWidget,
     this.backgroundColor = AppColors.darkestTeal,
-    this.titleColor = AppColors.teal,
+    this.titleColor = AppColors.white,
   });
 
   @override
@@ -42,7 +49,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       clipper: CurvedBottomClipper(),
       child: Container(
         color: backgroundColor,
-        padding: const EdgeInsets.only(top: 55, left: 24, right: 24, bottom: 50),
+        padding: const EdgeInsets.only(
+          top: 55,
+          left: 24,
+          right: 24,
+          bottom: 50,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -61,7 +73,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   )
                 else
                   const SizedBox(width: 28),
-                  
+
                 Text(
                   title,
                   style: TextStyle(
@@ -71,12 +83,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     fontSize: 16,
                   ),
                 ),
-                
+
                 Container(
-                  padding: const EdgeInsets.all(4),
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: titleColor.withOpacity(0.2),
+                    color: AppColors.white.withAlpha(35),
+                    border: Border.all(
+                      color: AppColors.white.withAlpha(90),
+                      width: 1,
+                    ),
                   ),
                   child: Icon(Icons.question_mark, color: titleColor, size: 18),
                 ),
@@ -89,7 +106,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             if (bottomWidget != null) ...[
               const SizedBox(height: 20),
               bottomWidget!,
-            ]
+            ],
           ],
         ),
       ),
@@ -97,5 +114,5 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(220); // Dynamic depending on content
+  Size get preferredSize => const Size.fromHeight(220);
 }

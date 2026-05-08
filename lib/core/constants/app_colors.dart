@@ -3,22 +3,23 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // Primary palette (from Figma)
+  // Primary palette (from Figma / REDIME current app)
   static const Color primaryTeal = Color(0xFF2E7D6F);
   static const Color darkTeal = Color(0xFF2C6B5A);
   static const Color lightMint = Color(0xFFC5E8E0);
   static const Color mintBackground = Color(0xFFE8F5F1);
   static const Color tealSurface = Color(0xFF3D8B7A);
 
-  // Aliases used by Alex's pickup/recycling flow
-  static const Color teal = primaryTeal;
-  static const Color darkestTeal = darkTeal;
-  static const Color background = mintBackground;
-  static const Color textMain = darkText;
-  static const Color lightTeal = lightMint;
-  static const Color otherSelectedBg = cardSelected;
-  static const Color disabledButton = disabledGrey;
-  static const Color disabledText = greySubtitle;
+  // Alex pickup/recycling flow palette
+  static const Color darkestTeal = Color(0xFF2D4241);
+  static const Color alexDarkTeal = Color(0xFF3B5B59);
+  static const Color teal = Color(0xFF8BB5B2);
+  static const Color lightTeal = Color(0xFFCBE2E0);
+  static const Color background = Color(0xFFFAFAFA);
+  static const Color otherSelectedBg = Color(0xFF222222);
+  static const Color textMain = Color(0xFF2D4241);
+  static const Color disabledButton = Color(0xFFE5E5E5);
+  static const Color disabledText = Color(0xFFAAAAAA);
 
   // Neutrals
   static const Color white = Color(0xFFFFFFFF);
