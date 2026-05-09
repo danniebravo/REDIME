@@ -74,7 +74,7 @@ class LoginView extends StatelessWidget {
             vm.isLoading
                 ? CircularProgressIndicator()
                 : ElevatedButton(
-                    onPressed: () => vm.login(),
+                    onPressed: () => vm.login(context),
                     child: Text('Continuar'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
@@ -101,7 +101,6 @@ class LoginView extends StatelessWidget {
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         Navigator.pushNamed(context, '/register');
-                        
                       },
                   ),
                 ],
@@ -127,7 +126,7 @@ class LoginView extends StatelessWidget {
             vm.isLoading
                 ? CircularProgressIndicator()
                 : ElevatedButton(
-                    onPressed: () => vm.login(),
+                    onPressed: () => vm.login(context),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

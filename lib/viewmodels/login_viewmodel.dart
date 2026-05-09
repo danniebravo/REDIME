@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import '../models/user_model.dart';
-
+import '../services/auth_service.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  
+  final AuthService _auth = AuthService();
 
   String email = '';
   String password = '';
+
   bool isLoading = false;
-  UserModel? user;
 
   void setEmail(String value) {
     email = value;
@@ -20,11 +19,22 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> login() async {
+  Future login(BuildContext context) async {
     isLoading = true;
     notifyListeners();
 
-    
+    try {
+      final response = await _auth.login(email, password);
+
+      print("LOGIN OK: $response");
+
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+
     isLoading = false;
     notifyListeners();
   }
