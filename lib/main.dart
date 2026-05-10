@@ -6,6 +6,8 @@ import 'views/login_view.dart';
 import 'views/register_view.dart';
 import 'views/home_view.dart';
 import 'views/welcome_view.dart';
+import 'views/profile_view.dart';
+import 'views/delete_account_view.dart';
 
 import 'viewmodels/login_viewmodel.dart';
 import 'viewmodels/RegisterUser_viewmodel.dart';
@@ -41,6 +43,8 @@ class MyApp extends StatelessWidget {
         '/register': (context) => RegisterView(),
         '/login': (context) => LoginView(),
         '/home': (context) => HomeView(),
+        '/profile': (context) => ProfileView(),
+        '/delete-account': (context) => const DeleteAccountView(),
       },
 
       debugShowCheckedModeBanner: false, // opcional, quita el banner de debug

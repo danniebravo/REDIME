@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import '../models/user_model.dart';
+import '../services/auth_service.dart';
 
 class RegisterUserViewModel extends ChangeNotifier {
+  final AuthService _auth = AuthService();
+
   String email = '';
   String password = '';
+  String nombre = '';
+  String apellido = '';
+  String cedula = '';
+  String celular = '';
+
   bool isLoading = false;
-  UserModel? user;
 
   void setEmail(String value) {
     email = value;
@@ -17,11 +23,52 @@ class RegisterUserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> login() async {
+  void setNombre(String value) {
+    nombre = value;
+    notifyListeners();
+  }
+
+  void setApellido(String value) {
+    apellido = value;
+    notifyListeners();
+  }
+
+  void setCedula(String value) {
+    cedula = value;
+    notifyListeners();
+  }
+
+  void setCelular(String value) {
+    celular = value;
+    notifyListeners();
+  }
+
+  Future register(BuildContext context) async {
     isLoading = true;
     notifyListeners();
 
-    isLoading = false;
-    notifyListeners();
+    try {
+      final response = await _auth.register(
+        email,
+        password,
+        nombre,
+        apellido,
+        cedula,
+        celular,
+      );
+
+      print("REGISTER OK: $response");
+
+      Navigator.pushReplacementNamed(context, '/login');
+    } catch (e) {
+      print("ERROR REGISTER: $e");
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }

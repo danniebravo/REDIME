@@ -1,90 +1,452 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 
-import 'package:flutter/gestures.dart';
+import '../core/constants/app_routes.dart';
 
 class HomeView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context){   
-     
-    return Scaffold(
-      appBar:AppBar(
-       leadingWidth: 260,   
-       leading: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.account_circle, color: Colors.white  , size: 90.0,),
-          SizedBox(width: 8),
-          Text(
-        'Nombre de usuario',
-        style: TextStyle(color: Colors.white, fontSize: 18),
-      ),        
-        ],
-       ),
-        
-             
-        title: Padding(
-        padding: const EdgeInsets.only(bottom: 130), // empuja el texto hacia arriba
-        child: Text('REDIME'),
-  ),
-        toolbarHeight: 190,
-        backgroundColor: const Color.fromARGB(255, 65, 141, 204),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(50)
-          )
+  const HomeView({super.key});
+
+  static const Color _primaryColor = Color(0xFF3A8F7D);
+  static const Color _backgroundColor = Color(0xFFF5F5F0);
+
+  void _showMapPendingMessage(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'La pantalla de puntos de reciclaje se conectará próximamente.',
         ),
-        
-        automaticallyImplyLeading: false,
-        centerTitle: false,
-        titleTextStyle: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.bold,
-          color: const Color.fromARGB(255, 255, 255, 255),
-        ),
-
       ),
-
-      
-      
-      body: ListView(
-        
-        children: [
-          SizedBox(height: 34),
-          ExpansionTile(
-            title : Text("Dispositivos Redimidos" ),
-            children: [
-              ListTile(title: Text('Opción 1')),
-              
-            ],
-            
-          ),
-          ExpansionTile(
-            title : Text("Tu Información"),
-            children: [
-              ListTile(title: Text('Opción 1')),
-              
-            ],
-            
-          ),
-          ExpansionTile(
-            title : Text("Cuenta"),
-            children: [
-              ListTile(title: Text('Opción 1')),
-              
-            ],
-            
-          )
-
-        ],
-      ),
-
-    
-
-
-
-
     );
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: _primaryColor,
+        statusBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: _backgroundColor,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    _HomeHeader(
+                      onSupportTap: () {
+                        Navigator.pushNamed(context, AppRoutes.chat);
+                      },
+                      onProfileTap: () {
+                        Navigator.pushNamed(context, AppRoutes.profile);
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        children: [
+                          _HomeActionButton(
+                            icon: Icons.local_shipping,
+                            label: 'Recoger dispositivos',
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.pickupFlow,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          _HomeActionButton(
+                            icon: Icons.location_on,
+                            label: 'Ver puntos de reciclaje',
+                            onTap: () => _showMapPendingMessage(context),
+                          ),
+                          const SizedBox(height: 12),
+                          _HomeActionButton(
+                            icon: Icons.monitor_heart,
+                            label: 'Estado del dispositivo',
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.deviceStatus,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 26),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Novedades',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          Text(
+                            'Hoy',
+                            style: TextStyle(color: Colors.grey, fontSize: 13),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 170,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.only(left: 20, right: 6),
+                        children: const [
+                          _NewsCard(
+                            title: 'Museo ITM',
+                            subtitle: 'Nueva exposición de memorias RAEE',
+                            icon: Icons.museum,
+                          ),
+                          _NewsCard(
+                            title: 'Meta Medellín',
+                            subtitle: 'Seguimos recuperando tecnología',
+                            icon: Icons.eco,
+                          ),
+                          _NewsCard(
+                            title: 'Trazabilidad',
+                            subtitle: 'Consulta el estado de tus dispositivos',
+                            icon: Icons.timeline,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: _HomeBottomNavigation(
+          onHomeTap: () {},
+          onQrTap: () {
+            Navigator.pushNamed(context, AppRoutes.qrScan);
+          },
+          onProfileTap: () {
+            Navigator.pushNamed(context, AppRoutes.profile);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeHeader extends StatelessWidget {
+  final VoidCallback onSupportTap;
+  final VoidCallback onProfileTap;
+
+  const _HomeHeader({required this.onSupportTap, required this.onProfileTap});
+
+  static const Color _primaryColor = Color(0xFF3A8F7D);
+  static const Color _darkPrimaryColor = Color(0xFF2F7168);
+  static const Color _softGreen = Color(0xFFE7F0EE);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: _primaryColor,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(34),
+          bottomRight: Radius.circular(34),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
+        child: Column(
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                const Center(
+                  child: Text(
+                    'REDIME',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 19,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  child: ClipOval(
+                    child: Material(
+                      color: _darkPrimaryColor,
+                      child: InkWell(
+                        onTap: onSupportTap,
+                        child: const SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: Center(
+                            child: Icon(
+                              Icons.help_outline,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 28),
+            GestureDetector(
+              onTap: onProfileTap,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: _darkPrimaryColor,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: const Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: _softGreen,
+                      child: Icon(Icons.person, size: 34, color: _primaryColor),
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Nombre de usuario',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Ver perfil y cuenta',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.white70,
+                      size: 16,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _HomeActionButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  static const Color _primaryColor = Color(0xFF3A8F7D);
+  static const Color _softGreen = Color(0xFFE7F0EE);
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      elevation: 2,
+      shadowColor: Colors.black.withAlpha(20),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 24,
+                backgroundColor: _softGreen,
+                child: Icon(icon, color: _primaryColor),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios, size: 16),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NewsCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+
+  const _NewsCard({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 205,
+      margin: const EdgeInsets.only(right: 14),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF2F7168), Color(0xFF1F4D48)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(22),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Icon(icon, color: Colors.white, size: 30),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 12,
+                  height: 1.35,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HomeBottomNavigation extends StatelessWidget {
+  final VoidCallback onHomeTap;
+  final VoidCallback onQrTap;
+  final VoidCallback onProfileTap;
+
+  const _HomeBottomNavigation({
+    required this.onHomeTap,
+    required this.onQrTap,
+    required this.onProfileTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.only(
+        left: 28,
+        right: 28,
+        top: 8,
+        bottom: 8 + MediaQuery.of(context).padding.bottom,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _BottomNavItem(icon: Icons.home, isActive: true, onTap: onHomeTap),
+          _BottomNavItem(
+            icon: Icons.qr_code_scanner,
+            isActive: false,
+            onTap: onQrTap,
+          ),
+          _BottomNavItem(
+            icon: Icons.person,
+            isActive: false,
+            onTap: onProfileTap,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BottomNavItem extends StatelessWidget {
+  final IconData icon;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _BottomNavItem({
+    required this.icon,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  static const Color _primaryColor = Color(0xFF3A8F7D);
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: onTap,
+      icon: Icon(
+        icon,
+        color: isActive ? _primaryColor : Colors.grey[600],
+        size: 29,
+      ),
+    );
+  }
 }
