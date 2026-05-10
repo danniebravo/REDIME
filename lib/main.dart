@@ -8,6 +8,9 @@ import 'views/home_view.dart';
 import 'views/welcome_view.dart';
 import 'views/profile_view.dart';
 import 'views/delete_account_view.dart';
+import 'views/chat_view.dart';
+import 'views/qr_scan_view.dart';
+import 'views/qr_content_view.dart';
 
 import 'viewmodels/login_viewmodel.dart';
 import 'viewmodels/RegisterUser_viewmodel.dart';
@@ -45,6 +48,9 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomeView(),
         '/profile': (context) => ProfileView(),
         '/delete-account': (context) => const DeleteAccountView(),
+        '/chat': (context) => const ChatView(),
+        '/qr-scan': (context) => const QrScanView(),
+        '/qr-content': (context) => const QrContentView(),
       },
 
       debugShowCheckedModeBanner: false, // opcional, quita el banner de debug
