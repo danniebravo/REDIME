@@ -155,8 +155,8 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
             right: 0,
             child: CustomAppBar(
               title: 'REDIME',
-              backgroundColor: AppColors.teal.withAlpha(242),
-              titleColor: AppColors.darkestTeal,
+              backgroundColor: AppColors.primaryTeal.withAlpha(242),
+              titleColor: AppColors.white,
               showBackButton: true,
               bottomWidget: (_showSearchBar || _viewModel.isRouteCalculated)
                   ? _buildSearchBar()
@@ -183,7 +183,7 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
     return ClipPath(
       clipper: _TopCurvedClipper(),
       child: Container(
-        color: AppColors.teal.withAlpha(242),
+        color: AppColors.primaryTeal.withAlpha(242),
         padding: const EdgeInsets.only(
           top: 40,
           bottom: 40,
@@ -193,15 +193,12 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const StepperWidget(
-              currentStep: 1,
-              activeColor: AppColors.darkestTeal,
-            ),
+            const StepperWidget(currentStep: 1, activeColor: AppColors.white),
             const SizedBox(height: 16),
             const Text(
               'Selecciona un punto de reciclaje',
               style: TextStyle(
-                color: AppColors.darkestTeal,
+                color: AppColors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -249,7 +246,7 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
           // Card content - constrained and scrollable
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.48,
+              maxHeight: MediaQuery.of(context).size.height * 0.42,
             ),
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
@@ -291,18 +288,8 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
 
-                  // Imagen / espacio visual reservado
-                  Container(
-                    height: 90,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 18),
 
                   // Dirección
                   const Row(

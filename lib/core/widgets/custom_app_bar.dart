@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-
 import '../constants/app_colors.dart';
+import '../constants/app_routes.dart';
 import 'stepper_widget.dart';
 
 class CurvedBottomClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
-
     path.lineTo(0, size.height - 35);
     path.quadraticBezierTo(
       size.width / 2,
@@ -17,7 +16,6 @@ class CurvedBottomClipper extends CustomClipper<Path> {
     );
     path.lineTo(size.width, 0);
     path.close();
-
     return path;
   }
 
@@ -84,18 +82,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
 
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.white.withAlpha(35),
-                    border: Border.all(
-                      color: AppColors.white.withAlpha(90),
-                      width: 1,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.chat);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: titleColor, width: 1.5),
+                      color: Colors.transparent,
+                    ),
+                    child: Icon(
+                      Icons.question_mark,
+                      color: titleColor,
+                      size: 18,
                     ),
                   ),
-                  child: Icon(Icons.question_mark, color: titleColor, size: 18),
                 ),
               ],
             ),
