@@ -9,16 +9,6 @@ class HomeView extends StatelessWidget {
   static const Color _primaryColor = Color(0xFF3A8F7D);
   static const Color _backgroundColor = Color(0xFFF5F5F0);
 
-  void _showMapPendingMessage(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'La pantalla de puntos de reciclaje se conectará próximamente.',
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -63,7 +53,12 @@ class HomeView extends StatelessWidget {
                           _HomeActionButton(
                             icon: Icons.location_on,
                             label: 'Ver puntos de reciclaje',
-                            onTap: () => _showMapPendingMessage(context),
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.pickupStep1,
+                              );
+                            },
                           ),
                           const SizedBox(height: 12),
                           _HomeActionButton(
