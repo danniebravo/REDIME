@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/redime_app_bar.dart';
-import '../viewmodels/device_status_viewmodel.dart';
-import '../widgets/tracking_timeline.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/app_strings.dart';
+import '../core/theme/app_text_styles.dart';
+import '../core/widgets/redime_app_bar.dart';
+import '../features/device_status/presentation/viewmodels/device_status_viewmodel.dart';
+import '../features/device_status/presentation/widgets/tracking_timeline.dart';
 
 class DeviceStatusView extends StatefulWidget {
   const DeviceStatusView({super.key});

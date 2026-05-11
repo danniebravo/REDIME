@@ -36,7 +36,7 @@ import 'features/device_status/data/datasources/status_local_datasource.dart';
 import 'features/device_status/data/repositories/status_repository_impl.dart';
 import 'features/device_status/domain/usecases/get_device_status.dart';
 import 'features/device_status/presentation/viewmodels/device_status_viewmodel.dart';
-import 'features/device_status/presentation/views/device_status_view.dart';
+import 'views/device_status_view.dart';
 
 // QR feature
 import 'features/qr/presentation/viewmodels/qr_scan_viewmodel.dart';
