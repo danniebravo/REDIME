@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_routes.dart';
-import '../viewmodels/qr_scan_viewmodel.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/app_routes.dart';
+import '../features/qr/presentation/viewmodels/qr_scan_viewmodel.dart';
 
 class QrScanView extends StatefulWidget {
   const QrScanView({super.key});

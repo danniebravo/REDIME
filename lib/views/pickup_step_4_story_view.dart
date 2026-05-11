@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_routes.dart';
-import '../../../../core/widgets/custom_app_bar.dart';
-import '../viewmodels/pickup_viewmodel.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/app_routes.dart';
+import '../core/widgets/custom_app_bar.dart';
+import '../features/device_pickup/presentation/viewmodels/pickup_viewmodel.dart';
 
 class PickupStep4StoryView extends StatefulWidget {
   const PickupStep4StoryView({super.key});

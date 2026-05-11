@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/primary_button.dart';
-import '../../../../core/widgets/section_header.dart';
-import '../viewmodels/pickup_flow_viewmodel.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/app_strings.dart';
+import '../core/theme/app_text_styles.dart';
+import '../core/widgets/primary_button.dart';
+import '../core/widgets/section_header.dart';
+import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
 
 class Step3AddressDateView extends StatelessWidget {
   const Step3AddressDateView({super.key});
