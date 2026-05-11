@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/primary_button.dart';
-import '../../../../core/widgets/section_header.dart';
-import '../../../../core/widgets/selectable_chip.dart';
-import '../../domain/entities/enums.dart';
-import '../viewmodels/pickup_flow_viewmodel.dart';
-import '../widgets/weight_dropdown.dart';
-import '../widgets/age_dropdown.dart';
+import '../core/constants/app_strings.dart';
+import '../core/theme/app_text_styles.dart';
+import '../core/widgets/primary_button.dart';
+import '../core/widgets/section_header.dart';
+import '../core/widgets/selectable_chip.dart';
+import '../features/device_pickup/domain/entities/enums.dart';
+import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
+import '../features/device_pickup/presentation/widgets/weight_dropdown.dart';
+import '../features/device_pickup/presentation/widgets/age_dropdown.dart';
 
 class Step2DeviceDetailsView extends StatelessWidget {
   const Step2DeviceDetailsView({super.key});

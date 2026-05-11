@@ -18,15 +18,15 @@ import 'features/device_pickup/data/datasources/pickup_local_datasource.dart';
 import 'features/device_pickup/data/repositories/pickup_repository_impl.dart';
 import 'features/device_pickup/domain/usecases/submit_pickup_request.dart';
 import 'features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
-import 'features/device_pickup/presentation/views/pickup_flow_page.dart';
-import 'features/device_pickup/presentation/views/pickup_confirmation_view.dart';
+import 'views/pickup_flow_page.dart';
+import 'views/pickup_confirmation_view.dart';
 
 // Alex Device Pickup / Recycling flow views
-import 'features/device_pickup/presentation/views/pickup_step_1_map_view.dart';
-import 'features/device_pickup/presentation/views/pickup_step_2_type_view.dart';
-import 'features/device_pickup/presentation/views/pickup_step_3_details_view.dart';
-import 'features/device_pickup/presentation/views/pickup_step_4_story_view.dart';
-import 'features/device_pickup/presentation/views/pickup_confirm_view.dart';
+import 'views/pickup_step_1_map_view.dart';
+import 'views/pickup_step_2_type_view.dart';
+import 'views/pickup_step_3_details_view.dart';
+import 'views/pickup_step_4_story_view.dart';
+import 'views/pickup_confirm_view.dart';
 
 // Welcome feature
 import 'views/welcome_view.dart';

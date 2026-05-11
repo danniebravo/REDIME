@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/widgets/primary_button.dart';
-import '../../../../core/widgets/section_header.dart';
-import '../../domain/entities/enums.dart';
-import '../viewmodels/pickup_flow_viewmodel.dart';
-import '../widgets/device_type_card.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/app_strings.dart';
+import '../core/widgets/primary_button.dart';
+import '../core/widgets/section_header.dart';
+import '../features/device_pickup/domain/entities/enums.dart';
+import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
+import '../features/device_pickup/presentation/widgets/device_type_card.dart';
 
 class Step1DeviceTypeView extends StatelessWidget {
   const Step1DeviceTypeView({super.key});
