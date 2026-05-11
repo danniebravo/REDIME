@@ -47,8 +47,8 @@ import 'views/qr_content_view.dart';
 import 'views/chat_view.dart';
 
 // Profile feature
-import 'features/profile/presentation/views/profile_view.dart';
-import 'features/profile/presentation/views/delete_account_view.dart';
+import 'views/profile_view.dart';
+import 'views/delete_account_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
