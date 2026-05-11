@@ -1,8 +1,5 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'dart:ui' as ui;
-
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_routes.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
@@ -29,14 +26,6 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
   bool get _hasStory =>
       !_viewModel.storySkipped && _viewModel.storyText.trim().isNotEmpty;
 
-  void _goHome() {
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      AppRoutes.home,
-      (route) => false,
-    );
-  }
-
   void _shareCard() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -55,16 +44,18 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
       backgroundColor: AppColors.background,
       appBar: CustomAppBar(
         title: 'REDIME',
-        showBackButton: false,
-        backgroundColor: AppColors.teal.withOpacity(0.95),
-        titleColor: AppColors.darkestTeal,
+        showBackButton: _hasStory,
+        // Mismo verde oscuro que quieres usar como referencia
+        backgroundColor: AppColors.darkTeal.withValues(alpha: 0.95),
+        // REDIME y botón "?" en blanco
+        titleColor: AppColors.white,
         bottomWidget: const Padding(
           padding: EdgeInsets.only(bottom: 4),
           child: Text(
             '¡Gracias!',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: AppColors.darkestTeal,
+              color: AppColors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
@@ -78,7 +69,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
     );
   }
 
-  /// Layout when user SKIPPED the story — centered and clean
+  /// Layout when user SKIPPED the story
   Widget _buildSkipLayout() {
     return Center(
       child: Padding(
@@ -92,6 +83,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 28),
+
             const Text(
               '¡Rescate iniciado!',
               textAlign: TextAlign.center,
@@ -103,6 +95,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
               ),
             ),
             const SizedBox(height: 16),
+
             const Text(
               'Gracias por confiar en Redime para dar\nuna segunda vida a tu dispositivo.',
               textAlign: TextAlign.center,
@@ -113,8 +106,15 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
               ),
             ),
             const SizedBox(height: 36),
+
             ElevatedButton(
-              onPressed: _goHome,
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.home,
+                  (route) => false,
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.darkTeal,
                 foregroundColor: AppColors.white,
@@ -138,7 +138,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
     );
   }
 
-  /// Layout when user SUBMITTED a story — with shareable card
+  /// Layout when user SUBMITTED a story
   Widget _buildStoryLayout() {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -146,12 +146,14 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 24),
+
           Image.asset(
             'assets/images/Logocheck.png',
             height: 110,
             fit: BoxFit.contain,
           ),
           const SizedBox(height: 20),
+
           const Text(
             '¡Rescate iniciado!',
             textAlign: TextAlign.center,
@@ -163,6 +165,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
             ),
           ),
           const SizedBox(height: 12),
+
           const Text(
             'Gracias por confiar en Redime para dar\nuna segunda vida a tu dispositivo.',
             textAlign: TextAlign.center,
@@ -173,13 +176,21 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
             ),
           ),
           const SizedBox(height: 24),
+
           _buildShareableCard(),
           const SizedBox(height: 28),
+
           Row(
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: _goHome,
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRoutes.home,
+                      (route) => false,
+                    );
+                  },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.darkTeal,
                     side: const BorderSide(color: AppColors.darkTeal),
@@ -226,6 +237,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
             ],
           ),
           const SizedBox(height: 24),
+
           RichText(
             textAlign: TextAlign.center,
             text: const TextSpan(
@@ -260,7 +272,6 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
     );
   }
 
-  /// The shareable card with device data and user story
   Widget _buildShareableCard() {
     final Uint8List? imageBytes = _viewModel.storyImageBytes as Uint8List?;
     final String deviceType = _viewModel.selectedSubcategory ?? 'Dispositivo';
@@ -283,7 +294,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
+                  color: Colors.black.withValues(alpha: 0.25),
                   blurRadius: 16,
                   offset: const Offset(0, 6),
                 ),
@@ -312,6 +323,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                           ),
                   ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.fromLTRB(18, 16, 18, 0),
                   child: Column(
@@ -369,6 +381,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                         ],
                       ),
                       const SizedBox(height: 12),
+
                       Text(
                         '$deviceType:',
                         style: const TextStyle(
@@ -389,6 +402,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                     ],
                   ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18,
@@ -396,9 +410,10 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                   ),
                   child: Container(
                     height: 1,
-                    color: AppColors.teal.withOpacity(0.3),
+                    color: AppColors.teal.withValues(alpha: 0.3),
                   ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 18),
                   child: Text(
@@ -406,13 +421,14 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                     maxLines: 6,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: AppColors.white.withOpacity(0.9),
+                      color: AppColors.white.withValues(alpha: 0.9),
                       fontSize: 13,
                       height: 1.6,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.fromLTRB(18, 12, 18, 16),
                   child: Align(
@@ -420,7 +436,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                     child: Text(
                       '#capsulasdememoriamed',
                       style: TextStyle(
-                        color: AppColors.teal.withOpacity(0.9),
+                        color: AppColors.teal.withValues(alpha: 0.9),
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
