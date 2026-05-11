@@ -29,7 +29,7 @@ import 'features/device_pickup/presentation/views/pickup_step_4_story_view.dart'
 import 'features/device_pickup/presentation/views/pickup_confirm_view.dart';
 
 // Welcome feature
-import 'features/welcome/presentation/views/welcome_view.dart';
+import 'views/welcome_view.dart';
 
 // Device Status feature
 import 'features/device_status/data/datasources/status_local_datasource.dart';
@@ -40,11 +40,11 @@ import 'features/device_status/presentation/views/device_status_view.dart';
 
 // QR feature
 import 'features/qr/presentation/viewmodels/qr_scan_viewmodel.dart';
-import 'features/qr/presentation/views/qr_scan_view.dart';
-import 'features/qr/presentation/views/qr_content_view.dart';
+import 'views/qr_scan_view.dart';
+import 'views/qr_content_view.dart';
 
 // Support feature
-import 'features/support/presentation/views/chat_view.dart';
+import 'views/chat_view.dart';
 
 // Profile feature
 import 'features/profile/presentation/views/profile_view.dart';
