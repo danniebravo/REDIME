@@ -18,37 +18,37 @@ import 'features/device_pickup/data/datasources/pickup_local_datasource.dart';
 import 'features/device_pickup/data/repositories/pickup_repository_impl.dart';
 import 'features/device_pickup/domain/usecases/submit_pickup_request.dart';
 import 'features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
-import 'views/pickup_flow_page.dart';
-import 'views/pickup_confirmation_view.dart';
+import 'features/device_pickup/presentation/views/pickup_flow_page.dart';
+import 'features/device_pickup/presentation/views/pickup_confirmation_view.dart';
 
 // Alex Device Pickup / Recycling flow views
-import 'views/pickup_step_1_map_view.dart';
-import 'views/pickup_step_2_type_view.dart';
-import 'views/pickup_step_3_details_view.dart';
-import 'views/pickup_step_4_story_view.dart';
-import 'views/pickup_confirm_view.dart';
+import 'features/device_pickup/presentation/views/pickup_step_1_map_view.dart';
+import 'features/device_pickup/presentation/views/pickup_step_2_type_view.dart';
+import 'features/device_pickup/presentation/views/pickup_step_3_details_view.dart';
+import 'features/device_pickup/presentation/views/pickup_step_4_story_view.dart';
+import 'features/device_pickup/presentation/views/pickup_confirm_view.dart';
 
 // Welcome feature
-import 'views/welcome_view.dart';
+import 'features/welcome/presentation/views/welcome_view.dart';
 
 // Device Status feature
 import 'features/device_status/data/datasources/status_local_datasource.dart';
 import 'features/device_status/data/repositories/status_repository_impl.dart';
 import 'features/device_status/domain/usecases/get_device_status.dart';
 import 'features/device_status/presentation/viewmodels/device_status_viewmodel.dart';
-import 'views/device_status_view.dart';
+import 'features/device_status/presentation/views/device_status_view.dart';
 
 // QR feature
 import 'features/qr/presentation/viewmodels/qr_scan_viewmodel.dart';
-import 'views/qr_scan_view.dart';
-import 'views/qr_content_view.dart';
+import 'features/qr/presentation/views/qr_scan_view.dart';
+import 'features/qr/presentation/views/qr_content_view.dart';
 
 // Support feature
-import 'views/chat_view.dart';
+import 'features/support/presentation/views/chat_view.dart';
 
 // Profile feature
-import 'views/profile_view.dart';
-import 'views/delete_account_view.dart';
+import 'features/profile/presentation/views/profile_view.dart';
+import 'features/profile/presentation/views/delete_account_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../core/constants/app_colors.dart';
-import '../core/constants/app_routes.dart';
-import '../core/widgets/custom_app_bar.dart';
-import '../core/widgets/primary_button.dart';
-import '../features/device_pickup/presentation/viewmodels/pickup_viewmodel.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_routes.dart';
+import '../../../../core/widgets/custom_app_bar.dart';
+import '../../../../core/widgets/primary_button.dart';
+import '../viewmodels/pickup_viewmodel.dart';
 
 class PickupStep2TypeView extends StatefulWidget {
   const PickupStep2TypeView({super.key});
