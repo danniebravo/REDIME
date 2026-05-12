@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../core/constants/app_routes.dart';
-import '../features/profile/data/datasources/profile_local_datasource.dart';
-import '../features/profile/data/repositories/profile_repository_impl.dart';
-import '../features/profile/domain/usecases/profile_usecases.dart';
-import '../features/profile/presentation/viewmodels/profile_viewmodel.dart';
+import '../../../../core/constants/app_routes.dart';
+import '../../data/datasources/profile_local_datasource.dart';
+import '../../data/repositories/profile_repository_impl.dart';
+import '../../domain/usecases/profile_usecases.dart';
+import '../viewmodels/profile_viewmodel.dart';
 
 ProfileViewModel buildProfileViewModel() {
   final dataSource = ProfileLocalDataSource();

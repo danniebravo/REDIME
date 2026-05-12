@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../core/constants/app_colors.dart';
-import '../core/constants/app_routes.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_routes.dart';
 
 class WelcomeView extends StatelessWidget {
   const WelcomeView({super.key});

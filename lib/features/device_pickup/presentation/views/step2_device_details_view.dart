@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/constants/app_colors.dart';
-import '../core/constants/app_strings.dart';
-import '../core/widgets/primary_button.dart';
-import '../features/device_pickup/domain/entities/enums.dart';
-import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../../../../core/widgets/primary_button.dart';
+import '../../domain/entities/enums.dart';
+import '../viewmodels/pickup_flow_viewmodel.dart';
 
 class Step2DeviceDetailsView extends StatefulWidget {
   const Step2DeviceDetailsView({super.key});

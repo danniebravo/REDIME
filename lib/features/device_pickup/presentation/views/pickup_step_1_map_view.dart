@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../core/constants/app_colors.dart';
-import '../core/widgets/custom_app_bar.dart';
-import '../core/widgets/primary_button.dart';
-import '../core/widgets/stepper_widget.dart';
-import '../core/constants/app_routes.dart';
-import '../features/device_pickup/presentation/viewmodels/pickup_viewmodel.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/custom_app_bar.dart';
+import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/stepper_widget.dart';
+import '../../../../core/constants/app_routes.dart';
+import '../viewmodels/pickup_viewmodel.dart';
 
 class PickupStep1MapView extends StatefulWidget {
   const PickupStep1MapView({super.key});

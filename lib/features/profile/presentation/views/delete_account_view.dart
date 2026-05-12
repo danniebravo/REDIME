@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/constants/app_colors.dart';
-import '../core/constants/app_routes.dart';
-import '../features/profile/presentation/viewmodels/profile_viewmodel.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_routes.dart';
+import '../viewmodels/profile_viewmodel.dart';
 import 'profile_view.dart';
 
 class DeleteAccountView extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../core/constants/app_colors.dart';
-import '../features/qr/data/models/qr_scan_model.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../data/models/qr_scan_model.dart';
 
 class QrContentView extends StatelessWidget {
   const QrContentView({super.key});

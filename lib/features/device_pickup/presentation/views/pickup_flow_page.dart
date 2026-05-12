@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../core/widgets/redime_app_bar.dart';
-import '../core/widgets/step_progress_indicator.dart';
-import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
+import '../../../../core/widgets/redime_app_bar.dart';
+import '../../../../core/widgets/step_progress_indicator.dart';
+import '../viewmodels/pickup_flow_viewmodel.dart';
 import 'step1_device_type_view.dart';
 import 'step2_device_details_view.dart';
 import 'step3_address_date_view.dart';
