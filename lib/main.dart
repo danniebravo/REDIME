@@ -11,6 +11,7 @@ import 'views/delete_account_view.dart';
 import 'views/chat_view.dart';
 import 'views/qr_scan_view.dart';
 import 'views/qr_content_view.dart';
+import 'views/device_status_view.dart';
 
 import 'viewmodels/login_viewmodel.dart';
 import 'viewmodels/RegisterUser_viewmodel.dart';
@@ -40,17 +41,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/welcome',
+      initialRoute: AppRoutes.welcome,
       routes: {
-        '/welcome': (context) => const WelcomeView(),
-        '/register': (context) => RegisterView(),
-        '/login': (context) => LoginView(),
-        '/home': (context) => HomeView(),
-        '/profile': (context) => ProfileView(),
-        '/delete-account': (context) => const DeleteAccountView(),
-        '/chat': (context) => const ChatView(),
-        '/qr-scan': (context) => const QrScanView(),
-        '/qr-content': (context) => const QrContentView(),
+        AppRoutes.welcome: (context) => const WelcomeView(),
+        AppRoutes.register: (context) => RegisterView(),
+        AppRoutes.login: (context) => LoginView(),
+        AppRoutes.home: (context) => HomeView(),
+        AppRoutes.profile: (context) => ProfileView(),
+        AppRoutes.deleteAccount: (context) => const DeleteAccountView(),
+        AppRoutes.chat: (context) => const ChatView(),
+        AppRoutes.qrScan: (context) => const QrScanView(),
+        AppRoutes.qrContent: (context) => const QrContentView(),
+        AppRoutes.deviceStatus: (context) => const DeviceStatusView(),
       },
 
       debugShowCheckedModeBanner: false, // opcional, quita el banner de debug
