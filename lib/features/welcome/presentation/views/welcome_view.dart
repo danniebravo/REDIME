@@ -111,7 +111,7 @@ class WelcomeView extends StatelessWidget {
                     'ofrece y comienza tu proceso ahora',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       color: AppColors.textMain,
                       height: 1.5,
                       fontWeight: FontWeight.w400,

@@ -11,13 +11,13 @@ class RegisterView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('REDIME'),
+        title: const Text('REDIME'),
         automaticallyImplyLeading: false,
         centerTitle: true,
-        titleTextStyle: TextStyle(
+        titleTextStyle: const TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-          color: Colors.black,
+          color: Colors.white,
         ),
       ),
       body: Padding(
