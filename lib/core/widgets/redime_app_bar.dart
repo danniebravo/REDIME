@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_routes.dart';
 import '../constants/app_strings.dart';
 import '../theme/app_text_styles.dart';
 
@@ -40,6 +41,7 @@ class RedimeAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         if (showHelpIcon)
           IconButton(
+            tooltip: 'Soporte REDIME',
             icon: Container(
               width: 28,
               height: 28,
@@ -59,23 +61,7 @@ class RedimeAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: const Text('Ayuda'),
-                  content: const Text(
-                    'Si tienes dudas sobre c\u00f3mo funciona el proceso de '
-                    'reciclaje, cont\u00e1ctanos a trav\u00e9s de la secci\u00f3n '
-                    'de soporte.',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Entendido'),
-                    ),
-                  ],
-                ),
-              );
+              Navigator.pushNamed(context, AppRoutes.chat);
             },
           ),
       ],
