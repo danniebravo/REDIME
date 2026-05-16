@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../core/constants/app_routes.dart';
+import '../core/widgets/help_button.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -166,43 +167,36 @@ class _HomeHeader extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
         child: Column(
           children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                const Center(
-                  child: Text(
-                    'REDIME',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 19,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 0,
-                  child: ClipOval(
-                    child: Material(
-                      color: _darkPrimaryColor,
-                      child: InkWell(
-                        onTap: onSupportTap,
-                        child: const SizedBox(
-                          width: 44,
-                          height: 44,
-                          child: Center(
-                            child: Icon(
-                              Icons.help_outline,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ),
-                        ),
+            SizedBox(
+              height: 44,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  const Center(
+                    child: Text(
+                      'REDIME',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 19,
+                        letterSpacing: 2,
                       ),
                     ),
                   ),
-                ),
-              ],
+                  Positioned(
+                    right: 0,
+                    top: 2,
+                    child: HelpButton(
+                      size: 40,
+                      iconSize: 20,
+                      borderWidth: 2,
+                      color: Colors.white,
+                      onPressed: onSupportTap,
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 28),
             GestureDetector(

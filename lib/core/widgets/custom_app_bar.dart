@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
+
 import '../constants/app_colors.dart';
 import '../constants/app_routes.dart';
+import 'help_button.dart';
 import 'stepper_widget.dart';
 
 class CurvedBottomClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
+
     path.lineTo(0, size.height - 35);
+
     path.quadraticBezierTo(
       size.width / 2,
       size.height,
       size.width,
       size.height - 35,
     );
+
     path.lineTo(size.width, 0);
     path.close();
+
     return path;
   }
 
@@ -70,7 +76,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     child: Icon(Icons.arrow_back, color: titleColor, size: 28),
                   )
                 else
-                  const SizedBox(width: 28),
+                  const SizedBox(width: 40),
 
                 Text(
                   title,
@@ -82,30 +88,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
 
-                GestureDetector(
-                  onTap: () {
+                HelpButton(
+                  size: 40,
+                  iconSize: 20,
+                  borderWidth: 2,
+                  color: titleColor,
+                  onPressed: () {
                     Navigator.pushNamed(context, AppRoutes.chat);
                   },
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: titleColor, width: 1.5),
-                      color: Colors.transparent,
-                    ),
-                    child: Icon(
-                      Icons.question_mark,
-                      color: titleColor,
-                      size: 18,
-                    ),
-                  ),
                 ),
               ],
             ),
+
             if (currentStep != null) ...[
               const SizedBox(height: 24),
               StepperWidget(currentStep: currentStep!),
             ],
+
             if (bottomWidget != null) ...[
               const SizedBox(height: 20),
               bottomWidget!,
