@@ -12,6 +12,12 @@ import 'views/chat_view.dart';
 import 'views/qr_scan_view.dart';
 import 'views/qr_content_view.dart';
 import 'views/device_status_view.dart';
+import 'views/pickup_step_1_map_view.dart';
+import 'views/pickup_step_2_type_view.dart';
+import 'views/pickup_step_3_details_view.dart';
+import 'views/pickup_step_4_story_view.dart';
+import 'views/pickup_confirm_view.dart';
+import '/views/pickup_flow_page.dart';
 
 import 'viewmodels/login_viewmodel.dart';
 import 'viewmodels/RegisterUser_viewmodel.dart';
@@ -53,6 +59,12 @@ class MyApp extends StatelessWidget {
         AppRoutes.qrScan: (context) => const QrScanView(),
         AppRoutes.qrContent: (context) => const QrContentView(),
         AppRoutes.deviceStatus: (context) => const DeviceStatusView(),
+        AppRoutes.pickupStep1: (context) => const PickupStep1MapView(),
+        AppRoutes.pickupStep2: (context) => const PickupStep2TypeView(),
+        AppRoutes.pickupStep3: (context) => const PickupStep3DetailsView(),
+        AppRoutes.pickupStep4: (context) => const PickupStep4StoryView(),
+        AppRoutes.pickupConfirm: (context) => const PickupConfirmView(),
+        AppRoutes.pickupFlow: (context) => const PickupFlowPage(),
       },
 
       debugShowCheckedModeBanner: false, // opcional, quita el banner de debug
