@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_routes.dart';
+import '../../../../core/widgets/help_button.dart';
 import '../../data/datasources/profile_local_datasource.dart';
 import '../../data/repositories/profile_repository_impl.dart';
 import '../../domain/usecases/profile_usecases.dart';
@@ -275,7 +276,11 @@ class _ProfileBodyState extends State<_ProfileBody> {
                 children: [
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 28,
+                    ),
                   ),
                   const Expanded(
                     child: Center(
@@ -290,12 +295,14 @@ class _ProfileBodyState extends State<_ProfileBody> {
                       ),
                     ),
                   ),
-                  IconButton(
-                    tooltip: 'Soporte',
+                  HelpButton(
+                    size: 40,
+                    iconSize: 20,
+                    borderWidth: 2,
+                    color: Colors.white,
                     onPressed: () {
                       Navigator.pushNamed(context, AppRoutes.chat);
                     },
-                    icon: const Icon(Icons.help_outline, color: Colors.white),
                   ),
                 ],
               ),
