@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/redime_app_bar.dart';
+import '../../../../core/widgets/help_button.dart';
 import '../viewmodels/device_status_viewmodel.dart';
 import '../widgets/tracking_timeline.dart';
 
@@ -18,6 +20,7 @@ class _DeviceStatusViewState extends State<DeviceStatusView> {
   @override
   void initState() {
     super.initState();
+
     // Load mock status on screen entry
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<DeviceStatusViewModel>().loadStatus('mock-001');
@@ -29,11 +32,13 @@ class _DeviceStatusViewState extends State<DeviceStatusView> {
     final vm = context.watch<DeviceStatusViewModel>();
 
     return Scaffold(
-      appBar: const RedimeAppBar(
-        title: AppStrings.appName,
-        showHelpIcon: true,
+      backgroundColor: AppColors.white,
+      body: Column(
+        children: [
+          const _DeviceStatusHeader(),
+          Expanded(child: _buildBody(vm)),
+        ],
       ),
-      body: _buildBody(vm),
     );
   }
 
@@ -51,7 +56,11 @@ class _DeviceStatusViewState extends State<DeviceStatusView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: AppColors.errorRed),
+              const Icon(
+                Icons.error_outline,
+                size: 48,
+                color: AppColors.errorRed,
+              ),
               const SizedBox(height: 12),
               Text(
                 vm.errorMessage!,
@@ -83,7 +92,6 @@ class _DeviceStatusViewState extends State<DeviceStatusView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Device info header
           Text(
             AppStrings.deviceStatusTitle,
             style: AppTextStyles.screenTitle.copyWith(fontSize: 22),
@@ -133,8 +141,6 @@ class _DeviceStatusViewState extends State<DeviceStatusView> {
             ),
           ),
           const SizedBox(height: 32),
-
-          // Timeline
           Text(
             'Seguimiento',
             style: AppTextStyles.sectionLabel.copyWith(fontSize: 16),
@@ -142,6 +148,98 @@ class _DeviceStatusViewState extends State<DeviceStatusView> {
           const SizedBox(height: 20),
           TrackingTimeline(steps: displaySteps),
         ],
+      ),
+    );
+  }
+}
+
+class _DeviceStatusHeaderClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+
+    path.lineTo(0, size.height - 38);
+
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height - 2,
+      size.width,
+      size.height - 38,
+    );
+
+    path.lineTo(size.width, 0);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+class _DeviceStatusHeader extends StatelessWidget {
+  const _DeviceStatusHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipPath(
+      clipper: _DeviceStatusHeaderClipper(),
+      child: Container(
+        width: double.infinity,
+        color: AppColors.primaryTeal,
+        child: SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 34),
+            child: SizedBox(
+              height: 54,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Positioned(
+                    left: 0,
+                    top: 5,
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: AppColors.white,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                  const Center(
+                    child: Text(
+                      AppStrings.appName,
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 19,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 0,
+                    top: 7,
+                    child: HelpButton(
+                      size: 40,
+                      iconSize: 20,
+                      borderWidth: 2,
+                      color: AppColors.white,
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoutes.chat);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

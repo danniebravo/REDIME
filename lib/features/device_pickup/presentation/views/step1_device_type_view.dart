@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/primary_button.dart';
@@ -23,24 +24,28 @@ class Step1DeviceTypeView extends StatelessWidget {
     final vm = context.watch<PickupFlowViewModel>();
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+      padding: const EdgeInsets.fromLTRB(24, 18, 24, 16),
       child: Column(
         children: [
           const SectionHeader(
-            title: 'Empecemos\ncon la redenci\u00f3n',
+            title: 'Empecemos\ncon la redención',
             subtitle:
-                '\u00bfSelecciona qu\u00e9 tipo de dispositivo deseas\nreciclar hoy?',
+                '¿Selecciona qué tipo de dispositivo deseas\nreciclar hoy?',
           ),
-          const SizedBox(height: 28),
+
+          // Espacio reducido para subir un poco los cuadros.
+          const SizedBox(height: 8),
+
           GridView.count(
             crossAxisCount: 2,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 14,
+            mainAxisSpacing: 10,
             crossAxisSpacing: 14,
-            childAspectRatio: 0.95,
+            childAspectRatio: 1.04,
             children: _cardConfigs.map((config) {
               final (type, icon, bgColor) = config;
+
               return DeviceTypeCard(
                 type: type,
                 icon: icon,
@@ -50,7 +55,10 @@ class Step1DeviceTypeView extends StatelessWidget {
               );
             }).toList(),
           ),
-          const SizedBox(height: 28),
+
+          // Espacio aumentado para bajar un poco el botón Continuar.
+          const SizedBox(height: 60),
+
           PrimaryButton(
             label: AppStrings.continueButton,
             onPressed: vm.canContinueStep1 ? () => vm.nextStep() : null,

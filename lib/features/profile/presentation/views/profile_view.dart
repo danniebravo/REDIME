@@ -39,14 +39,39 @@ class _ProfileBody extends StatefulWidget {
   State<_ProfileBody> createState() => _ProfileBodyState();
 }
 
+class _ProfileHeaderClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+
+    path.lineTo(0, size.height - 46);
+
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height - 4,
+      size.width,
+      size.height - 46,
+    );
+
+    path.lineTo(size.width, 0);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
 class _ProfileBodyState extends State<_ProfileBody> {
   bool _devicesExpanded = false;
   bool _infoExpanded = false;
   bool _accountExpanded = false;
 
-  static const Color _primaryTeal = Color(0xFF3D8B85);
-  static const Color _darkTeal = Color(0xFF2E6B66);
+  static const Color _primaryTeal = Color(0xFF3A8F7D);
+  static const Color _darkTeal = Color(0xFF2F7168);
   static const Color _backgroundColor = Color(0xFFF5F5F0);
+  static const Color _softGreen = Color(0xFFE7F0EE);
 
   final List<Map<String, String>> _devices = [
     {
@@ -257,104 +282,122 @@ class _ProfileBodyState extends State<_ProfileBody> {
   Widget _buildHeader(ProfileViewModel viewModel) {
     final name = viewModel.profile != null
         ? '${viewModel.profile!.nombres}\n${viewModel.profile!.apellidos}'
-        : 'Nombre de\nUsuario';
+        : 'Nombre De\nUsuario';
 
-    return Container(
-      color: _primaryTeal,
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            bottom: 24,
-            top: 4,
-          ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                      size: 28,
-                    ),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        'REDIME',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          letterSpacing: 2,
+    return ClipPath(
+      clipper: _ProfileHeaderClipper(),
+      child: Container(
+        width: double.infinity,
+        color: _primaryTeal,
+        child: SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 64),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 44,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.center,
+                    children: [
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 28,
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  HelpButton(
-                    size: 40,
-                    iconSize: 20,
-                    borderWidth: 2,
-                    color: Colors.white,
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.chat);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 36,
-                        backgroundColor: Colors.teal.shade200,
-                        child: const Icon(
-                          Icons.person,
-                          size: 40,
-                          color: Colors.white,
+                      const Center(
+                        child: Text(
+                          'REDIME',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 19,
+                            letterSpacing: 2,
+                          ),
                         ),
                       ),
                       Positioned(
-                        bottom: 0,
                         right: 0,
-                        child: Container(
-                          width: 22,
-                          height: 22,
-                          decoration: BoxDecoration(
-                            color: _darkTeal,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 1.5),
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            size: 12,
-                            color: Colors.white,
-                          ),
+                        top: 2,
+                        child: HelpButton(
+                          size: 40,
+                          iconSize: 20,
+                          borderWidth: 2,
+                          color: Colors.white,
+                          onPressed: () {
+                            Navigator.pushNamed(context, AppRoutes.chat);
+                          },
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        height: 1.2,
+                ),
+                const SizedBox(height: 22),
+                Row(
+                  children: [
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          width: 92,
+                          height: 92,
+                          decoration: const BoxDecoration(
+                            color: _softGreen,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.person,
+                            size: 54,
+                            color: _primaryTeal,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 2,
+                          right: 2,
+                          child: Container(
+                            width: 26,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              color: _darkTeal,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.edit,
+                              size: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: Text(
+                        name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          height: 1.15,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -374,6 +417,9 @@ class _ProfileBodyState extends State<_ProfileBody> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.shade300),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 3)),
+        ],
       ),
       child: Column(
         children: [

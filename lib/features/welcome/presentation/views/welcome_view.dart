@@ -57,22 +57,23 @@ class WelcomeView extends StatelessWidget {
                   ),
                 ),
                 Align(
-                  alignment: const Alignment(0, 0.3),
+                  alignment: const Alignment(0, 0.24),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Image.asset(
-                        'assets/images/logo.png',
-                        height: 120,
+                        'assets/images/Logoredime-blanco.webp',
+                        height: 165,
+                        fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return const Icon(
-                            Icons.eco_rounded,
-                            size: 120,
+                            Icons.recycling_rounded,
+                            size: 135,
                             color: AppColors.white,
                           );
                         },
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 8),
                       const Text(
                         'REDIME',
                         style: TextStyle(
@@ -101,23 +102,33 @@ class WelcomeView extends StatelessWidget {
           // Sección inferior
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Tus dispositivos tienen historia y nosotros la\n'
-                    'preservamos. Conoce las opciones que REDIME te\n'
-                    'ofrece y comienza tu proceso ahora',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: AppColors.textMain,
-                      height: 1.5,
-                      fontWeight: FontWeight.w400,
+                  const Spacer(flex: 2),
+
+                  Align(
+                    alignment: Alignment.center,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 360),
+                      child: const Text(
+                        'Tus dispositivos tienen historia y\n'
+                        'nosotros la preservamos.\n'
+                        'Conoce las opciones que REDIME te\n'
+                        'ofrece y comienza tu proceso ahora.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors.textMain,
+                          height: 1.45,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
                     ),
                   ),
-                  const Spacer(),
+
+                  const Spacer(flex: 3),
+
                   SizedBox(
                     width: double.infinity,
                     height: 52,
@@ -146,7 +157,8 @@ class WelcomeView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
