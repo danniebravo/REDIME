@@ -13,10 +13,30 @@ class Step1DeviceTypeView extends StatelessWidget {
   const Step1DeviceTypeView({super.key});
 
   static const _cardConfigs = [
-    (DeviceType.largeAppliance, Icons.kitchen, AppColors.cardLightMint),
-    (DeviceType.smallAppliance, Icons.blender, AppColors.cardMediumTeal),
-    (DeviceType.telecomEquipment, Icons.headphones, AppColors.cardDarkTeal),
-    (DeviceType.other, Icons.devices_other, AppColors.cardDarkTeal),
+    (
+      DeviceType.largeAppliance,
+      'assets/images/Electrodomesticos-seleccionado.png',
+      'assets/images/Electrodomesticos-deseleccionado.png',
+      AppColors.cardLightMint,
+    ),
+    (
+      DeviceType.smallAppliance,
+      'assets/images/Medianos-seleccionados.png',
+      'assets/images/Medianos-Deseleccionados.png',
+      AppColors.cardLightMint,
+    ),
+    (
+      DeviceType.telecomEquipment,
+      'assets/images/Equipos-de-telecom-seleccionados.webp',
+      'assets/images/Equipos-de-telecom-deseleccionado_1.webp',
+      AppColors.cardMediumTeal,
+    ),
+    (
+      DeviceType.other,
+      'assets/images/Otros-celeccionado_-blanco_1.webp',
+      'assets/images/Otros-deseleccionados_-negro.webp',
+      AppColors.cardLightMint,
+    ),
   ];
 
   @override
@@ -33,7 +53,6 @@ class Step1DeviceTypeView extends StatelessWidget {
                 '¿Selecciona qué tipo de dispositivo deseas\nreciclar hoy?',
           ),
 
-          // Espacio reducido para subir un poco los cuadros.
           const SizedBox(height: 8),
 
           GridView.count(
@@ -44,11 +63,13 @@ class Step1DeviceTypeView extends StatelessWidget {
             crossAxisSpacing: 14,
             childAspectRatio: 1.04,
             children: _cardConfigs.map((config) {
-              final (type, icon, bgColor) = config;
+              final (type, selectedAssetPath, unselectedAssetPath, bgColor) =
+                  config;
 
               return DeviceTypeCard(
                 type: type,
-                icon: icon,
+                selectedAssetPath: selectedAssetPath,
+                unselectedAssetPath: unselectedAssetPath,
                 backgroundColor: bgColor,
                 isSelected: vm.selectedDeviceType == type,
                 onTap: () => vm.selectDeviceType(type),
@@ -56,7 +77,6 @@ class Step1DeviceTypeView extends StatelessWidget {
             }).toList(),
           ),
 
-          // Espacio aumentado para bajar un poco el botón Continuar.
           const SizedBox(height: 60),
 
           PrimaryButton(
