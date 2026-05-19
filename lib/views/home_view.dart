@@ -2,22 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../core/constants/app_routes.dart';
+import '../core/widgets/help_button.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   static const Color _primaryColor = Color(0xFF3A8F7D);
   static const Color _backgroundColor = Color(0xFFF5F5F0);
-
-  void _showMapPendingMessage(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'La pantalla de puntos de reciclaje se conectará próximamente.',
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +54,12 @@ class HomeView extends StatelessWidget {
                           _HomeActionButton(
                             icon: Icons.location_on,
                             label: 'Ver puntos de reciclaje',
-                            onTap: () => _showMapPendingMessage(context),
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.pickupStep1,
+                              );
+                            },
                           ),
                           const SizedBox(height: 12),
                           _HomeActionButton(
@@ -146,6 +142,30 @@ class HomeView extends StatelessWidget {
   }
 }
 
+class _HomeHeaderClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+
+    path.lineTo(0, size.height - 46);
+
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height - 4,
+      size.width,
+      size.height - 46,
+    );
+
+    path.lineTo(size.width, 0);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
 class _HomeHeader extends StatelessWidget {
   final VoidCallback onSupportTap;
   final VoidCallback onProfileTap;
@@ -153,113 +173,114 @@ class _HomeHeader extends StatelessWidget {
   const _HomeHeader({required this.onSupportTap, required this.onProfileTap});
 
   static const Color _primaryColor = Color(0xFF3A8F7D);
-  static const Color _darkPrimaryColor = Color(0xFF2F7168);
   static const Color _softGreen = Color(0xFFE7F0EE);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
+    return ClipPath(
+      clipper: _HomeHeaderClipper(),
+      child: Container(
+        width: double.infinity,
         color: _primaryColor,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(34),
-          bottomRight: Radius.circular(34),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
-        child: Column(
-          children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                const Center(
-                  child: Text(
-                    'REDIME',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 19,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 0,
-                  child: ClipOval(
-                    child: Material(
-                      color: _darkPrimaryColor,
-                      child: InkWell(
-                        onTap: onSupportTap,
-                        child: const SizedBox(
-                          width: 44,
-                          height: 44,
-                          child: Center(
-                            child: Icon(
-                              Icons.help_outline,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 66),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 44,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
+                  children: [
+                    const Center(
+                      child: Text(
+                        'REDIME',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 19,
+                          letterSpacing: 2,
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 28),
-            GestureDetector(
-              onTap: onProfileTap,
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: _darkPrimaryColor,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: const Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: _softGreen,
-                      child: Icon(Icons.person, size: 34, color: _primaryColor),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Nombre de usuario',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Ver perfil y cuenta',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
+                    Positioned(
+                      right: 0,
+                      top: 2,
+                      child: HelpButton(
+                        size: 40,
+                        iconSize: 20,
+                        borderWidth: 2,
+                        color: Colors.white,
+                        onPressed: onSupportTap,
                       ),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.white70,
-                      size: 16,
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 18),
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(28),
+                  onTap: onProfileTap,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 8,
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 82,
+                          height: 82,
+                          decoration: const BoxDecoration(
+                            color: _softGreen,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.person,
+                            size: 46,
+                            color: _primaryColor,
+                          ),
+                        ),
+                        const SizedBox(width: 18),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Nombre de usuario',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  height: 1.1,
+                                ),
+                              ),
+                              SizedBox(height: 6),
+                              Text(
+                                'Ver perfil y cuenta',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 15,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white70,
+                          size: 18,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -286,7 +307,7 @@ class _HomeActionButton extends StatelessWidget {
       color: Colors.white,
       borderRadius: BorderRadius.circular(18),
       elevation: 2,
-      shadowColor: Colors.black.withAlpha(20),
+      shadowColor: Colors.black12,
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
         onTap: onTap,
@@ -343,11 +364,11 @@ class _NewsCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: Colors.black.withAlpha(22),
+            color: Colors.black12,
             blurRadius: 14,
-            offset: const Offset(0, 6),
+            offset: Offset(0, 6),
           ),
         ],
       ),
@@ -442,11 +463,7 @@ class _BottomNavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: onTap,
-      icon: Icon(
-        icon,
-        color: isActive ? _primaryColor : Colors.grey[600],
-        size: 29,
-      ),
+      icon: Icon(icon, color: isActive ? _primaryColor : Colors.grey, size: 29),
     );
   }
 }
