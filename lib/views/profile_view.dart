@@ -6,6 +6,7 @@ import '../core/constants/app_routes.dart';
 import '../core/widgets/help_button.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
+import '../viewmodels/pickup_list_viewmodel.dart';
 import '../viewmodels/profile_viewmodel.dart';
 
 class ProfileView extends StatefulWidget {
@@ -49,18 +50,14 @@ class _ProfileViewState extends State<ProfileView> {
   static const Color _backgroundColor = Color(0xFFF5F5F0);
   static const Color _softGreen = Color(0xFFE7F0EE);
 
-  final List<Map<String, String>> _devices = [
-    {
-      'dispositivo': 'Cámara Sony',
-      'estado': 'Parte de la exhibición:\nEl trono del espectador olvidado',
-      'fecha': '05/04/2025',
-    },
-    {
-      'dispositivo': 'Teléfono antiguo',
-      'estado': 'Parte de la exhibición:\nEl Faro del Ojo Público',
-      'fecha': '05/04/2025',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<PickupListViewModel>().loadMine();
+    });
+  }
 
   final TextEditingController nombresController = TextEditingController();
   final TextEditingController apellidosController = TextEditingController();
@@ -208,6 +205,9 @@ class _ProfileViewState extends State<ProfileView> {
                         setState(() {
                           _devicesExpanded = !_devicesExpanded;
                         });
+                        if (_devicesExpanded) {
+                          context.read<PickupListViewModel>().loadMine();
+                        }
                       },
                       expandedContent: _buildDevicesTable(),
                     ),
@@ -466,6 +466,9 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Widget _buildDevicesTable() {
+    final vm = context.watch<PickupListViewModel>();
+    final pickups = vm.pickups;
+
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -496,15 +499,15 @@ class _ProfileViewState extends State<ProfileView> {
             ],
           ),
           const Divider(),
-          ..._devices.map(
+          ...pickups.map(
             (device) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(flex: 3, child: Text(device['dispositivo']!)),
-                  Expanded(flex: 4, child: Text(device['estado']!)),
-                  Expanded(flex: 3, child: Text(device['fecha']!)),
+                  Expanded(flex: 3, child: Text(device.dispositivoLabel)),
+                  Expanded(flex: 4, child: Text(device.estadoLabel)),
+                  Expanded(flex: 3, child: Text(device.fechaLabel)),
                 ],
               ),
             ),

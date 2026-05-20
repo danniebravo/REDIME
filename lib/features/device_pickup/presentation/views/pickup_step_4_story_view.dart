@@ -142,14 +142,32 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
     );
   }
 
-  void _onSkip() {
+  Future<void> _onSkip() async {
+    if (_viewModel.isSubmitting) return;
     _viewModel.skipStory();
+    final ok = await _viewModel.submit();
+    if (!mounted) return;
+    if (!ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_viewModel.submitError ?? 'Error al guardar')),
+      );
+      return;
+    }
     Navigator.pushNamed(context, AppRoutes.pickupConfirm, arguments: _viewModel);
   }
 
-  void _onSubmitStory() {
+  Future<void> _onSubmitStory() async {
+    if (_viewModel.isSubmitting) return;
     _viewModel.setStoryImageBytes(_imageBytes);
     _viewModel.submitStory();
+    final ok = await _viewModel.submit();
+    if (!mounted) return;
+    if (!ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_viewModel.submitError ?? 'Error al guardar')),
+      );
+      return;
+    }
     Navigator.pushNamed(context, AppRoutes.pickupConfirm, arguments: _viewModel);
   }
 

@@ -20,6 +20,7 @@ import 'features/qr/presentation/viewmodels/qr_scan_viewmodel.dart';
 import 'viewmodels/RegisterUser_viewmodel.dart';
 import 'viewmodels/home_viewmodel.dart';
 import 'viewmodels/login_viewmodel.dart';
+import 'viewmodels/pickup_list_viewmodel.dart';
 import 'viewmodels/profile_viewmodel.dart';
 
 import 'views/chat_view.dart';
@@ -44,6 +45,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => RegisterUserViewModel()),
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
+        ChangeNotifierProvider(create: (_) => PickupListViewModel()),
       ],
       child: const MyApp(),
     ),

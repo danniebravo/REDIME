@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../../../models/pickup_model.dart';
+import '../../../../services/pickup_service.dart';
+
 enum DeviceCategory { none, telecom, others }
 
 enum FunctionalStatus { none, yes, partial, no }
@@ -16,6 +19,11 @@ class RecyclePoint {
 }
 
 class PickupViewModel extends ChangeNotifier {
+  PickupViewModel({PickupService? pickupService})
+      : _pickupService = pickupService ?? PickupService();
+
+  final PickupService _pickupService;
+
   // ---------- STEP 1: MAP ----------
   bool isPointSelected = false;
   RecyclePoint? selectedPoint;
@@ -346,5 +354,87 @@ class PickupViewModel extends ChangeNotifier {
 
   bool get canSubmitStory {
     return storyText.trim().isNotEmpty;
+  }
+
+  // ---------- SUBMIT TO BACKEND ----------
+  bool isSubmitting = false;
+  String? submitError;
+  bool isSubmitted = false;
+
+  String? _functionalLabel() {
+    switch (functionalStatus) {
+      case FunctionalStatus.yes:
+        return 'Sí';
+      case FunctionalStatus.partial:
+        return 'Parcial';
+      case FunctionalStatus.no:
+        return 'No';
+      case FunctionalStatus.none:
+        return null;
+    }
+  }
+
+  String? _integrityLabel() {
+    switch (integrityStatus) {
+      case IntegrityStatus.yes:
+        return 'Sí';
+      case IntegrityStatus.looseParts:
+        return 'No';
+      case IntegrityStatus.none:
+        return null;
+    }
+  }
+
+  String? _deviceTypeLabel() {
+    switch (selectedCategory) {
+      case DeviceCategory.telecom:
+        return 'telecom';
+      case DeviceCategory.others:
+        return 'others';
+      case DeviceCategory.none:
+        return null;
+    }
+  }
+
+  Future<bool> submit() async {
+    if (isSubmitting) return false;
+    isSubmitting = true;
+    submitError = null;
+    notifyListeners();
+
+    try {
+      final addr = userAddress.trim().isNotEmpty
+          ? userAddress.trim()
+          : selectedPoint?.address;
+
+      final pickup = PickupModel(
+        deviceType: _deviceTypeLabel(),
+        subcategory: selectedSubcategory,
+        brand: brand.trim().isEmpty ? null : brand.trim(),
+        estimatedWeight: selectedWeight,
+        age: selectedAge,
+        condition: _functionalLabel(),
+        integrity: _integrityLabel(),
+        hasScreen: hasScreen,
+        isScreenBroken: isScreenBroken,
+        dynamicExtra: selectedDynamicExtra,
+        address: addr,
+        story: storySkipped || storyText.trim().isEmpty ? null : storyText.trim(),
+        photoPath: storyImagePath,
+        status: 'En proceso',
+        source: 'pickup-flow',
+      );
+
+      await _pickupService.createPickup(pickup);
+      isSubmitted = true;
+      return true;
+    } catch (e) {
+      submitError = e.toString().replaceFirst('Exception: ', '');
+      debugPrint('[PickupViewModel.submit] error: $submitError');
+      return false;
+    } finally {
+      isSubmitting = false;
+      notifyListeners();
+    }
   }
 }

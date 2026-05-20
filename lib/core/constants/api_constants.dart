@@ -10,4 +10,8 @@ class ApiConstants {
   static final String profile = '$baseUrl/auth/profile';
 
   static final String deleteAccount = '$baseUrl/auth/account';
+
+  static final String pickups = '$baseUrl/pickups';
+
+  static final String myPickups = '$baseUrl/pickups/me';
 }

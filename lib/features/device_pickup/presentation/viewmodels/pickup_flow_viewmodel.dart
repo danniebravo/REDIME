@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import '../../../../models/pickup_model.dart';
+import '../../../../services/pickup_service.dart';
 import '../../domain/entities/device_entity.dart';
 import '../../domain/entities/enums.dart';
 import '../../domain/entities/pickup_request_entity.dart';
@@ -6,9 +8,13 @@ import '../../domain/usecases/submit_pickup_request.dart';
 
 class PickupFlowViewModel extends ChangeNotifier {
   final SubmitPickupRequestUseCase _submitUseCase;
+  final PickupService _pickupService;
 
-  PickupFlowViewModel({required SubmitPickupRequestUseCase submitUseCase})
-    : _submitUseCase = submitUseCase;
+  PickupFlowViewModel({
+    required SubmitPickupRequestUseCase submitUseCase,
+    PickupService? pickupService,
+  })  : _submitUseCase = submitUseCase,
+        _pickupService = pickupService ?? PickupService();
 
   // ─── Step tracking ───
   int _currentStep = 0;
@@ -495,6 +501,28 @@ class PickupFlowViewModel extends ChangeNotifier {
       );
 
       _lastRequest = await _submitUseCase.call(request);
+
+      final pickup = PickupModel(
+        deviceType: _selectedDeviceType?.name,
+        subcategory: _selectedSubcategory,
+        brand: _brand,
+        estimatedWeight: _estimatedWeight,
+        age: _age,
+        condition: _condition?.displayName,
+        integrity: _integrity?.displayName,
+        hasScreen: _hasScreen,
+        isScreenBroken: _isScreenBroken,
+        dynamicExtra: _selectedDynamicExtra,
+        address: _address,
+        pickupDate: _pickupDate,
+        story: hasUserStory ? _story : null,
+        photoPath: withStory ? _photoPath : null,
+        status: 'En proceso',
+        source: 'pickup-flow',
+      );
+
+      await _pickupService.createPickup(pickup);
+
       _isCompleted = true;
     } catch (e) {
       _errorMessage = 'Error al enviar la solicitud: $e';
