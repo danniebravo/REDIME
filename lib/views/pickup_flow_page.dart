@@ -164,7 +164,11 @@ class _PickupFlowPageState extends State<PickupFlowPage> {
     if (!mounted) return;
 
     if (vm.isCompleted) {
-      Navigator.pushNamed(context, AppRoutes.pickupConfirmation, arguments: vm);
+      Navigator.pushNamed(
+        context,
+        AppRoutes.pickupConfirmation,
+        arguments: {'hasStory': false},
+      );
     }
   }
 
@@ -174,7 +178,11 @@ class _PickupFlowPageState extends State<PickupFlowPage> {
     if (!mounted) return;
 
     if (vm.isCompleted) {
-      Navigator.pushNamed(context, AppRoutes.pickupConfirmation, arguments: vm);
+      Navigator.pushNamed(
+        context,
+        AppRoutes.pickupConfirmation,
+        arguments: {'hasStory': vm.hasStory},
+      );
     }
   }
 

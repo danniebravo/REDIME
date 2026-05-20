@@ -5,18 +5,27 @@ import '../core/constants/app_routes.dart';
 import '../core/constants/app_strings.dart';
 import '../core/theme/app_text_styles.dart';
 import '../core/widgets/redime_app_bar.dart';
-import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
 
 class PickupConfirmationView extends StatelessWidget {
   const PickupConfirmationView({super.key});
 
+  bool _resolveHasStory(Object? args) {
+    if (args is bool) {
+      return args;
+    }
+
+    if (args is Map) {
+      final value = args['hasStory'];
+      return value == true;
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments;
-
-    final PickupFlowViewModel? vm = args is PickupFlowViewModel ? args : null;
-
-    final hasStory = vm?.lastRequest?.hasStory ?? false;
+    final hasStory = _resolveHasStory(args);
 
     return Scaffold(
       appBar: RedimeAppBar(
@@ -69,8 +78,6 @@ class PickupConfirmationView extends StatelessWidget {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
-                    vm?.reset();
-
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       AppRoutes.home,
