@@ -73,10 +73,8 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
 
   void _onClearAddress() {
     _addressController.clear();
-    _viewModel.setUserAddress('');
-    _viewModel.isRouteCalculated = false;
+    _viewModel.clearRoute();
     setState(() => _showSearchBar = false);
-    _viewModel.notifyListeners();
   }
 
   void _onDeselectPoint() {
@@ -92,7 +90,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          // 1. Mapa
           Positioned.fill(
             child: FlutterMap(
               mapController: _mapController,
@@ -148,7 +145,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
             ),
           ),
 
-          // 2. Header
           Positioned(
             top: 0,
             left: 0,
@@ -164,7 +160,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
             ),
           ),
 
-          // 3. Bottom: default panel or point card
           Positioned(
             bottom: 0,
             left: 0,
@@ -178,7 +173,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
     );
   }
 
-  // ─── Default bottom panel (no point selected) ───
   Widget _buildDefaultBottomPanel() {
     return ClipPath(
       clipper: _TopCurvedClipper(),
@@ -215,7 +209,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
     );
   }
 
-  // ─── Point card as a bottom sheet (replaces panel) ───
   Widget _buildPointBottomSheet() {
     return Container(
       decoration: BoxDecoration(
@@ -232,7 +225,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Drag handle
           Container(
             margin: const EdgeInsets.only(top: 12),
             width: 40,
@@ -243,7 +235,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
             ),
           ),
 
-          // Card content - constrained and scrollable
           ConstrainedBox(
             constraints: BoxConstraints(
               maxHeight: MediaQuery.of(context).size.height * 0.42,
@@ -253,7 +244,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header
                   Row(
                     children: [
                       GestureDetector(
@@ -291,7 +281,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
 
                   const SizedBox(height: 18),
 
-                  // Dirección
                   const Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -322,7 +311,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
                   ),
                   const SizedBox(height: 10),
 
-                  // Dispositivos
                   const Row(
                     children: [
                       Text(
@@ -348,7 +336,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
                   ),
                   const SizedBox(height: 10),
 
-                  // Horarios
                   const Row(
                     children: [
                       Text(
@@ -378,7 +365,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
                   ),
                   const SizedBox(height: 14),
 
-                  // Ruta info o botón
                   if (_viewModel.isRouteCalculated)
                     Container(
                       padding: const EdgeInsets.all(10),
@@ -457,7 +443,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
             ),
           ),
 
-          // Continuar button always visible
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
             child: PrimaryButton(
@@ -477,7 +462,6 @@ class _PickupStep1MapViewState extends State<PickupStep1MapView> {
     );
   }
 
-  // ─── Search Bar ───
   Widget _buildSearchBar() {
     return Container(
       height: 56,

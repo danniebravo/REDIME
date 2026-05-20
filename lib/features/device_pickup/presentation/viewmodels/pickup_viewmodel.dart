@@ -12,25 +12,42 @@ class RecyclePoint {
   final String address;
   final LatLng location;
 
-  RecyclePoint({required this.id, required this.address, required this.location});
+  RecyclePoint({
+    required this.id,
+    required this.address,
+    required this.location,
+  });
 }
 
 class PickupViewModel extends ChangeNotifier {
   // ---------- STEP 1: MAP ----------
   bool isPointSelected = false;
   RecyclePoint? selectedPoint;
-  
+
   String userAddress = "";
   bool isRouteCalculated = false;
 
   final List<RecyclePoint> availablePoints = [
-    RecyclePoint(id: '1', address: 'Cl. 33 #42B-06, La Candelaria', location: const LatLng(6.2384, -75.5683)),
-    RecyclePoint(id: '2', address: 'La Candelaria, Medellín', location: const LatLng(6.2518, -75.5636)),
-    RecyclePoint(id: '3', address: 'Cl. 14a #43d-56, El Poblado', location: const LatLng(6.2166, -75.5681)),
+    RecyclePoint(
+      id: '1',
+      address: 'Cl. 33 #42B-06, La Candelaria',
+      location: const LatLng(6.2384, -75.5683),
+    ),
+    RecyclePoint(
+      id: '2',
+      address: 'La Candelaria, Medellín',
+      location: const LatLng(6.2518, -75.5636),
+    ),
+    RecyclePoint(
+      id: '3',
+      address: 'Cl. 14a #43d-56, El Poblado',
+      location: const LatLng(6.2166, -75.5681),
+    ),
   ];
 
   void setUserAddress(String address) {
     userAddress = address;
+
     if (selectedPoint != null && isRouteCalculated) {
       notifyListeners();
     }
@@ -38,9 +55,15 @@ class PickupViewModel extends ChangeNotifier {
 
   void calculateRoute() {
     if (userAddress.isNotEmpty) {
-       isRouteCalculated = true;
-       notifyListeners();
+      isRouteCalculated = true;
+      notifyListeners();
     }
+  }
+
+  void clearRoute() {
+    userAddress = '';
+    isRouteCalculated = false;
+    notifyListeners();
   }
 
   void selectPoint(RecyclePoint point) {
@@ -82,11 +105,9 @@ class PickupViewModel extends ChangeNotifier {
   FunctionalStatus functionalStatus = FunctionalStatus.none;
   IntegrityStatus integrityStatus = IntegrityStatus.none;
 
-  // Screen conditional fields
-  bool? hasScreen;       // null = not answered, true = yes, false = no
-  bool? isScreenBroken;  // null = not answered
+  bool? hasScreen;
+  bool? isScreenBroken;
 
-  // Subcategories based on selected category (HU-18: dynamic subcategories)
   List<String> get subcategories {
     if (selectedCategory == DeviceCategory.telecom) {
       return [
@@ -112,37 +133,56 @@ class PickupViewModel extends ChangeNotifier {
         'Otro',
       ];
     }
+
     return [];
   }
 
-  // Dynamic extra fields per subcategory (HU-18: dynamic form)
   String? get dynamicExtraFieldLabel {
     if (selectedSubcategory == 'Laptop') return '¿Incluye batería?';
     if (selectedSubcategory == 'Televisor') return '¿Tipo de pantalla?';
     if (selectedSubcategory == 'Impresora') return '¿Incluye cartuchos?';
-    if (selectedSubcategory == 'Dispositivo con pilas/baterías') return '¿Tipo de batería?';
+
+    if (selectedSubcategory == 'Dispositivo con pilas/baterías') {
+      return '¿Tipo de batería?';
+    }
+
     return null;
   }
 
   List<String>? get dynamicExtraFieldOptions {
     if (selectedSubcategory == 'Laptop') return ['Sí', 'No'];
-    if (selectedSubcategory == 'Televisor') return ['LCD', 'LED', 'OLED', 'CRT (Tubo)', 'No sé'];
+
+    if (selectedSubcategory == 'Televisor') {
+      return ['LCD', 'LED', 'OLED', 'CRT (Tubo)', 'No sé'];
+    }
+
     if (selectedSubcategory == 'Impresora') return ['Sí', 'No'];
-    if (selectedSubcategory == 'Dispositivo con pilas/baterías') return ['Li-Ion', 'NiMH', 'Plomo', 'Otra', 'No sé'];
+
+    if (selectedSubcategory == 'Dispositivo con pilas/baterías') {
+      return ['Li-Ion', 'NiMH', 'Plomo', 'Otra', 'No sé'];
+    }
+
     return null;
   }
 
   String? selectedDynamicExtra;
 
-  // Non-RAEE validation list (HU-18: object not allowed)
   static const List<String> nonRaeeItems = [
-    'Ropa', 'Muebles', 'Alimentos', 'Pilas sueltas', 'Bombillos', 'Medicamentos',
+    'Ropa',
+    'Muebles',
+    'Alimentos',
+    'Pilas sueltas',
+    'Bombillos',
+    'Medicamentos',
   ];
 
   bool get isNonRaee {
     if (selectedSubcategory == 'Otro' && brand.toLowerCase().isNotEmpty) {
-      return nonRaeeItems.any((item) => brand.toLowerCase().contains(item.toLowerCase()));
+      return nonRaeeItems.any(
+        (item) => brand.toLowerCase().contains(item.toLowerCase()),
+      );
     }
+
     return false;
   }
 
@@ -162,89 +202,167 @@ class PickupViewModel extends ChangeNotifier {
     'Más de 10 años',
   ];
 
-  // ---- Comprehensive RAEE brands list with fuzzy matching ----
   static const List<String> allBrands = [
-    // Celulares / Tablets
-    'Samsung', 'Apple', 'Huawei', 'Xiaomi', 'Motorola', 'Nokia',
-    'LG', 'Sony', 'OnePlus', 'Oppo', 'Vivo', 'Realme', 'ZTE',
-    'Honor', 'Google Pixel', 'HTC', 'Alcatel', 'BlackBerry',
-    // Laptops / PC
-    'Dell', 'HP', 'Lenovo', 'Asus', 'Acer', 'MSI', 'Toshiba',
-    'Compaq', 'Gateway', 'Alienware', 'Razer', 'Microsoft Surface',
-    // Televisores / Monitores
-    'LG', 'Samsung', 'Sony', 'Panasonic', 'Philips', 'TCL',
-    'Hisense', 'Sharp', 'Vizio', 'AOC', 'ViewSonic', 'BenQ',
-    'Daewoo', 'Kalley', 'Challenger',
-    // Audiovisual / Cámaras
-    'Canon', 'Nikon', 'Sony', 'Fujifilm', 'GoPro', 'Olympus',
-    'Panasonic', 'JBL', 'Bose', 'Harman Kardon', 'Sennheiser',
-    // Consolas de videojuegos
-    'Nintendo', 'PlayStation', 'Xbox', 'Sega', 'Atari',
-    // Electrodomésticos pequeños
-    'Black & Decker', 'Oster', 'Hamilton Beach', 'KitchenAid',
-    'Braun', 'Philips', 'Cuisinart', 'Moulinex', 'T-fal',
-    'Whirlpool', 'Electrolux', 'Mabe', 'Haceb', 'Imusa',
-    // Impresoras
-    'HP', 'Epson', 'Brother', 'Canon', 'Lexmark', 'Ricoh', 'Xerox',
-    // Discos duros / Almacenamiento
-    'Western Digital', 'Seagate', 'Toshiba', 'Kingston', 'SanDisk',
-    'Crucial', 'Samsung', 'Maxtor', 'Hitachi',
-    // Redes / Router
-    'TP-Link', 'Cisco', 'Netgear', 'D-Link', 'Linksys', 'Ubiquiti',
-    'MikroTik', 'Huawei',
-    // Pilas / Baterías
-    'Duracell', 'Energizer', 'Panasonic', 'Varta', 'GP',
-    // Otros
-    'Garmin', 'Fitbit', 'Dyson', 'iRobot', 'Bosch',
-    'Makita', 'DeWalt', 'Dremel',
+    'Samsung',
+    'Apple',
+    'Huawei',
+    'Xiaomi',
+    'Motorola',
+    'Nokia',
+    'LG',
+    'Sony',
+    'OnePlus',
+    'Oppo',
+    'Vivo',
+    'Realme',
+    'ZTE',
+    'Honor',
+    'Google Pixel',
+    'HTC',
+    'Alcatel',
+    'BlackBerry',
+    'Dell',
+    'HP',
+    'Lenovo',
+    'Asus',
+    'Acer',
+    'MSI',
+    'Toshiba',
+    'Compaq',
+    'Gateway',
+    'Alienware',
+    'Razer',
+    'Microsoft Surface',
+    'Panasonic',
+    'Philips',
+    'TCL',
+    'Hisense',
+    'Sharp',
+    'Vizio',
+    'AOC',
+    'ViewSonic',
+    'BenQ',
+    'Daewoo',
+    'Kalley',
+    'Challenger',
+    'Canon',
+    'Nikon',
+    'Fujifilm',
+    'GoPro',
+    'Olympus',
+    'JBL',
+    'Bose',
+    'Harman Kardon',
+    'Sennheiser',
+    'Nintendo',
+    'PlayStation',
+    'Xbox',
+    'Sega',
+    'Atari',
+    'Black & Decker',
+    'Oster',
+    'Hamilton Beach',
+    'KitchenAid',
+    'Braun',
+    'Philips',
+    'Cuisinart',
+    'Moulinex',
+    'T-fal',
+    'Whirlpool',
+    'Electrolux',
+    'Mabe',
+    'Haceb',
+    'Imusa',
+    'HP',
+    'Epson',
+    'Brother',
+    'Canon',
+    'Lexmark',
+    'Ricoh',
+    'Xerox',
+    'Western Digital',
+    'Seagate',
+    'Toshiba',
+    'Kingston',
+    'SanDisk',
+    'Crucial',
+    'Samsung',
+    'Maxtor',
+    'Hitachi',
+    'TP-Link',
+    'Cisco',
+    'Netgear',
+    'D-Link',
+    'Linksys',
+    'Ubiquiti',
+    'MikroTik',
+    'Huawei',
+    'Duracell',
+    'Energizer',
+    'Panasonic',
+    'Varta',
+    'GP',
+    'Garmin',
+    'Fitbit',
+    'Dyson',
+    'iRobot',
+    'Bosch',
+    'Makita',
+    'DeWalt',
+    'Dremel',
   ];
 
-  /// Fuzzy brand search: tolerates typos using Levenshtein-like matching
   List<String> searchBrands(String query) {
     if (query.isEmpty) return [];
+
     final q = query.toLowerCase().trim();
-    
-    // Remove duplicates from the master list
     final uniqueBrands = allBrands.toSet().toList();
-    
-    // First: exact prefix matches
+
     final prefixMatches = uniqueBrands
-        .where((b) => b.toLowerCase().startsWith(q))
+        .where((brand) => brand.toLowerCase().startsWith(q))
         .toList();
-    
-    // Second: contains matches
+
     final containsMatches = uniqueBrands
-        .where((b) => b.toLowerCase().contains(q) && !b.toLowerCase().startsWith(q))
+        .where(
+          (brand) =>
+              brand.toLowerCase().contains(q) &&
+              !brand.toLowerCase().startsWith(q),
+        )
         .toList();
-    
-    // Third: fuzzy matches (tolerate 1-2 character differences)
-    final fuzzyMatches = uniqueBrands
-        .where((b) {
-          if (b.toLowerCase().contains(q) || b.toLowerCase().startsWith(q)) return false;
-          return _fuzzyMatch(q, b.toLowerCase());
-        })
-        .toList();
-    
-    return [...prefixMatches, ...containsMatches, ...fuzzyMatches].take(8).toList();
+
+    final fuzzyMatches = uniqueBrands.where((brand) {
+      final lowerBrand = brand.toLowerCase();
+
+      if (lowerBrand.contains(q) || lowerBrand.startsWith(q)) {
+        return false;
+      }
+
+      return _fuzzyMatch(q, lowerBrand);
+    }).toList();
+
+    return [
+      ...prefixMatches,
+      ...containsMatches,
+      ...fuzzyMatches,
+    ].take(8).toList();
   }
 
-  /// Simple fuzzy matching: checks if strings are within edit distance of 2
   bool _fuzzyMatch(String query, String target) {
     if ((query.length - target.length).abs() > 3) return false;
-    
-    // Check if most characters of query appear in target in order
+
     int matched = 0;
-    int targetIdx = 0;
-    for (int i = 0; i < query.length && targetIdx < target.length; i++) {
-      for (int j = targetIdx; j < target.length; j++) {
+    int targetIndex = 0;
+
+    for (int i = 0; i < query.length && targetIndex < target.length; i++) {
+      for (int j = targetIndex; j < target.length; j++) {
         if (query[i] == target[j]) {
           matched++;
-          targetIdx = j + 1;
+          targetIndex = j + 1;
           break;
         }
       }
     }
-    // At least 60% of the query characters must match in order
+
     return matched >= (query.length * 0.6).ceil() && query.length >= 2;
   }
 
@@ -288,9 +406,11 @@ class PickupViewModel extends ChangeNotifier {
 
   void setHasScreen(bool? value) {
     hasScreen = value;
+
     if (value == false) {
-      isScreenBroken = null; // Reset screen broken if no screen
+      isScreenBroken = null;
     }
+
     notifyListeners();
   }
 
@@ -313,9 +433,9 @@ class PickupViewModel extends ChangeNotifier {
   // ---------- STEP 4: STORY ----------
   String storyText = '';
   String? storyImagePath;
-  dynamic storyImageBytes; // Uint8List passed from Step 4
+  dynamic storyImageBytes;
   bool storySkipped = false;
-  String userName = ''; // Placeholder: will be filled when auth is integrated
+  String userName = '';
 
   void setStoryText(String value) {
     storyText = value;

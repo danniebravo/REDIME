@@ -1,31 +1,55 @@
 import 'package:flutter/material.dart';
 
 import '../core/constants/app_colors.dart';
+import '../core/constants/app_strings.dart';
+import '../core/widgets/primary_button.dart';
 import '../core/widgets/section_header.dart';
 import '../widgets/device_type_card.dart';
 
-class Step1DeviceTypeView extends StatefulWidget {
-  const Step1DeviceTypeView({super.key});
+class Step1DeviceTypeView extends StatelessWidget {
+  final String? selectedDeviceType;
+  final ValueChanged<String> onSelectDeviceType;
+  final VoidCallback onContinue;
 
-  @override
-  State<Step1DeviceTypeView> createState() => _Step1DeviceTypeViewState();
-}
-
-class _Step1DeviceTypeViewState extends State<Step1DeviceTypeView> {
-  String? _selectedDeviceType;
+  const Step1DeviceTypeView({
+    super.key,
+    required this.selectedDeviceType,
+    required this.onSelectDeviceType,
+    required this.onContinue,
+  });
 
   static const _cardConfigs = [
-    ('Electrodoméstico grande', Icons.kitchen, AppColors.cardLightMint),
-    ('Electrodoméstico pequeño', Icons.blender, AppColors.cardMediumTeal),
-    ('Equipos de telecomunicación', Icons.headphones, AppColors.cardDarkTeal),
-    ('Otros dispositivos', Icons.devices_other, AppColors.cardDarkTeal),
+    (
+      'large_appliance',
+      'Electrodomésticos',
+      'assets/images/Electrodomesticos-seleccionado.png',
+      'assets/images/Electrodomesticos-deseleccionado.png',
+      AppColors.cardLightMint,
+    ),
+    (
+      'small_appliance',
+      'Medianos y pequeños',
+      'assets/images/Medianos-seleccionados.png',
+      'assets/images/Medianos-Deseleccionados.png',
+      AppColors.cardLightMint,
+    ),
+    (
+      'telecom_equipment',
+      'Equipos de telecomunicaciones',
+      'assets/images/Equipos-de-telecom-seleccionados.webp',
+      'assets/images/Equipos-de-telecom-deseleccionado_1.webp',
+      AppColors.cardMediumTeal,
+    ),
+    (
+      'other',
+      'Otros',
+      'assets/images/Otros-celeccionado_-blanco_1.webp',
+      'assets/images/Otros-deseleccionados_-negro.webp',
+      AppColors.cardLightMint,
+    ),
   ];
 
-  void _selectDeviceType(String type) {
-    setState(() {
-      _selectedDeviceType = type;
-    });
-  }
+  bool get _canContinue => selectedDeviceType != null;
 
   @override
   Widget build(BuildContext context) {
@@ -49,16 +73,30 @@ class _Step1DeviceTypeViewState extends State<Step1DeviceTypeView> {
             crossAxisSpacing: 14,
             childAspectRatio: 1.04,
             children: _cardConfigs.map((config) {
-              final (title, icon, bgColor) = config;
+              final (
+                id,
+                title,
+                selectedAssetPath,
+                unselectedAssetPath,
+                bgColor,
+              ) = config;
 
               return DeviceTypeCard(
                 title: title,
-                icon: icon,
+                selectedAssetPath: selectedAssetPath,
+                unselectedAssetPath: unselectedAssetPath,
                 backgroundColor: bgColor,
-                isSelected: _selectedDeviceType == title,
-                onTap: () => _selectDeviceType(title),
+                isSelected: selectedDeviceType == id,
+                onTap: () => onSelectDeviceType(id),
               );
             }).toList(),
+          ),
+
+          const SizedBox(height: 60),
+
+          PrimaryButton(
+            label: AppStrings.continueButton,
+            onPressed: _canContinue ? onContinue : null,
           ),
         ],
       ),

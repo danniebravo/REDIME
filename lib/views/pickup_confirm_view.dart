@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_routes.dart';
 import '../core/widgets/custom_app_bar.dart';
+import '../features/device_pickup/presentation/viewmodels/pickup_viewmodel.dart';
 
 class PickupConfirmView extends StatefulWidget {
   const PickupConfirmView({super.key});
@@ -12,19 +13,18 @@ class PickupConfirmView extends StatefulWidget {
 }
 
 class _PickupConfirmViewState extends State<PickupConfirmView> {
+  late PickupViewModel _viewModel;
   final GlobalKey _cardKey = GlobalKey();
 
-  // Mock data temporal hasta conectar ViewModel/backend
-  final bool _hasStory = true;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments as PickupViewModel?;
+    _viewModel = args ?? PickupViewModel();
+  }
 
-  final String _storyText =
-      'Este fue mi primer celular y me acompañó durante muchos años.';
-
-  final String _deviceType = 'Teléfono';
-  final String _brandName = 'Samsung';
-  final String _age = '5 años';
-  final String _userName = 'Usuario';
-  final Uint8List? _imageBytes = null;
+  bool get _hasStory =>
+      !_viewModel.storySkipped && _viewModel.storyText.trim().isNotEmpty;
 
   void _shareCard() {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -45,7 +45,9 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
       appBar: CustomAppBar(
         title: 'REDIME',
         showBackButton: _hasStory,
+        // Mismo verde oscuro que quieres usar como referencia
         backgroundColor: AppColors.darkTeal.withValues(alpha: 0.95),
+        // REDIME y botón "?" en blanco
         titleColor: AppColors.white,
         bottomWidget: const Padding(
           padding: EdgeInsets.only(bottom: 4),
@@ -67,6 +69,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
     );
   }
 
+  /// Layout when user SKIPPED the story
   Widget _buildSkipLayout() {
     return Center(
       child: Padding(
@@ -79,7 +82,6 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
               height: 140,
               fit: BoxFit.contain,
             ),
-
             const SizedBox(height: 28),
 
             const Text(
@@ -92,7 +94,6 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                 height: 1.2,
               ),
             ),
-
             const SizedBox(height: 16),
 
             const Text(
@@ -104,7 +105,6 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                 height: 1.6,
               ),
             ),
-
             const SizedBox(height: 36),
 
             ElevatedButton(
@@ -138,6 +138,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
     );
   }
 
+  /// Layout when user SUBMITTED a story
   Widget _buildStoryLayout() {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -151,7 +152,6 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
             height: 110,
             fit: BoxFit.contain,
           ),
-
           const SizedBox(height: 20),
 
           const Text(
@@ -164,7 +164,6 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
               height: 1.2,
             ),
           ),
-
           const SizedBox(height: 12),
 
           const Text(
@@ -176,11 +175,9 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
               height: 1.5,
             ),
           ),
-
           const SizedBox(height: 24),
 
           _buildShareableCard(),
-
           const SizedBox(height: 28),
 
           Row(
@@ -208,9 +205,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                   ),
                 ),
               ),
-
               const SizedBox(width: 12),
-
               Expanded(
                 child: ElevatedButton(
                   onPressed: _shareCard,
@@ -241,7 +236,6 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
               ),
             ],
           ),
-
           const SizedBox(height: 24),
 
           RichText(
@@ -272,7 +266,6 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
               ],
             ),
           ),
-
           const SizedBox(height: 32),
         ],
       ),
@@ -280,6 +273,16 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
   }
 
   Widget _buildShareableCard() {
+    final Uint8List? imageBytes = _viewModel.storyImageBytes as Uint8List?;
+    final String deviceType = _viewModel.selectedSubcategory ?? 'Dispositivo';
+    final String brandName = _viewModel.brand.isNotEmpty
+        ? _viewModel.brand
+        : '—';
+    final String age = _viewModel.selectedAge ?? '—';
+    final String userName = _viewModel.userName.isNotEmpty
+        ? _viewModel.userName
+        : '________________';
+
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 320),
@@ -308,8 +311,8 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                   child: SizedBox(
                     height: 160,
                     width: double.infinity,
-                    child: _imageBytes != null
-                        ? Image.memory(_imageBytes!, fit: BoxFit.cover)
+                    child: imageBytes != null
+                        ? Image.memory(imageBytes, fit: BoxFit.cover)
                         : Container(
                             color: AppColors.darkTeal,
                             child: const Icon(
@@ -341,11 +344,9 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-
                                 const SizedBox(height: 2),
-
                                 Text(
-                                  _userName,
+                                  userName,
                                   style: const TextStyle(
                                     color: AppColors.white,
                                     fontSize: 15,
@@ -355,7 +356,6 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                               ],
                             ),
                           ),
-
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
@@ -367,11 +367,9 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-
                               const SizedBox(height: 2),
-
                               Text(
-                                _age,
+                                age,
                                 style: const TextStyle(
                                   color: AppColors.white,
                                   fontSize: 15,
@@ -382,22 +380,19 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                           ),
                         ],
                       ),
-
                       const SizedBox(height: 12),
 
                       Text(
-                        '$_deviceType:',
+                        '$deviceType:',
                         style: const TextStyle(
                           color: AppColors.teal,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-
                       const SizedBox(height: 2),
-
                       Text(
-                        _brandName,
+                        brandName,
                         style: const TextStyle(
                           color: AppColors.white,
                           fontSize: 15,
@@ -422,7 +417,7 @@ class _PickupConfirmViewState extends State<PickupConfirmView> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 18),
                   child: Text(
-                    _storyText,
+                    _viewModel.storyText,
                     maxLines: 6,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(

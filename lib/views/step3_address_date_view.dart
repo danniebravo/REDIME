@@ -8,18 +8,55 @@ import '../core/widgets/primary_button.dart';
 import '../core/widgets/section_header.dart';
 
 class Step3AddressDateView extends StatefulWidget {
-  const Step3AddressDateView({super.key});
+  final String address;
+  final DateTime? pickupDate;
+  final bool canContinue;
+  final ValueChanged<String> onAddressChanged;
+  final ValueChanged<DateTime> onPickupDateChanged;
+  final VoidCallback onContinue;
+
+  const Step3AddressDateView({
+    super.key,
+    required this.address,
+    required this.pickupDate,
+    required this.canContinue,
+    required this.onAddressChanged,
+    required this.onPickupDateChanged,
+    required this.onContinue,
+  });
 
   @override
   State<Step3AddressDateView> createState() => _Step3AddressDateViewState();
 }
 
 class _Step3AddressDateViewState extends State<Step3AddressDateView> {
-  final TextEditingController _addressController = TextEditingController();
+  late final TextEditingController _addressController;
+  late final TextEditingController _dateController;
 
-  final TextEditingController _dateController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
 
-  DateTime? _pickupDate;
+    _addressController = TextEditingController(text: widget.address);
+    _dateController = TextEditingController(
+      text: _formatDate(widget.pickupDate),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant Step3AddressDateView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.address != _addressController.text) {
+      _addressController.text = widget.address;
+    }
+
+    final newDateText = _formatDate(widget.pickupDate);
+
+    if (newDateText != _dateController.text) {
+      _dateController.text = newDateText;
+    }
+  }
 
   @override
   void dispose() {
@@ -28,16 +65,17 @@ class _Step3AddressDateViewState extends State<Step3AddressDateView> {
     super.dispose();
   }
 
-  bool get _canContinue {
-    return _addressController.text.trim().isNotEmpty && _pickupDate != null;
+  String _formatDate(DateTime? date) {
+    if (date == null) return '';
+    return DateFormat('dd/MM/yy').format(date);
   }
 
-  Future<void> _selectDate() async {
+  Future<void> _pickDate(BuildContext context) async {
     final now = DateTime.now();
 
     final picked = await showDatePicker(
       context: context,
-      initialDate: _pickupDate ?? now.add(const Duration(days: 1)),
+      initialDate: widget.pickupDate ?? now.add(const Duration(days: 1)),
       firstDate: now,
       lastDate: now.add(const Duration(days: 90)),
       builder: (ctx, child) {
@@ -53,15 +91,8 @@ class _Step3AddressDateViewState extends State<Step3AddressDateView> {
     );
 
     if (picked != null) {
-      setState(() {
-        _pickupDate = picked;
-        _dateController.text = DateFormat('dd/MM/yy').format(picked);
-      });
+      widget.onPickupDateChanged(picked);
     }
-  }
-
-  void _continue() {
-    // Aquí agregas tu lógica
   }
 
   @override
@@ -80,13 +111,10 @@ class _Step3AddressDateViewState extends State<Step3AddressDateView> {
 
           const SizedBox(height: 36),
 
-          // Address
           Row(
             children: [
               Text(AppStrings.addressLabel, style: AppTextStyles.fieldLabel),
-
               const SizedBox(width: 6),
-
               const Icon(
                 Icons.location_on,
                 size: 18,
@@ -99,19 +127,16 @@ class _Step3AddressDateViewState extends State<Step3AddressDateView> {
 
           TextField(
             controller: _addressController,
-            onChanged: (_) => setState(() {}),
+            onChanged: widget.onAddressChanged,
             decoration: const InputDecoration(hintText: AppStrings.addressHint),
           ),
 
           const SizedBox(height: 24),
 
-          // Date
           Row(
             children: [
               Text(AppStrings.dateLabel, style: AppTextStyles.fieldLabel),
-
               const SizedBox(width: 6),
-
               const Icon(
                 Icons.calendar_today,
                 size: 18,
@@ -123,7 +148,7 @@ class _Step3AddressDateViewState extends State<Step3AddressDateView> {
           const SizedBox(height: 8),
 
           GestureDetector(
-            onTap: _selectDate,
+            onTap: () => _pickDate(context),
             child: AbsorbPointer(
               child: TextField(
                 controller: _dateController,
@@ -140,10 +165,9 @@ class _Step3AddressDateViewState extends State<Step3AddressDateView> {
 
           const SizedBox(height: 40),
 
-          // Continue
           PrimaryButton(
             label: AppStrings.continueButton,
-            onPressed: _canContinue ? _continue : null,
+            onPressed: widget.canContinue ? widget.onContinue : null,
           ),
         ],
       ),
