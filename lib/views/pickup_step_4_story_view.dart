@@ -1,11 +1,10 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_routes.dart';
 import '../core/widgets/custom_app_bar.dart';
+import '../features/device_pickup/presentation/viewmodels/pickup_viewmodel.dart';
 
 class PickupStep4StoryView extends StatefulWidget {
   const PickupStep4StoryView({super.key});
@@ -15,20 +14,29 @@ class PickupStep4StoryView extends StatefulWidget {
 }
 
 class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
+  late PickupViewModel _viewModel;
   final TextEditingController _storyController = TextEditingController();
-
   final ImagePicker _picker = ImagePicker();
-
   Uint8List? _imageBytes;
 
-  String _storyText = '';
-
-  String? _storyImagePath;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments as PickupViewModel?;
+    _viewModel = args ?? PickupViewModel();
+    _viewModel.addListener(_onViewModelChange);
+    _storyController.text = _viewModel.storyText;
+  }
 
   @override
   void dispose() {
+    _viewModel.removeListener(_onViewModelChange);
     _storyController.dispose();
     super.dispose();
+  }
+
+  void _onViewModelChange() {
+    setState(() {});
   }
 
   Future<void> _pickImageFromGallery() async {
@@ -38,14 +46,12 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
       maxHeight: 1200,
       imageQuality: 85,
     );
-
     if (image != null) {
       final bytes = await image.readAsBytes();
-
       setState(() {
         _imageBytes = bytes;
-        _storyImagePath = image.path;
       });
+      _viewModel.setStoryImage(image.path);
     }
   }
 
@@ -56,14 +62,12 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
       maxHeight: 1200,
       imageQuality: 85,
     );
-
     if (image != null) {
       final bytes = await image.readAsBytes();
-
       setState(() {
         _imageBytes = bytes;
-        _storyImagePath = image.path;
       });
+      _viewModel.setStoryImage(image.path);
     }
   }
 
@@ -88,9 +92,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-
               const SizedBox(height: 16),
-
               const Text(
                 'Seleccionar imagen',
                 style: TextStyle(
@@ -99,9 +101,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                   color: AppColors.textMain,
                 ),
               ),
-
               const SizedBox(height: 16),
-
               ListTile(
                 leading: Container(
                   padding: const EdgeInsets.all(10),
@@ -109,10 +109,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                     color: AppColors.teal.withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.camera_alt,
-                    color: AppColors.darkTeal,
-                  ),
+                  child: const Icon(Icons.camera_alt, color: AppColors.darkTeal),
                 ),
                 title: const Text('Tomar foto'),
                 subtitle: const Text('Usa la cámara de tu dispositivo'),
@@ -121,7 +118,6 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                   _pickImageFromCamera();
                 },
               ),
-
               ListTile(
                 leading: Container(
                   padding: const EdgeInsets.all(10),
@@ -129,10 +125,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                     color: AppColors.teal.withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.photo_library,
-                    color: AppColors.darkTeal,
-                  ),
+                  child: const Icon(Icons.photo_library, color: AppColors.darkTeal),
                 ),
                 title: const Text('Elegir de galería'),
                 subtitle: const Text('Selecciona una imagen existente'),
@@ -141,7 +134,6 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                   _pickImageFromGallery();
                 },
               ),
-
               const SizedBox(height: 8),
             ],
           ),
@@ -151,24 +143,24 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
   }
 
   void _onSkip() {
-    Navigator.pushNamed(context, AppRoutes.pickupConfirm);
+    _viewModel.skipStory();
+    Navigator.pushNamed(context, AppRoutes.pickupConfirm, arguments: _viewModel);
   }
 
   void _onSubmitStory() {
-    Navigator.pushNamed(context, AppRoutes.pickupConfirm);
-  }
-
-  bool get _canSubmitStory {
-    return _storyText.trim().isNotEmpty || _imageBytes != null;
+    _viewModel.setStoryImageBytes(_imageBytes);
+    _viewModel.submitStory();
+    Navigator.pushNamed(context, AppRoutes.pickupConfirm, arguments: _viewModel);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
-      appBar: const CustomAppBar(title: 'REDIME', currentStep: 4),
-
+      appBar: const CustomAppBar(
+        title: 'REDIME',
+        currentStep: 4,
+      ),
       body: SafeArea(
         top: false,
         child: Column(
@@ -181,6 +173,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                   children: [
                     const SizedBox(height: 32),
 
+                    // Title
                     const Text(
                       'Su Historia',
                       textAlign: TextAlign.center,
@@ -191,9 +184,9 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                         height: 1.2,
                       ),
                     ),
-
                     const SizedBox(height: 12),
 
+                    // Subtitle
                     const Text(
                       '¿Qué significa este objeto para ti?',
                       textAlign: TextAlign.center,
@@ -203,9 +196,9 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                         color: AppColors.darkTeal,
                       ),
                     ),
-
                     const SizedBox(height: 12),
 
+                    // Description
                     Text(
                       'Este paso es totalmente opcional; si no quieres que tu dispositivo aparezca como exhibición en el museo de memorias de REDIME, solo salta este paso.',
                       textAlign: TextAlign.center,
@@ -215,9 +208,9 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                         height: 1.5,
                       ),
                     ),
-
                     const SizedBox(height: 32),
 
+                    // Story text area
                     const Text(
                       'Escribe un recuerdo o mensaje',
                       style: TextStyle(
@@ -226,59 +219,38 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                         color: AppColors.textMain,
                       ),
                     ),
-
                     const SizedBox(height: 8),
-
                     Container(
                       decoration: BoxDecoration(
                         color: AppColors.white,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppColors.lightTeal,
-                          width: 1.5,
-                        ),
+                        border: Border.all(color: AppColors.lightTeal, width: 1.5),
                       ),
                       child: TextField(
                         controller: _storyController,
-                        onChanged: (val) {
-                          setState(() {
-                            _storyText = val;
-                          });
-                        },
+                        onChanged: (val) => _viewModel.setStoryText(val),
                         maxLines: 5,
                         maxLength: 500,
                         decoration: InputDecoration(
                           hintText: 'Este fue mi primer celular...',
-                          hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 14,
-                          ),
+                          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
                           contentPadding: const EdgeInsets.all(16),
                           border: InputBorder.none,
-                          counterStyle: TextStyle(
-                            color: AppColors.teal.withOpacity(0.6),
-                            fontSize: 11,
-                          ),
+                          counterStyle: TextStyle(color: AppColors.teal.withOpacity(0.6), fontSize: 11),
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 24),
 
+                    // Photo upload area (real image picker)
                     GestureDetector(
                       onTap: _showImageSourceDialog,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 24,
-                          horizontal: 24,
-                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
                         decoration: BoxDecoration(
                           color: AppColors.white,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: AppColors.lightTeal,
-                            width: 1.5,
-                          ),
+                          border: Border.all(color: AppColors.lightTeal, width: 1.5),
                         ),
                         child: _imageBytes != null
                             ? Stack(
@@ -292,7 +264,6 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-
                                   Positioned(
                                     top: 8,
                                     right: 8,
@@ -300,8 +271,8 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                                       onTap: () {
                                         setState(() {
                                           _imageBytes = null;
-                                          _storyImagePath = null;
                                         });
+                                        _viewModel.setStoryImage(null);
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.all(4),
@@ -309,35 +280,22 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                                           color: Colors.black54,
                                           shape: BoxShape.circle,
                                         ),
-                                        child: const Icon(
-                                          Icons.close,
-                                          color: Colors.white,
-                                          size: 18,
-                                        ),
+                                        child: const Icon(Icons.close, color: Colors.white, size: 18),
                                       ),
                                     ),
                                   ),
-
                                   Positioned(
                                     bottom: 8,
                                     left: 8,
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 4,
-                                      ),
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: AppColors.darkTeal.withOpacity(
-                                          0.8,
-                                        ),
+                                        color: AppColors.darkTeal.withOpacity(0.8),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: const Text(
                                         'Toca para cambiar',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 11,
-                                        ),
+                                        style: TextStyle(color: Colors.white, fontSize: 11),
                                       ),
                                     ),
                                   ),
@@ -350,9 +308,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                                     size: 48,
                                     color: AppColors.darkTeal.withOpacity(0.5),
                                   ),
-
                                   const SizedBox(height: 12),
-
                                   const Text(
                                     'Subir foto del recuerdo',
                                     style: TextStyle(
@@ -361,17 +317,13 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                                       color: AppColors.textMain,
                                     ),
                                   ),
-
                                   const SizedBox(height: 6),
-
                                   Text(
                                     '(Esta imagen será colocada a la par de tu\ndispositivo en el museo, contando su historia.)',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: AppColors.darkTeal.withOpacity(
-                                        0.5,
-                                      ),
+                                      color: AppColors.darkTeal.withOpacity(0.5),
                                       height: 1.4,
                                     ),
                                   ),
@@ -379,17 +331,18 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                               ),
                       ),
                     ),
-
                     const SizedBox(height: 32),
                   ],
                 ),
               ),
             ),
 
+            // Bottom buttons
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
               child: Row(
                 children: [
+                  // Omitir button (HU-20)
                   Expanded(
                     flex: 2,
                     child: OutlinedButton(
@@ -404,25 +357,21 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                       ),
                       child: const Text(
                         'Omitir...',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
-
                   const SizedBox(width: 12),
-
+                  // Enviar historia button (HU-19)
                   Expanded(
                     flex: 3,
                     child: ElevatedButton(
-                      onPressed: _canSubmitStory ? _onSubmitStory : null,
+                      onPressed: _viewModel.canSubmitStory ? _onSubmitStory : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _canSubmitStory
+                        backgroundColor: _viewModel.canSubmitStory
                             ? AppColors.darkTeal
                             : AppColors.disabledButton,
-                        foregroundColor: _canSubmitStory
+                        foregroundColor: _viewModel.canSubmitStory
                             ? AppColors.white
                             : AppColors.disabledText,
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -436,10 +385,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                         children: [
                           Text(
                             'Enviar historia',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                           ),
                           SizedBox(width: 6),
                           Icon(Icons.send, size: 18),

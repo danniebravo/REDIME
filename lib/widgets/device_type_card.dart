@@ -2,24 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../core/constants/app_colors.dart';
 import '../core/theme/app_text_styles.dart';
+import '../features/device_pickup/domain/entities/enums.dart';
 
 class DeviceTypeCard extends StatelessWidget {
-  final String title;
-  final IconData icon;
+  final DeviceType type;
+  final String selectedAssetPath;
+  final String unselectedAssetPath;
   final bool isSelected;
   final VoidCallback onTap;
-
-  /// Card background colors matching the Figma 2x2 grid:
-  /// Top-left (large): light mint
-  /// Top-right (small): medium teal
-  /// Bottom-left (telecom): dark teal
-  /// Bottom-right (other): dark teal
   final Color backgroundColor;
 
   const DeviceTypeCard({
     super.key,
-    required this.title,
-    required this.icon,
+    required this.type,
+    required this.selectedAssetPath,
+    required this.unselectedAssetPath,
     required this.isSelected,
     required this.onTap,
     required this.backgroundColor,
@@ -27,75 +24,112 @@ class DeviceTypeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkBg =
-        backgroundColor == AppColors.cardDarkTeal ||
-        backgroundColor == AppColors.cardMediumTeal;
+    final Color cardColor = isSelected
+        ? AppColors.cardDarkTeal
+        : backgroundColor;
+
+    final String assetPath = isSelected
+        ? selectedAssetPath
+        : unselectedAssetPath;
+
+    final TextStyle labelStyle = AppTextStyles.cardLabelDark.copyWith(
+      color: isSelected ? AppColors.white : AppColors.darkText,
+      fontWeight: FontWeight.w700,
+      height: 1.12,
+    );
 
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.cardSelected : backgroundColor,
-          borderRadius: BorderRadius.circular(16),
+          color: cardColor,
+          borderRadius: BorderRadius.circular(12),
           border: isSelected
               ? Border.all(color: AppColors.primaryTeal, width: 2)
               : null,
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppColors.primaryTeal.withValues(alpha: 0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isSelected ? 0.18 : 0.10),
+              blurRadius: isSelected ? 8 : 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    icon,
-                    size: 48,
-                    color: isSelected
-                        ? AppColors.primaryTeal
-                        : (isDarkBg ? AppColors.white : AppColors.darkText),
-                  ),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final double imageHeight = constraints.maxHeight * 0.43;
+                final double imageWidth = constraints.maxWidth * 0.62;
 
-                  const SizedBox(height: 10),
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: imageHeight,
+                          width: imageWidth,
+                          child: Image.asset(
+                            assetPath,
+                            fit: BoxFit.contain,
+                            alignment: Alignment.center,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.devices_other,
+                                size: 44,
+                                color: isSelected
+                                    ? AppColors.white
+                                    : AppColors.primaryTeal,
+                              );
+                            },
+                          ),
+                        ),
 
-                  Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: isSelected
-                        ? AppTextStyles.cardLabelDark
-                        : (isDarkBg
-                              ? AppTextStyles.cardLabel
-                              : AppTextStyles.cardLabelDark),
+                        const SizedBox(height: 10),
+
+                        Flexible(
+                          child: Text(
+                            type.displayName,
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: labelStyle,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
 
             if (isSelected)
               Positioned(
-                top: 8,
-                right: 8,
+                top: -8,
+                right: -8,
                 child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: const BoxDecoration(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.darkText,
+                    color: AppColors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.18),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: const Icon(
                     Icons.check,
-                    size: 16,
-                    color: AppColors.white,
+                    size: 20,
+                    color: AppColors.darkText,
                   ),
                 ),
               ),

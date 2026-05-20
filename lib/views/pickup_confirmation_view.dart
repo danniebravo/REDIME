@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_routes.dart';
 import '../core/constants/app_strings.dart';
 import '../core/theme/app_text_styles.dart';
 import '../core/widgets/redime_app_bar.dart';
+import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
 
 class PickupConfirmationView extends StatelessWidget {
   const PickupConfirmationView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Temporal hasta conectar ViewModel/backend
-    const bool hasStory = true;
+    final args = ModalRoute.of(context)?.settings.arguments;
+
+    final PickupFlowViewModel? vm = args is PickupFlowViewModel ? args : null;
+
+    final hasStory = vm?.lastRequest?.hasStory ?? false;
 
     return Scaffold(
       appBar: RedimeAppBar(
@@ -27,7 +32,6 @@ class PickupConfirmationView extends StatelessWidget {
             children: [
               const Spacer(flex: 2),
 
-              // Recycling check icon
               Container(
                 width: 120,
                 height: 120,
@@ -45,7 +49,6 @@ class PickupConfirmationView extends StatelessWidget {
 
               const SizedBox(height: 28),
 
-              // Title
               Text(
                 AppStrings.confirmationTitle,
                 style: AppTextStyles.confirmationTitle,
@@ -54,7 +57,6 @@ class PickupConfirmationView extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              // Subtitle
               Text(
                 AppStrings.confirmationSubtitle,
                 style: AppTextStyles.confirmationSubtitle,
@@ -63,11 +65,12 @@ class PickupConfirmationView extends StatelessWidget {
 
               const SizedBox(height: 36),
 
-              // Back to home button
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
+                    vm?.reset();
+
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       AppRoutes.home,
@@ -92,10 +95,8 @@ class PickupConfirmationView extends StatelessWidget {
                 ),
               ),
 
-              // Share button
               if (hasStory) ...[
                 const SizedBox(height: 12),
-
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(

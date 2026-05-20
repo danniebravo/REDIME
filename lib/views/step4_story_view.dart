@@ -1,30 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_strings.dart';
 import '../core/constants/app_routes.dart';
 import '../core/theme/app_text_styles.dart';
 import '../core/widgets/redime_outline_button.dart';
 import '../core/widgets/section_header.dart';
-
+import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
 import '../widgets/photo_upload_area.dart';
 
-class Step4StoryView extends StatefulWidget {
+class Step4StoryView extends StatelessWidget {
   const Step4StoryView({super.key});
 
-  @override
-  State<Step4StoryView> createState() => _Step4StoryViewState();
-}
-
-class _Step4StoryViewState extends State<Step4StoryView> {
-  final TextEditingController _storyController = TextEditingController();
-
-  String? _photoPath;
-  bool _isSubmitting = false;
-  String? _errorMessage;
-
-  Future<void> _pickPhoto() async {
+  Future<void> _pickPhoto(BuildContext context) async {
     try {
       final picker = ImagePicker();
 
@@ -35,49 +25,44 @@ class _Step4StoryViewState extends State<Step4StoryView> {
         imageQuality: 80,
       );
 
-      if (image != null) {
-        setState(() {
-          _photoPath = image.path;
-        });
+      if (image != null && context.mounted) {
+        context.read<PickupFlowViewModel>().setPhotoPath(image.path);
       }
     } catch (_) {
-      // Photo picking cancelled or failed
+      // Si el usuario cancela o falla la carga de imagen, no hacemos nada.
     }
   }
 
-  Future<void> _submit({required bool withStory}) async {
-    setState(() {
-      _isSubmitting = true;
-      _errorMessage = null;
-    });
+  Future<void> _finishWithoutStory(
+    BuildContext context,
+    PickupFlowViewModel vm,
+  ) async {
+    await vm.submitRequest(withStory: false);
 
-    try {
-      // Aquí puedes agregar tu lógica de envío
+    if (!context.mounted) return;
 
-      if (!mounted) return;
-
-      Navigator.pushReplacementNamed(context, AppRoutes.pickupConfirmation);
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Ocurrió un error al enviar la solicitud';
-      });
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSubmitting = false;
-        });
-      }
+    if (vm.isCompleted) {
+      Navigator.pushNamed(context, AppRoutes.pickupConfirmation, arguments: vm);
     }
   }
 
-  @override
-  void dispose() {
-    _storyController.dispose();
-    super.dispose();
+  Future<void> _finishWithStory(
+    BuildContext context,
+    PickupFlowViewModel vm,
+  ) async {
+    await vm.submitRequest(withStory: true);
+
+    if (!context.mounted) return;
+
+    if (vm.isCompleted) {
+      Navigator.pushNamed(context, AppRoutes.pickupConfirmation, arguments: vm);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<PickupFlowViewModel>();
+
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
       child: Column(
@@ -109,7 +94,7 @@ class _Step4StoryViewState extends State<Step4StoryView> {
           const SizedBox(height: 8),
 
           TextField(
-            controller: _storyController,
+            onChanged: vm.setStory,
             maxLines: 5,
             decoration: const InputDecoration(
               hintText: AppStrings.storyHint,
@@ -119,7 +104,10 @@ class _Step4StoryViewState extends State<Step4StoryView> {
 
           const SizedBox(height: 20),
 
-          PhotoUploadArea(photoPath: _photoPath, onTap: _pickPhoto),
+          PhotoUploadArea(
+            photoPath: vm.photoPath,
+            onTap: () => _pickPhoto(context),
+          ),
 
           const SizedBox(height: 32),
 
@@ -128,9 +116,9 @@ class _Step4StoryViewState extends State<Step4StoryView> {
               Expanded(
                 child: RedimeOutlineButton(
                   label: AppStrings.skipButton,
-                  onPressed: _isSubmitting
+                  onPressed: vm.isSubmitting
                       ? null
-                      : () => _submit(withStory: false),
+                      : () => _finishWithoutStory(context, vm),
                 ),
               ),
 
@@ -138,9 +126,9 @@ class _Step4StoryViewState extends State<Step4StoryView> {
 
               Expanded(
                 child: OutlinedButton(
-                  onPressed: _isSubmitting
+                  onPressed: vm.isSubmitting
                       ? null
-                      : () => _submit(withStory: true),
+                      : () => _finishWithStory(context, vm),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primaryTeal,
                     side: const BorderSide(
@@ -155,7 +143,7 @@ class _Step4StoryViewState extends State<Step4StoryView> {
                       vertical: 12,
                     ),
                   ),
-                  child: _isSubmitting
+                  child: vm.isSubmitting
                       ? const SizedBox(
                           width: 20,
                           height: 20,
@@ -184,10 +172,10 @@ class _Step4StoryViewState extends State<Step4StoryView> {
             ],
           ),
 
-          if (_errorMessage != null) ...[
+          if (vm.errorMessage != null) ...[
             const SizedBox(height: 16),
             Text(
-              _errorMessage!,
+              vm.errorMessage!,
               style: const TextStyle(color: AppColors.errorRed, fontSize: 13),
               textAlign: TextAlign.center,
             ),

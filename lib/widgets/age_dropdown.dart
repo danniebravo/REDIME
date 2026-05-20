@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/app_strings.dart';
 
 class AgeDropdown extends StatelessWidget {
   final String? value;
