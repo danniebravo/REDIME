@@ -5,9 +5,6 @@ import 'package:provider/provider.dart';
 import 'core/constants/app_routes.dart';
 import 'core/theme/app_theme.dart';
 
-import 'features/device_pickup/domain/usecases/submit_pickup_request.dart';
-import 'features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
-
 import 'viewmodels/RegisterUser_viewmodel.dart';
 import 'viewmodels/login_viewmodel.dart';
 
@@ -50,7 +47,7 @@ class MyApp extends StatelessWidget {
 
   // Bypass temporal solo para pruebas visuales.
   // Mantener en false antes de subir cambios finales.
-  static const bool bypassLogin = false;
+  static const bool bypassLogin = true;
 
   @override
   Widget build(BuildContext context) {
@@ -74,21 +71,18 @@ class MyApp extends StatelessWidget {
 
         AppRoutes.deviceStatus: (context) => const DeviceStatusView(),
 
+        // Flujo anterior/paralelo. Se conserva sin modificar por ahora.
         AppRoutes.pickupStep1: (context) => const PickupStep1MapView(),
         AppRoutes.pickupStep2: (context) => const PickupStep2TypeView(),
         AppRoutes.pickupStep3: (context) => const PickupStep3DetailsView(),
         AppRoutes.pickupStep4: (context) => const PickupStep4StoryView(),
         AppRoutes.pickupConfirm: (context) => const PickupConfirmView(),
+
         AppRoutes.pickupConfirmation: (context) =>
             const PickupConfirmationView(),
 
-        // Recoger dispositivos todavía conserva temporalmente su ViewModel.
-        // Lo desacoplamos en una fase posterior para no romper la UI.
-        AppRoutes.pickupFlow: (context) => ChangeNotifierProvider(
-          create: (_) =>
-              PickupFlowViewModel(submitUseCase: SubmitPickupRequestUseCase()),
-          child: const PickupFlowPage(),
-        ),
+        // Flujo principal de Recoger dispositivos desacoplado de ViewModel.
+        AppRoutes.pickupFlow: (context) => const PickupFlowPage(),
       },
     );
   }

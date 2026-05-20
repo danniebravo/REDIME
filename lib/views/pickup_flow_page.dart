@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_routes.dart';
 import '../core/widgets/help_button.dart';
 import '../core/widgets/step_progress_indicator.dart';
-import '../features/device_pickup/domain/entities/enums.dart';
-import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
 import 'step1_device_type_view.dart';
 import 'step2_device_details_view.dart';
 import 'step3_address_date_view.dart';
@@ -22,8 +19,28 @@ class PickupFlowPage extends StatefulWidget {
 class _PickupFlowPageState extends State<PickupFlowPage> {
   late final PageController _pageController;
 
+  int _currentStep = 0;
   int _lastStep = 0;
+
   String? _selectedDeviceTypeId;
+
+  String? _selectedSubcategory;
+  String? _selectedDynamicExtra;
+  String _brand = '';
+  String? _estimatedWeight;
+  String? _age;
+  bool? _hasScreen;
+  bool? _isScreenBroken;
+  String? _condition;
+  String? _integrity;
+
+  String _address = '';
+  DateTime? _pickupDate;
+
+  String _story = '';
+  String? _photoPath;
+  bool _isSubmitting = false;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -37,170 +54,287 @@ class _PickupFlowPageState extends State<PickupFlowPage> {
     super.dispose();
   }
 
-  void _syncPage(int currentStep) {
-    if (currentStep != _lastStep && _pageController.hasClients) {
-      _pageController.animateToPage(
-        currentStep,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-      _lastStep = currentStep;
+  List<String> get _subcategories {
+    switch (_selectedDeviceTypeId) {
+      case 'telecom_equipment':
+        return [
+          'Celular',
+          'Laptop',
+          'Tablet',
+          'Router / Modem',
+          'Teléfono fijo',
+          'Cámara',
+          'Disco duro',
+          'Consola de videojuegos',
+          'Dispositivo con pilas/baterías',
+        ];
+
+      case 'large_appliance':
+      case 'small_appliance':
+      case 'other':
+        return [
+          'Televisor',
+          'Impresora',
+          'Electrodoméstico pequeño',
+          'Cámara',
+          'Disco duro',
+          'Consola de videojuegos',
+          'Dispositivo con pilas/baterías',
+          'Otro',
+        ];
+
+      default:
+        return [];
     }
   }
 
-  void _handleBack(PickupFlowViewModel vm) {
-    if (vm.currentStep > 0) {
-      vm.previousStep();
+  String? get _dynamicExtraFieldLabel {
+    if (_selectedSubcategory == 'Laptop') return '¿Incluye batería?';
+    if (_selectedSubcategory == 'Televisor') return '¿Tipo de pantalla?';
+    if (_selectedSubcategory == 'Impresora') return '¿Incluye cartuchos?';
+
+    if (_selectedSubcategory == 'Dispositivo con pilas/baterías') {
+      return '¿Tipo de batería?';
+    }
+
+    return null;
+  }
+
+  List<String>? get _dynamicExtraFieldOptions {
+    if (_selectedSubcategory == 'Laptop') return ['Sí', 'No'];
+
+    if (_selectedSubcategory == 'Televisor') {
+      return ['LCD', 'LED', 'OLED', 'CRT (Tubo)', 'No sé'];
+    }
+
+    if (_selectedSubcategory == 'Impresora') return ['Sí', 'No'];
+
+    if (_selectedSubcategory == 'Dispositivo con pilas/baterías') {
+      return ['Li-Ion', 'NiMH', 'Plomo', 'Otra', 'No sé'];
+    }
+
+    return null;
+  }
+
+  bool get _isNonRaee {
+    const nonRaeeItems = [
+      'Ropa',
+      'Muebles',
+      'Alimentos',
+      'Pilas sueltas',
+      'Bombillos',
+      'Medicamentos',
+    ];
+
+    if (_selectedSubcategory == 'Otro' && _brand.toLowerCase().isNotEmpty) {
+      return nonRaeeItems.any(
+        (item) => _brand.toLowerCase().contains(item.toLowerCase()),
+      );
+    }
+
+    return false;
+  }
+
+  bool get _canContinueStep1 => _selectedDeviceTypeId != null;
+
+  bool get _canContinueStep2 {
+    return _selectedSubcategory != null &&
+        _brand.trim().isNotEmpty &&
+        _estimatedWeight != null &&
+        _age != null &&
+        _condition != null &&
+        _integrity != null &&
+        _hasScreen != null &&
+        !_isNonRaee;
+  }
+
+  bool get _canContinueStep3 {
+    return _address.trim().isNotEmpty && _pickupDate != null;
+  }
+
+  bool get _hasStory {
+    return _story.trim().isNotEmpty || _photoPath != null;
+  }
+
+  void _syncPage() {
+    if (_currentStep != _lastStep && _pageController.hasClients) {
+      _pageController.animateToPage(
+        _currentStep,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+
+      _lastStep = _currentStep;
+    }
+  }
+
+  void _nextStep() {
+    if (_currentStep < 3) {
+      setState(() {
+        _currentStep++;
+      });
+    }
+  }
+
+  void _previousStep() {
+    if (_currentStep > 0) {
+      setState(() {
+        _currentStep--;
+      });
+    }
+  }
+
+  void _handleBack() {
+    if (_currentStep > 0) {
+      _previousStep();
     } else {
       Navigator.of(context).pop();
     }
   }
 
-  String? _deviceTypeToId(DeviceType? type) {
-    return switch (type) {
-      DeviceType.largeAppliance => 'large_appliance',
-      DeviceType.smallAppliance => 'small_appliance',
-      DeviceType.telecomEquipment => 'telecom_equipment',
-      DeviceType.other => 'other',
-      null => null,
-    };
-  }
-
-  DeviceType? _idToDeviceType(String id) {
-    return switch (id) {
-      'large_appliance' => DeviceType.largeAppliance,
-      'small_appliance' => DeviceType.smallAppliance,
-      'telecom_equipment' => DeviceType.telecomEquipment,
-      'other' => DeviceType.other,
-      _ => null,
-    };
-  }
-
-  void _selectDeviceType(PickupFlowViewModel vm, String id) {
-    final deviceType = _idToDeviceType(id);
-
-    if (deviceType == null) return;
-
+  void _selectDeviceType(String id) {
     setState(() {
       _selectedDeviceTypeId = id;
+
+      _selectedSubcategory = null;
+      _selectedDynamicExtra = null;
+      _brand = '';
+      _estimatedWeight = null;
+      _age = null;
+      _hasScreen = null;
+      _isScreenBroken = null;
+      _condition = null;
+      _integrity = null;
+    });
+  }
+
+  void _setSubcategory(String? value) {
+    setState(() {
+      _selectedSubcategory = value;
+      _selectedDynamicExtra = null;
+      _hasScreen = null;
+      _isScreenBroken = null;
+    });
+  }
+
+  void _setDynamicExtra(String? value) {
+    setState(() {
+      _selectedDynamicExtra = value;
+    });
+  }
+
+  void _setBrand(String value) {
+    setState(() {
+      _brand = value;
+    });
+  }
+
+  void _setEstimatedWeight(String? value) {
+    setState(() {
+      _estimatedWeight = value;
+    });
+  }
+
+  void _setAge(String? value) {
+    setState(() {
+      _age = value;
+    });
+  }
+
+  void _setHasScreen(bool? value) {
+    setState(() {
+      _hasScreen = value;
+
+      if (value == false) {
+        _isScreenBroken = null;
+      }
+    });
+  }
+
+  void _setScreenBroken(bool? value) {
+    setState(() {
+      _isScreenBroken = value;
+    });
+  }
+
+  void _setCondition(String? value) {
+    setState(() {
+      _condition = value;
+    });
+  }
+
+  void _setIntegrity(String? value) {
+    setState(() {
+      _integrity = value;
+    });
+  }
+
+  void _setAddress(String value) {
+    setState(() {
+      _address = value;
+    });
+  }
+
+  void _setPickupDate(DateTime value) {
+    setState(() {
+      _pickupDate = value;
+    });
+  }
+
+  void _setStory(String value) {
+    setState(() {
+      _story = value;
+    });
+  }
+
+  void _setPhotoPath(String? value) {
+    setState(() {
+      _photoPath = value;
+    });
+  }
+
+  Future<void> _submitRequest({required bool withStory}) async {
+    setState(() {
+      _isSubmitting = true;
+      _errorMessage = null;
     });
 
-    vm.selectDeviceType(deviceType);
-  }
+    try {
+      await Future.delayed(const Duration(milliseconds: 500));
 
-  String? _conditionToId(DeviceCondition? condition) {
-    if (condition == null) return null;
+      if (!mounted) return;
 
-    final name = condition.name.toLowerCase();
-    final label = condition.displayName.toLowerCase();
-
-    if (name.contains('partial') || label.contains('parcial')) {
-      return 'partially_working';
-    }
-
-    if (name.contains('not') || label == 'no') {
-      return 'not_working';
-    }
-
-    return 'fully_working';
-  }
-
-  DeviceCondition? _idToCondition(String? id) {
-    if (id == null) return null;
-
-    for (final condition in DeviceCondition.values) {
-      if (_conditionToId(condition) == id) {
-        return condition;
-      }
-    }
-
-    return null;
-  }
-
-  String? _integrityToId(DeviceIntegrity? integrity) {
-    if (integrity == null) return null;
-
-    final name = integrity.name.toLowerCase();
-    final label = integrity.displayName.toLowerCase();
-
-    if (name.contains('single') || label == 'sí' || label == 'si') {
-      return 'single_piece';
-    }
-
-    return 'multiple_pieces';
-  }
-
-  DeviceIntegrity? _idToIntegrity(String? id) {
-    if (id == null) return null;
-
-    for (final integrity in DeviceIntegrity.values) {
-      if (_integrityToId(integrity) == id) {
-        return integrity;
-      }
-    }
-
-    return null;
-  }
-
-  void _setCondition(PickupFlowViewModel vm, String? id) {
-    final condition = _idToCondition(id);
-
-    if (condition == null) return;
-
-    vm.setCondition(condition);
-  }
-
-  void _setIntegrity(PickupFlowViewModel vm, String? id) {
-    final integrity = _idToIntegrity(id);
-
-    if (integrity == null) return;
-
-    vm.setIntegrity(integrity);
-  }
-
-  Future<void> _finishWithoutStory(PickupFlowViewModel vm) async {
-    await vm.submitRequest(withStory: false);
-
-    if (!mounted) return;
-
-    if (vm.isCompleted) {
       Navigator.pushNamed(
         context,
         AppRoutes.pickupConfirmation,
-        arguments: {'hasStory': false},
+        arguments: {'hasStory': withStory && _hasStory},
       );
-    }
-  }
-
-  Future<void> _finishWithStory(PickupFlowViewModel vm) async {
-    await vm.submitRequest(withStory: true);
-
-    if (!mounted) return;
-
-    if (vm.isCompleted) {
-      Navigator.pushNamed(
-        context,
-        AppRoutes.pickupConfirmation,
-        arguments: {'hasStory': vm.hasStory},
-      );
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Error al enviar la solicitud: $error';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<PickupFlowViewModel>();
-
-    _selectedDeviceTypeId ??= _deviceTypeToId(vm.selectedDeviceType);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _syncPage(vm.currentStep);
+      _syncPage();
     });
 
     return PopScope(
-      canPop: vm.currentStep == 0,
+      canPop: _currentStep == 0,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) {
-          vm.previousStep();
+          _previousStep();
         }
       },
       child: Scaffold(
@@ -208,8 +342,8 @@ class _PickupFlowPageState extends State<PickupFlowPage> {
         body: Column(
           children: [
             _PickupFlowHeader(
-              currentStep: vm.currentStep + 1,
-              onBack: () => _handleBack(vm),
+              currentStep: _currentStep + 1,
+              onBack: _handleBack,
             ),
             Expanded(
               child: PageView(
@@ -218,52 +352,56 @@ class _PickupFlowPageState extends State<PickupFlowPage> {
                 children: [
                   Step1DeviceTypeView(
                     selectedDeviceType: _selectedDeviceTypeId,
-                    onSelectDeviceType: (id) => _selectDeviceType(vm, id),
-                    onContinue: vm.canContinueStep1 ? vm.nextStep : () {},
+                    onSelectDeviceType: _selectDeviceType,
+                    onContinue: _canContinueStep1 ? _nextStep : () {},
                   ),
                   Step2DeviceDetailsView(
-                    selectedSubcategory: vm.selectedSubcategory,
-                    subcategories: vm.subcategories,
-                    isNonRaee: vm.isNonRaee,
-                    dynamicExtraFieldLabel: vm.dynamicExtraFieldLabel,
-                    dynamicExtraFieldOptions: vm.dynamicExtraFieldOptions,
-                    selectedDynamicExtra: vm.selectedDynamicExtra,
-                    brand: vm.brand,
-                    estimatedWeight: vm.estimatedWeight,
-                    age: vm.age,
-                    hasScreen: vm.hasScreen,
-                    isScreenBroken: vm.isScreenBroken,
-                    condition: _conditionToId(vm.condition),
-                    integrity: _integrityToId(vm.integrity),
-                    canContinue: vm.canContinueStep2,
-                    onSubcategoryChanged: vm.setSubcategory,
-                    onDynamicExtraChanged: vm.setDynamicExtra,
-                    onBrandChanged: vm.setBrand,
-                    onEstimatedWeightChanged: vm.setEstimatedWeight,
-                    onAgeChanged: vm.setAge,
-                    onHasScreenChanged: vm.setHasScreen,
-                    onScreenBrokenChanged: vm.setIsScreenBroken,
-                    onConditionChanged: (id) => _setCondition(vm, id),
-                    onIntegrityChanged: (id) => _setIntegrity(vm, id),
-                    onContinue: vm.nextStep,
+                    selectedSubcategory: _selectedSubcategory,
+                    subcategories: _subcategories,
+                    isNonRaee: _isNonRaee,
+                    dynamicExtraFieldLabel: _dynamicExtraFieldLabel,
+                    dynamicExtraFieldOptions: _dynamicExtraFieldOptions,
+                    selectedDynamicExtra: _selectedDynamicExtra,
+                    brand: _brand,
+                    estimatedWeight: _estimatedWeight,
+                    age: _age,
+                    hasScreen: _hasScreen,
+                    isScreenBroken: _isScreenBroken,
+                    condition: _condition,
+                    integrity: _integrity,
+                    canContinue: _canContinueStep2,
+                    onSubcategoryChanged: _setSubcategory,
+                    onDynamicExtraChanged: _setDynamicExtra,
+                    onBrandChanged: _setBrand,
+                    onEstimatedWeightChanged: _setEstimatedWeight,
+                    onAgeChanged: _setAge,
+                    onHasScreenChanged: _setHasScreen,
+                    onScreenBrokenChanged: _setScreenBroken,
+                    onConditionChanged: _setCondition,
+                    onIntegrityChanged: _setIntegrity,
+                    onContinue: _nextStep,
                   ),
                   Step3AddressDateView(
-                    address: vm.address,
-                    pickupDate: vm.pickupDate,
-                    canContinue: vm.canContinueStep3,
-                    onAddressChanged: vm.setAddress,
-                    onPickupDateChanged: vm.setPickupDate,
-                    onContinue: vm.nextStep,
+                    address: _address,
+                    pickupDate: _pickupDate,
+                    canContinue: _canContinueStep3,
+                    onAddressChanged: _setAddress,
+                    onPickupDateChanged: _setPickupDate,
+                    onContinue: _nextStep,
                   ),
                   Step4StoryView(
-                    story: vm.story,
-                    photoPath: vm.photoPath,
-                    isSubmitting: vm.isSubmitting,
-                    errorMessage: vm.errorMessage,
-                    onStoryChanged: vm.setStory,
-                    onPhotoPathChanged: vm.setPhotoPath,
-                    onFinishWithoutStory: () => _finishWithoutStory(vm),
-                    onFinishWithStory: () => _finishWithStory(vm),
+                    story: _story,
+                    photoPath: _photoPath,
+                    isSubmitting: _isSubmitting,
+                    errorMessage: _errorMessage,
+                    onStoryChanged: _setStory,
+                    onPhotoPathChanged: _setPhotoPath,
+                    onFinishWithoutStory: () {
+                      return _submitRequest(withStory: false);
+                    },
+                    onFinishWithStory: () {
+                      return _submitRequest(withStory: true);
+                    },
                   ),
                 ],
               ),
