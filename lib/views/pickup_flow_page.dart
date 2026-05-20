@@ -158,6 +158,26 @@ class _PickupFlowPageState extends State<PickupFlowPage> {
     vm.setIntegrity(integrity);
   }
 
+  Future<void> _finishWithoutStory(PickupFlowViewModel vm) async {
+    await vm.submitRequest(withStory: false);
+
+    if (!mounted) return;
+
+    if (vm.isCompleted) {
+      Navigator.pushNamed(context, AppRoutes.pickupConfirmation, arguments: vm);
+    }
+  }
+
+  Future<void> _finishWithStory(PickupFlowViewModel vm) async {
+    await vm.submitRequest(withStory: true);
+
+    if (!mounted) return;
+
+    if (vm.isCompleted) {
+      Navigator.pushNamed(context, AppRoutes.pickupConfirmation, arguments: vm);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<PickupFlowViewModel>();
@@ -227,7 +247,16 @@ class _PickupFlowPageState extends State<PickupFlowPage> {
                     onPickupDateChanged: vm.setPickupDate,
                     onContinue: vm.nextStep,
                   ),
-                  const Step4StoryView(),
+                  Step4StoryView(
+                    story: vm.story,
+                    photoPath: vm.photoPath,
+                    isSubmitting: vm.isSubmitting,
+                    errorMessage: vm.errorMessage,
+                    onStoryChanged: vm.setStory,
+                    onPhotoPathChanged: vm.setPhotoPath,
+                    onFinishWithoutStory: () => _finishWithoutStory(vm),
+                    onFinishWithStory: () => _finishWithStory(vm),
+                  ),
                 ],
               ),
             ),

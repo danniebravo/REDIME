@@ -1,20 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_strings.dart';
-import '../core/constants/app_routes.dart';
 import '../core/theme/app_text_styles.dart';
 import '../core/widgets/redime_outline_button.dart';
 import '../core/widgets/section_header.dart';
-import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
 import '../widgets/photo_upload_area.dart';
 
-class Step4StoryView extends StatelessWidget {
-  const Step4StoryView({super.key});
+class Step4StoryView extends StatefulWidget {
+  final String story;
+  final String? photoPath;
+  final bool isSubmitting;
+  final String? errorMessage;
+  final ValueChanged<String> onStoryChanged;
+  final ValueChanged<String?> onPhotoPathChanged;
+  final Future<void> Function() onFinishWithoutStory;
+  final Future<void> Function() onFinishWithStory;
 
-  Future<void> _pickPhoto(BuildContext context) async {
+  const Step4StoryView({
+    super.key,
+    required this.story,
+    required this.photoPath,
+    required this.isSubmitting,
+    required this.errorMessage,
+    required this.onStoryChanged,
+    required this.onPhotoPathChanged,
+    required this.onFinishWithoutStory,
+    required this.onFinishWithStory,
+  });
+
+  @override
+  State<Step4StoryView> createState() => _Step4StoryViewState();
+}
+
+class _Step4StoryViewState extends State<Step4StoryView> {
+  late final TextEditingController _storyController;
+
+  @override
+  void initState() {
+    super.initState();
+    _storyController = TextEditingController(text: widget.story);
+  }
+
+  @override
+  void didUpdateWidget(covariant Step4StoryView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.story != _storyController.text) {
+      _storyController.text = widget.story;
+    }
+  }
+
+  @override
+  void dispose() {
+    _storyController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickPhoto() async {
     try {
       final picker = ImagePicker();
 
@@ -25,44 +69,16 @@ class Step4StoryView extends StatelessWidget {
         imageQuality: 80,
       );
 
-      if (image != null && context.mounted) {
-        context.read<PickupFlowViewModel>().setPhotoPath(image.path);
+      if (image != null) {
+        widget.onPhotoPathChanged(image.path);
       }
     } catch (_) {
       // Si el usuario cancela o falla la carga de imagen, no hacemos nada.
     }
   }
 
-  Future<void> _finishWithoutStory(
-    BuildContext context,
-    PickupFlowViewModel vm,
-  ) async {
-    await vm.submitRequest(withStory: false);
-
-    if (!context.mounted) return;
-
-    if (vm.isCompleted) {
-      Navigator.pushNamed(context, AppRoutes.pickupConfirmation, arguments: vm);
-    }
-  }
-
-  Future<void> _finishWithStory(
-    BuildContext context,
-    PickupFlowViewModel vm,
-  ) async {
-    await vm.submitRequest(withStory: true);
-
-    if (!context.mounted) return;
-
-    if (vm.isCompleted) {
-      Navigator.pushNamed(context, AppRoutes.pickupConfirmation, arguments: vm);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<PickupFlowViewModel>();
-
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
       child: Column(
@@ -94,7 +110,8 @@ class Step4StoryView extends StatelessWidget {
           const SizedBox(height: 8),
 
           TextField(
-            onChanged: vm.setStory,
+            controller: _storyController,
+            onChanged: widget.onStoryChanged,
             maxLines: 5,
             decoration: const InputDecoration(
               hintText: AppStrings.storyHint,
@@ -104,10 +121,7 @@ class Step4StoryView extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          PhotoUploadArea(
-            photoPath: vm.photoPath,
-            onTap: () => _pickPhoto(context),
-          ),
+          PhotoUploadArea(photoPath: widget.photoPath, onTap: _pickPhoto),
 
           const SizedBox(height: 32),
 
@@ -116,9 +130,11 @@ class Step4StoryView extends StatelessWidget {
               Expanded(
                 child: RedimeOutlineButton(
                   label: AppStrings.skipButton,
-                  onPressed: vm.isSubmitting
+                  onPressed: widget.isSubmitting
                       ? null
-                      : () => _finishWithoutStory(context, vm),
+                      : () async {
+                          await widget.onFinishWithoutStory();
+                        },
                 ),
               ),
 
@@ -126,9 +142,11 @@ class Step4StoryView extends StatelessWidget {
 
               Expanded(
                 child: OutlinedButton(
-                  onPressed: vm.isSubmitting
+                  onPressed: widget.isSubmitting
                       ? null
-                      : () => _finishWithStory(context, vm),
+                      : () async {
+                          await widget.onFinishWithStory();
+                        },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primaryTeal,
                     side: const BorderSide(
@@ -143,7 +161,7 @@ class Step4StoryView extends StatelessWidget {
                       vertical: 12,
                     ),
                   ),
-                  child: vm.isSubmitting
+                  child: widget.isSubmitting
                       ? const SizedBox(
                           width: 20,
                           height: 20,
@@ -172,10 +190,10 @@ class Step4StoryView extends StatelessWidget {
             ],
           ),
 
-          if (vm.errorMessage != null) ...[
+          if (widget.errorMessage != null) ...[
             const SizedBox(height: 16),
             Text(
-              vm.errorMessage!,
+              widget.errorMessage!,
               style: const TextStyle(color: AppColors.errorRed, fontSize: 13),
               textAlign: TextAlign.center,
             ),
