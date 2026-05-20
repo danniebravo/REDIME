@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../core/constants/app_routes.dart';
 import '../core/widgets/help_button.dart';
+import '../models/user_model.dart';
+import '../services/auth_service.dart';
+import '../viewmodels/profile_viewmodel.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -58,23 +62,31 @@ class _ProfileViewState extends State<ProfileView> {
     },
   ];
 
-  final TextEditingController nombresController = TextEditingController(
-    text: 'Juan',
-  );
-
-  final TextEditingController apellidosController = TextEditingController(
-    text: 'Pérez',
-  );
-
-  final TextEditingController celularController = TextEditingController(
-    text: '3001234567',
-  );
-
-  final TextEditingController correoController = TextEditingController(
-    text: 'juan@test.com',
-  );
+  final TextEditingController nombresController = TextEditingController();
+  final TextEditingController apellidosController = TextEditingController();
+  final TextEditingController celularController = TextEditingController();
+  final TextEditingController correoController = TextEditingController();
 
   String campoEditando = '';
+  bool _controllersHydrated = false;
+
+  void _hydrateControllersIfNeeded(UserModel? user) {
+    if (user == null || _controllersHydrated) return;
+    nombresController.text = user.nombre;
+    apellidosController.text = user.apellido;
+    celularController.text = user.celular;
+    correoController.text = user.email;
+    _controllersHydrated = true;
+  }
+
+  @override
+  void dispose() {
+    nombresController.dispose();
+    apellidosController.dispose();
+    celularController.dispose();
+    correoController.dispose();
+    super.dispose();
+  }
 
   void editarCampo(String field) {
     setState(() {
@@ -95,8 +107,10 @@ class _ProfileViewState extends State<ProfileView> {
         actionsAlignment: MainAxisAlignment.center,
         actions: [
           OutlinedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(ctx);
+              await AuthService().clearToken();
+              if (!context.mounted) return;
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.login,
@@ -148,6 +162,9 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<ProfileViewModel>();
+    _hydrateControllersIfNeeded(vm.user);
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
         statusBarColor: _primaryTeal,
@@ -157,7 +174,24 @@ class _ProfileViewState extends State<ProfileView> {
         backgroundColor: _backgroundColor,
         body: Column(
           children: [
-            _buildHeader(),
+            _buildHeader(vm.user),
+            if (vm.isLoading)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: LinearProgressIndicator(),
+              ),
+            if (vm.hasError)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Text(
+                  'No se pudo cargar el perfil: ${vm.errorMessage ?? ''}',
+                  style: const TextStyle(color: Colors.red),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
@@ -230,7 +264,13 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(UserModel? user) {
+    final headerText = (user?.nombreUsuario.isNotEmpty ?? false)
+        ? user!.nombreUsuario
+        : (user?.nombreCompleto.isNotEmpty ?? false)
+            ? user!.nombreCompleto
+            : 'Cargando...';
+
     return ClipPath(
       clipper: _ProfileHeaderClipper(),
       child: Container(
@@ -330,10 +370,10 @@ class _ProfileViewState extends State<ProfileView> {
                       ],
                     ),
                     const SizedBox(width: 20),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Nombre De\nUsuario',
-                        style: TextStyle(
+                        headerText,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
@@ -503,7 +543,18 @@ class _ProfileViewState extends State<ProfileView> {
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                context.read<ProfileViewModel>().saveProfile(
+                  context,
+                  nombre: nombresController.text,
+                  apellido: apellidosController.text,
+                  celular: celularController.text,
+                  email: correoController.text,
+                );
+                setState(() {
+                  campoEditando = '';
+                });
+              },
               child: const Text(
                 'Guardar',
                 style: TextStyle(

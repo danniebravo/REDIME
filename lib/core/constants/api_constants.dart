@@ -6,4 +6,8 @@ class ApiConstants {
   static final String login = '$baseUrl/auth/login';
 
   static final String register = '$baseUrl/auth/register';
+
+  static final String profile = '$baseUrl/auth/profile';
+
+  static final String deleteAccount = '$baseUrl/auth/account';
 }

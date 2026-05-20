@@ -18,7 +18,9 @@ import 'features/device_pickup/presentation/views/pickup_step_4_story_view.dart'
 import 'features/qr/presentation/viewmodels/qr_scan_viewmodel.dart';
 
 import 'viewmodels/RegisterUser_viewmodel.dart';
+import 'viewmodels/home_viewmodel.dart';
 import 'viewmodels/login_viewmodel.dart';
+import 'viewmodels/profile_viewmodel.dart';
 
 import 'views/chat_view.dart';
 import 'views/delete_account_view.dart';
@@ -41,6 +43,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => RegisterUserViewModel()),
+        ChangeNotifierProvider(create: (_) => HomeViewModel()),
       ],
       child: const MyApp(),
     ),
@@ -62,7 +65,10 @@ class MyApp extends StatelessWidget {
         AppRoutes.register: (context) => RegisterView(),
         AppRoutes.login: (context) => LoginView(),
         AppRoutes.home: (context) => const HomeView(),
-        AppRoutes.profile: (context) => const ProfileView(),
+        AppRoutes.profile: (context) => ChangeNotifierProvider(
+          create: (_) => ProfileViewModel()..loadProfile(),
+          child: const ProfileView(),
+        ),
         AppRoutes.deleteAccount: (context) => const DeleteAccountView(),
         AppRoutes.chat: (context) => const ChatView(),
 

@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../core/constants/app_routes.dart';
 import '../core/widgets/help_button.dart';
+import '../viewmodels/home_viewmodel.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
   static const Color _primaryColor = Color(0xFF3A8F7D);
   static const Color _backgroundColor = Color(0xFFF5F5F0);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HomeViewModel>().loadUser();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +47,10 @@ class HomeView extends StatelessWidget {
                         Navigator.pushNamed(context, AppRoutes.chat);
                       },
                       onProfileTap: () {
-                        Navigator.pushNamed(context, AppRoutes.profile);
+                        Navigator.pushNamed(context, AppRoutes.profile).then((_) {
+                          if (!mounted) return;
+                          context.read<HomeViewModel>().loadUser();
+                        });
                       },
                     ),
                     const SizedBox(height: 24),
@@ -134,7 +152,10 @@ class HomeView extends StatelessWidget {
             Navigator.pushNamed(context, AppRoutes.qrScan);
           },
           onProfileTap: () {
-            Navigator.pushNamed(context, AppRoutes.profile);
+            Navigator.pushNamed(context, AppRoutes.profile).then((_) {
+              if (!mounted) return;
+              context.read<HomeViewModel>().loadUser();
+            });
           },
         ),
       ),
@@ -244,21 +265,42 @@ class _HomeHeader extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 18),
-                        const Expanded(
+                        Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Nombre de usuario',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  height: 1.1,
-                                ),
+                              Builder(
+                                builder: (context) {
+                                  final user = context.watch<HomeViewModel>().user;
+                                  if (user == null) {
+                                    return const Text(
+                                      'Cargando...',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        height: 1.1,
+                                      ),
+                                    );
+                                  }
+                                  final display = user.nombreUsuario.isNotEmpty
+                                      ? user.nombreUsuario
+                                      : (user.nombreCompleto.isNotEmpty
+                                          ? user.nombreCompleto
+                                          : 'Sin nombre');
+                                  return Text(
+                                    display,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      height: 1.1,
+                                    ),
+                                  );
+                                },
                               ),
-                              SizedBox(height: 6),
-                              Text(
+                              const SizedBox(height: 6),
+                              const Text(
                                 'Ver perfil y cuenta',
                                 style: TextStyle(
                                   color: Colors.white70,

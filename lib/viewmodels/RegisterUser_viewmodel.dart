@@ -10,6 +10,7 @@ class RegisterUserViewModel extends ChangeNotifier {
   String apellido = '';
   String cedula = '';
   String celular = '';
+  String nombreUsuario = '';
 
   bool isLoading = false;
 
@@ -43,6 +44,11 @@ class RegisterUserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setNombreUsuario(String value) {
+    nombreUsuario = value;
+    notifyListeners();
+  }
+
   Future register(BuildContext context) async {
     isLoading = true;
     notifyListeners();
@@ -55,6 +61,7 @@ class RegisterUserViewModel extends ChangeNotifier {
         apellido,
         cedula,
         celular,
+        nombreUsuario,
       );
 
       print("REGISTER OK: $response");
