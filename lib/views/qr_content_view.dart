@@ -3,7 +3,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_routes.dart';
-import '../features/qr/data/models/qr_scan_model.dart';
 
 class QrContentView extends StatelessWidget {
   const QrContentView({super.key});
@@ -12,7 +11,7 @@ class QrContentView extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments;
 
-    final QrScanModel? qrData = args is QrScanModel ? args : null;
+    final String? qrRawValue = args is String ? args : null;
 
     return Scaffold(
       backgroundColor: AppColors.mintBackground,
@@ -24,25 +23,25 @@ class QrContentView extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
-        child: qrData == null
+        child: qrRawValue == null || qrRawValue.trim().isEmpty
             ? _EmptyQrContent(
                 onScanAgain: () {
                   Navigator.pushReplacementNamed(context, AppRoutes.qrScan);
                 },
               )
-            : _QrContentBody(qrData: qrData),
+            : _QrContentBody(rawValue: qrRawValue),
       ),
     );
   }
 }
 
 class _QrContentBody extends StatelessWidget {
-  final QrScanModel qrData;
+  final String rawValue;
 
-  const _QrContentBody({required this.qrData});
+  const _QrContentBody({required this.rawValue});
 
   bool get _isValidUrl {
-    final uri = Uri.tryParse(qrData.rawValue.trim());
+    final uri = Uri.tryParse(rawValue.trim());
 
     if (uri == null) return false;
 
@@ -52,7 +51,7 @@ class _QrContentBody extends StatelessWidget {
   }
 
   Future<void> _openQrLink(BuildContext context) async {
-    final uri = Uri.tryParse(qrData.rawValue.trim());
+    final uri = Uri.tryParse(rawValue.trim());
 
     if (uri == null || !_isValidUrl) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -137,7 +136,7 @@ class _QrContentBody extends StatelessWidget {
             border: Border.all(color: Colors.black12),
           ),
           child: Text(
-            qrData.rawValue,
+            rawValue,
             style: const TextStyle(fontSize: 14, color: Colors.black87),
           ),
         ),

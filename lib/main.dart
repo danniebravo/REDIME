@@ -7,7 +7,6 @@ import 'core/theme/app_theme.dart';
 
 import 'features/device_pickup/domain/usecases/submit_pickup_request.dart';
 import 'features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
-import 'features/qr/presentation/viewmodels/qr_scan_viewmodel.dart';
 
 import 'viewmodels/RegisterUser_viewmodel.dart';
 import 'viewmodels/login_viewmodel.dart';
@@ -50,7 +49,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // Bypass temporal solo para pruebas visuales.
-  // Antes de subir cambios finales, dejar en false.
+  // Mantener en false antes de subir cambios finales.
   static const bool bypassLogin = false;
 
   @override
@@ -69,10 +68,8 @@ class MyApp extends StatelessWidget {
         AppRoutes.deleteAccount: (context) => const DeleteAccountView(),
         AppRoutes.chat: (context) => const ChatView(),
 
-        AppRoutes.qrScan: (context) => ChangeNotifierProvider(
-          create: (_) => QrScanViewModel(),
-          child: const QrScanView(),
-        ),
+        // QR desacoplado de QrScanViewModel.
+        AppRoutes.qrScan: (context) => const QrScanView(),
         AppRoutes.qrContent: (context) => const QrContentView(),
 
         AppRoutes.deviceStatus: (context) => const DeviceStatusView(),
@@ -85,6 +82,8 @@ class MyApp extends StatelessWidget {
         AppRoutes.pickupConfirmation: (context) =>
             const PickupConfirmationView(),
 
+        // Recoger dispositivos todavía conserva temporalmente su ViewModel.
+        // Lo desacoplamos en una fase posterior para no romper la UI.
         AppRoutes.pickupFlow: (context) => ChangeNotifierProvider(
           create: (_) =>
               PickupFlowViewModel(submitUseCase: SubmitPickupRequestUseCase()),
