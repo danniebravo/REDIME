@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/constants/app_routes.dart';
+import '../services/auth_service.dart';
 
 class DeleteAccountView extends StatefulWidget {
   const DeleteAccountView({super.key});
@@ -15,6 +16,7 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   static const Color _primaryTeal = Color(0xFF3D8B85);
 
@@ -37,6 +39,30 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
 
       return;
     }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final auth = AuthService();
+
+    try {
+      await auth.deleteAccount(email, password);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+      final message = e.toString().replaceFirst('Exception: ', '');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+      return;
+    }
+
+    await auth.clearToken();
+
+    if (!mounted) return;
 
     await showDialog<void>(
       context: context,
@@ -228,7 +254,7 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                 width: double.infinity,
 
                 child: ElevatedButton(
-                  onPressed: _deleteAccount,
+                  onPressed: _isLoading ? null : _deleteAccount,
 
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _primaryTeal,
