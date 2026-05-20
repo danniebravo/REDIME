@@ -18,6 +18,7 @@ class _PickupStep2TypeViewState extends State<PickupStep2TypeView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     final args = ModalRoute.of(context)?.settings.arguments as PickupViewModel?;
     _viewModel = args ?? PickupViewModel();
     _viewModel.addListener(_onViewModelChange);
@@ -37,10 +38,7 @@ class _PickupStep2TypeViewState extends State<PickupStep2TypeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const CustomAppBar(
-        title: 'REDIME',
-        currentStep: 2,
-      ),
+      appBar: const CustomAppBar(title: 'REDIME', currentStep: 2),
       body: SafeArea(
         top: false,
         child: Padding(
@@ -49,6 +47,7 @@ class _PickupStep2TypeViewState extends State<PickupStep2TypeView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 32),
+
               const Text(
                 'Empecemos\ncon la redención',
                 textAlign: TextAlign.center,
@@ -59,45 +58,57 @@ class _PickupStep2TypeViewState extends State<PickupStep2TypeView> {
                   height: 1.2,
                 ),
               ),
+
               const SizedBox(height: 12),
+
               const Text(
                 '¿Selecciona qué tipo de dispositivo deseas\nreciclar hoy?',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.darkTeal,
-                ),
+                style: TextStyle(fontSize: 14, color: AppColors.darkTeal),
               ),
+
               const SizedBox(height: 48),
+
               Row(
                 children: [
                   Expanded(
-                     child: _buildCategoryCard(
-                         category: DeviceCategory.telecom,
-                         title: 'Equipos de\ntelecomunicaciones',
-                         imageSelected: 'assets/images/Equipos-de-telecom-seleccionados.webp',
-                         imageUnselected: 'assets/images/Equipos-de-telecom-deseleccionado_1.webp',
-                     ),
+                    child: _buildCategoryCard(
+                      category: DeviceCategory.telecom,
+                      title: 'Equipos de\ntelecomunicaciones',
+                      imageSelected:
+                          'assets/images/Equipos-de-telecom-seleccionados.webp',
+                      imageUnselected:
+                          'assets/images/Equipos-de-telecom-deseleccionado_1.webp',
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                     child: _buildCategoryCard(
-                         category: DeviceCategory.others,
-                         title: '\nOtros',
-                         imageSelected: 'assets/images/Otros-celeccionado_-blanco_1.webp',
-                         imageUnselected: 'assets/images/Otros-deseleccionados_-negro.webp',
-                     ),
+                    child: _buildCategoryCard(
+                      category: DeviceCategory.others,
+                      title: '\nOtros',
+                      imageSelected:
+                          'assets/images/Otros-celeccionado_-blanco_1.webp',
+                      imageUnselected:
+                          'assets/images/Otros-deseleccionados_-negro.webp',
+                    ),
                   ),
                 ],
               ),
+
               const Spacer(),
+
               PrimaryButton(
                 text: 'Continuar',
                 isEnabled: _viewModel.selectedCategory != DeviceCategory.none,
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.pickupStep3, arguments: _viewModel);
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.pickupStep3,
+                    arguments: _viewModel,
+                  );
                 },
               ),
+
               const SizedBox(height: 32),
             ],
           ),
@@ -112,16 +123,25 @@ class _PickupStep2TypeViewState extends State<PickupStep2TypeView> {
     required String imageSelected,
     required String imageUnselected,
   }) {
-    bool isSelected = _viewModel.selectedCategory == category;
-    
+    final bool isSelected = _viewModel.selectedCategory == category;
+
     Color bgColor;
     Color textColor;
+
     if (!isSelected) {
-       bgColor = category == DeviceCategory.telecom ? AppColors.lightTeal : AppColors.white;
-       textColor = category == DeviceCategory.telecom ? AppColors.darkTeal : AppColors.textMain;
+      bgColor = category == DeviceCategory.telecom
+          ? AppColors.lightTeal
+          : AppColors.white;
+      textColor = category == DeviceCategory.telecom
+          ? AppColors.darkTeal
+          : AppColors.textMain;
     } else {
-       bgColor = category == DeviceCategory.telecom ? AppColors.darkTeal : AppColors.otherSelectedBg;
-       textColor = category == DeviceCategory.telecom ? AppColors.lightTeal : AppColors.white;
+      bgColor = category == DeviceCategory.telecom
+          ? AppColors.darkTeal
+          : AppColors.otherSelectedBg;
+      textColor = category == DeviceCategory.telecom
+          ? AppColors.lightTeal
+          : AppColors.white;
     }
 
     return GestureDetector(
@@ -137,12 +157,12 @@ class _PickupStep2TypeViewState extends State<PickupStep2TypeView> {
               color: bgColor,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
-                if (!isSelected) 
+                if (!isSelected)
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
-                  )
+                  ),
               ],
             ),
             child: Column(
@@ -167,24 +187,24 @@ class _PickupStep2TypeViewState extends State<PickupStep2TypeView> {
             ),
           ),
           if (isSelected)
-             Positioned(
-               top: -8,
-               right: -8,
-               child: Container(
-                 padding: const EdgeInsets.all(6),
-                 decoration: BoxDecoration(
-                   color: AppColors.white,
-                   shape: BoxShape.circle,
-                   boxShadow: [
-                     BoxShadow(
-                       color: Colors.black.withOpacity(0.15),
-                       blurRadius: 6,
-                     )
-                   ]
-                 ),
-                 child: const Icon(Icons.check, size: 16, color: Colors.black),
-               ),
-             ),
+            Positioned(
+              top: -8,
+              right: -8,
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.check, size: 16, color: Colors.black),
+              ),
+            ),
         ],
       ),
     );
