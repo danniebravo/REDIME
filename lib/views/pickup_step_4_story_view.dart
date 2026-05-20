@@ -106,7 +106,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                 leading: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: AppColors.teal.withOpacity(0.15),
+                    color: AppColors.teal.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.camera_alt, color: AppColors.darkTeal),
@@ -122,7 +122,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                 leading: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: AppColors.teal.withOpacity(0.15),
+                    color: AppColors.teal.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.photo_library, color: AppColors.darkTeal),
@@ -204,7 +204,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 13,
-                        color: AppColors.darkTeal.withOpacity(0.7),
+                        color: AppColors.darkTeal.withValues(alpha: 0.7),
                         height: 1.5,
                       ),
                     ),
@@ -236,7 +236,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                           hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
                           contentPadding: const EdgeInsets.all(16),
                           border: InputBorder.none,
-                          counterStyle: TextStyle(color: AppColors.teal.withOpacity(0.6), fontSize: 11),
+                          counterStyle: TextStyle(color: AppColors.teal.withValues(alpha: 0.6), fontSize: 11),
                         ),
                       ),
                     ),
@@ -290,7 +290,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: AppColors.darkTeal.withOpacity(0.8),
+                                        color: AppColors.darkTeal.withValues(alpha: 0.8),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: const Text(
@@ -306,7 +306,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                                   Icon(
                                     Icons.camera_alt_outlined,
                                     size: 48,
-                                    color: AppColors.darkTeal.withOpacity(0.5),
+                                    color: AppColors.darkTeal.withValues(alpha: 0.5),
                                   ),
                                   const SizedBox(height: 12),
                                   const Text(
@@ -323,7 +323,7 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: AppColors.darkTeal.withOpacity(0.5),
+                                      color: AppColors.darkTeal.withValues(alpha: 0.5),
                                       height: 1.4,
                                     ),
                                   ),
