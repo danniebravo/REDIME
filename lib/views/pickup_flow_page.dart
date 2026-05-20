@@ -5,6 +5,7 @@ import '../core/constants/app_colors.dart';
 import '../core/constants/app_routes.dart';
 import '../core/widgets/help_button.dart';
 import '../core/widgets/step_progress_indicator.dart';
+import '../features/device_pickup/domain/entities/enums.dart';
 import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
 import 'step1_device_type_view.dart';
 import 'step2_device_details_view.dart';
@@ -19,8 +20,10 @@ class PickupFlowPage extends StatefulWidget {
 }
 
 class _PickupFlowPageState extends State<PickupFlowPage> {
-  late PageController _pageController;
+  late final PageController _pageController;
+
   int _lastStep = 0;
+  String? _selectedDeviceTypeId;
 
   @override
   void initState() {
@@ -53,9 +56,43 @@ class _PickupFlowPageState extends State<PickupFlowPage> {
     }
   }
 
+  String? _deviceTypeToId(DeviceType? type) {
+    return switch (type) {
+      DeviceType.largeAppliance => 'large_appliance',
+      DeviceType.smallAppliance => 'small_appliance',
+      DeviceType.telecomEquipment => 'telecom_equipment',
+      DeviceType.other => 'other',
+      null => null,
+    };
+  }
+
+  DeviceType? _idToDeviceType(String id) {
+    return switch (id) {
+      'large_appliance' => DeviceType.largeAppliance,
+      'small_appliance' => DeviceType.smallAppliance,
+      'telecom_equipment' => DeviceType.telecomEquipment,
+      'other' => DeviceType.other,
+      _ => null,
+    };
+  }
+
+  void _selectDeviceType(PickupFlowViewModel vm, String id) {
+    final deviceType = _idToDeviceType(id);
+
+    if (deviceType == null) return;
+
+    setState(() {
+      _selectedDeviceTypeId = id;
+    });
+
+    vm.selectDeviceType(deviceType);
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<PickupFlowViewModel>();
+
+    _selectedDeviceTypeId ??= _deviceTypeToId(vm.selectedDeviceType);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _syncPage(vm.currentStep);
@@ -80,11 +117,15 @@ class _PickupFlowPageState extends State<PickupFlowPage> {
               child: PageView(
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
-                children: const [
-                  Step1DeviceTypeView(),
-                  Step2DeviceDetailsView(),
-                  Step3AddressDateView(),
-                  Step4StoryView(),
+                children: [
+                  Step1DeviceTypeView(
+                    selectedDeviceType: _selectedDeviceTypeId,
+                    onSelectDeviceType: (id) => _selectDeviceType(vm, id),
+                    onContinue: vm.canContinueStep1 ? vm.nextStep : () {},
+                  ),
+                  const Step2DeviceDetailsView(),
+                  const Step3AddressDateView(),
+                  const Step4StoryView(),
                 ],
               ),
             ),
@@ -100,9 +141,6 @@ class _PickupFlowHeaderClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     final path = Path();
 
-    // Curva más equilibrada:
-    // no tan arriba para no cortar el stepper,
-    // no tan abajo para no generar tanto espacio blanco visual.
     path.lineTo(0, size.height - 38);
 
     path.quadraticBezierTo(

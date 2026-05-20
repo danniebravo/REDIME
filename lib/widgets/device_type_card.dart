@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../core/constants/app_colors.dart';
 import '../core/theme/app_text_styles.dart';
-import '../features/device_pickup/domain/entities/enums.dart';
 
 class DeviceTypeCard extends StatelessWidget {
-  final DeviceType type;
+  final String title;
   final String selectedAssetPath;
   final String unselectedAssetPath;
   final bool isSelected;
@@ -14,7 +13,7 @@ class DeviceTypeCard extends StatelessWidget {
 
   const DeviceTypeCard({
     super.key,
-    required this.type,
+    required this.title,
     required this.selectedAssetPath,
     required this.unselectedAssetPath,
     required this.isSelected,
@@ -94,7 +93,7 @@ class DeviceTypeCard extends StatelessWidget {
 
                         Flexible(
                           child: Text(
-                            type.displayName,
+                            title,
                             textAlign: TextAlign.center,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,

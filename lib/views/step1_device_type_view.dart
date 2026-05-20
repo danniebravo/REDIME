@@ -1,48 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_strings.dart';
 import '../core/widgets/primary_button.dart';
 import '../core/widgets/section_header.dart';
-import '../features/device_pickup/domain/entities/enums.dart';
-import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
 import '../widgets/device_type_card.dart';
 
 class Step1DeviceTypeView extends StatelessWidget {
-  const Step1DeviceTypeView({super.key});
+  final String? selectedDeviceType;
+  final ValueChanged<String> onSelectDeviceType;
+  final VoidCallback onContinue;
+
+  const Step1DeviceTypeView({
+    super.key,
+    required this.selectedDeviceType,
+    required this.onSelectDeviceType,
+    required this.onContinue,
+  });
 
   static const _cardConfigs = [
     (
-      DeviceType.largeAppliance,
+      'large_appliance',
+      'Electrodomésticos',
       'assets/images/Electrodomesticos-seleccionado.png',
       'assets/images/Electrodomesticos-deseleccionado.png',
       AppColors.cardLightMint,
     ),
     (
-      DeviceType.smallAppliance,
+      'small_appliance',
+      'Medianos y pequeños',
       'assets/images/Medianos-seleccionados.png',
       'assets/images/Medianos-Deseleccionados.png',
       AppColors.cardLightMint,
     ),
     (
-      DeviceType.telecomEquipment,
+      'telecom_equipment',
+      'Equipos de telecomunicaciones',
       'assets/images/Equipos-de-telecom-seleccionados.webp',
       'assets/images/Equipos-de-telecom-deseleccionado_1.webp',
       AppColors.cardMediumTeal,
     ),
     (
-      DeviceType.other,
+      'other',
+      'Otros',
       'assets/images/Otros-celeccionado_-blanco_1.webp',
       'assets/images/Otros-deseleccionados_-negro.webp',
       AppColors.cardLightMint,
     ),
   ];
 
+  bool get _canContinue => selectedDeviceType != null;
+
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<PickupFlowViewModel>();
-
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 18, 24, 16),
       child: Column(
@@ -63,16 +73,21 @@ class Step1DeviceTypeView extends StatelessWidget {
             crossAxisSpacing: 14,
             childAspectRatio: 1.04,
             children: _cardConfigs.map((config) {
-              final (type, selectedAssetPath, unselectedAssetPath, bgColor) =
-                  config;
+              final (
+                id,
+                title,
+                selectedAssetPath,
+                unselectedAssetPath,
+                bgColor,
+              ) = config;
 
               return DeviceTypeCard(
-                type: type,
+                title: title,
                 selectedAssetPath: selectedAssetPath,
                 unselectedAssetPath: unselectedAssetPath,
                 backgroundColor: bgColor,
-                isSelected: vm.selectedDeviceType == type,
-                onTap: () => vm.selectDeviceType(type),
+                isSelected: selectedDeviceType == id,
+                onTap: () => onSelectDeviceType(id),
               );
             }).toList(),
           ),
@@ -81,7 +96,7 @@ class Step1DeviceTypeView extends StatelessWidget {
 
           PrimaryButton(
             label: AppStrings.continueButton,
-            onPressed: vm.canContinueStep1 ? () => vm.nextStep() : null,
+            onPressed: _canContinue ? onContinue : null,
           ),
         ],
       ),
