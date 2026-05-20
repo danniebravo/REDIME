@@ -1,25 +1,221 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_strings.dart';
 import '../core/widgets/primary_button.dart';
-import '../features/device_pickup/domain/entities/enums.dart';
-import '../features/device_pickup/presentation/viewmodels/pickup_flow_viewmodel.dart';
 
 class Step2DeviceDetailsView extends StatefulWidget {
-  const Step2DeviceDetailsView({super.key});
+  final String? selectedSubcategory;
+  final List<String> subcategories;
+  final bool isNonRaee;
+
+  final String? dynamicExtraFieldLabel;
+  final List<String>? dynamicExtraFieldOptions;
+  final String? selectedDynamicExtra;
+
+  final String brand;
+  final String? estimatedWeight;
+  final String? age;
+  final bool? hasScreen;
+  final bool? isScreenBroken;
+  final String? condition;
+  final String? integrity;
+  final bool canContinue;
+
+  final ValueChanged<String?> onSubcategoryChanged;
+  final ValueChanged<String?> onDynamicExtraChanged;
+  final ValueChanged<String> onBrandChanged;
+  final ValueChanged<String?> onEstimatedWeightChanged;
+  final ValueChanged<String?> onAgeChanged;
+  final ValueChanged<bool?> onHasScreenChanged;
+  final ValueChanged<bool?> onScreenBrokenChanged;
+  final ValueChanged<String?> onConditionChanged;
+  final ValueChanged<String?> onIntegrityChanged;
+  final VoidCallback onContinue;
+
+  const Step2DeviceDetailsView({
+    super.key,
+    required this.selectedSubcategory,
+    required this.subcategories,
+    required this.isNonRaee,
+    required this.dynamicExtraFieldLabel,
+    required this.dynamicExtraFieldOptions,
+    required this.selectedDynamicExtra,
+    required this.brand,
+    required this.estimatedWeight,
+    required this.age,
+    required this.hasScreen,
+    required this.isScreenBroken,
+    required this.condition,
+    required this.integrity,
+    required this.canContinue,
+    required this.onSubcategoryChanged,
+    required this.onDynamicExtraChanged,
+    required this.onBrandChanged,
+    required this.onEstimatedWeightChanged,
+    required this.onAgeChanged,
+    required this.onHasScreenChanged,
+    required this.onScreenBrokenChanged,
+    required this.onConditionChanged,
+    required this.onIntegrityChanged,
+    required this.onContinue,
+  });
+
+  static const List<String> weightOptions = [
+    'Menos de 1 kg',
+    '1 - 5 kg',
+    '5 - 15 kg',
+    '15 - 30 kg',
+    'Más de 30 kg',
+  ];
+
+  static const List<String> ageOptions = [
+    'Menos de 1 año',
+    '1 - 3 años',
+    '3 - 5 años',
+    '5 - 10 años',
+    'Más de 10 años',
+  ];
+
+  static const List<String> conditionOptions = [
+    'fully_working',
+    'partially_working',
+    'not_working',
+  ];
+
+  static const List<String> integrityOptions = [
+    'single_piece',
+    'multiple_pieces',
+  ];
 
   @override
   State<Step2DeviceDetailsView> createState() => _Step2DeviceDetailsViewState();
 }
 
 class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
-  final TextEditingController _brandController = TextEditingController();
+  late final TextEditingController _brandController;
   final FocusNode _brandFocusNode = FocusNode();
 
   List<String> _brandSuggestions = [];
   bool _showSuggestions = false;
+
+  static const List<String> _allBrands = [
+    'Samsung',
+    'Apple',
+    'Huawei',
+    'Xiaomi',
+    'Motorola',
+    'Nokia',
+    'LG',
+    'Sony',
+    'OnePlus',
+    'Oppo',
+    'Vivo',
+    'Realme',
+    'ZTE',
+    'Honor',
+    'Google Pixel',
+    'HTC',
+    'Alcatel',
+    'BlackBerry',
+    'Dell',
+    'HP',
+    'Lenovo',
+    'Asus',
+    'Acer',
+    'MSI',
+    'Toshiba',
+    'Compaq',
+    'Gateway',
+    'Alienware',
+    'Razer',
+    'Microsoft Surface',
+    'Panasonic',
+    'Philips',
+    'TCL',
+    'Hisense',
+    'Sharp',
+    'Vizio',
+    'AOC',
+    'ViewSonic',
+    'BenQ',
+    'Daewoo',
+    'Kalley',
+    'Challenger',
+    'Canon',
+    'Nikon',
+    'Fujifilm',
+    'GoPro',
+    'Olympus',
+    'JBL',
+    'Bose',
+    'Harman Kardon',
+    'Sennheiser',
+    'Nintendo',
+    'PlayStation',
+    'Xbox',
+    'Sega',
+    'Atari',
+    'Black & Decker',
+    'Oster',
+    'Hamilton Beach',
+    'KitchenAid',
+    'Braun',
+    'Cuisinart',
+    'Moulinex',
+    'T-fal',
+    'Whirlpool',
+    'Electrolux',
+    'Mabe',
+    'Haceb',
+    'Imusa',
+    'Epson',
+    'Brother',
+    'Lexmark',
+    'Ricoh',
+    'Xerox',
+    'Western Digital',
+    'Seagate',
+    'Kingston',
+    'SanDisk',
+    'Crucial',
+    'Maxtor',
+    'Hitachi',
+    'TP-Link',
+    'Cisco',
+    'Netgear',
+    'D-Link',
+    'Linksys',
+    'Ubiquiti',
+    'MikroTik',
+    'Duracell',
+    'Energizer',
+    'Varta',
+    'GP',
+    'Garmin',
+    'Fitbit',
+    'Dyson',
+    'iRobot',
+    'Bosch',
+    'Makita',
+    'DeWalt',
+    'Dremel',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _brandController = TextEditingController(text: widget.brand);
+  }
+
+  @override
+  void didUpdateWidget(covariant Step2DeviceDetailsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.brand != _brandController.text && !_brandFocusNode.hasFocus) {
+      _brandController.text = widget.brand;
+    }
+  }
 
   @override
   void dispose() {
@@ -28,20 +224,74 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
     super.dispose();
   }
 
-  void _onBrandChanged(PickupFlowViewModel vm, String value) {
-    vm.setBrand(value);
+  List<String> _searchBrands(String query) {
+    if (query.isEmpty) return [];
 
-    final suggestions = vm.searchBrands(value);
+    final q = query.toLowerCase().trim();
+    final uniqueBrands = _allBrands.toSet().toList();
+
+    final prefixMatches = uniqueBrands
+        .where((brand) => brand.toLowerCase().startsWith(q))
+        .toList();
+
+    final containsMatches = uniqueBrands
+        .where(
+          (brand) =>
+              brand.toLowerCase().contains(q) &&
+              !brand.toLowerCase().startsWith(q),
+        )
+        .toList();
+
+    final fuzzyMatches = uniqueBrands.where((brand) {
+      final lowerBrand = brand.toLowerCase();
+
+      if (lowerBrand.contains(q) || lowerBrand.startsWith(q)) {
+        return false;
+      }
+
+      return _fuzzyMatch(q, lowerBrand);
+    }).toList();
+
+    return [
+      ...prefixMatches,
+      ...containsMatches,
+      ...fuzzyMatches,
+    ].take(8).toList();
+  }
+
+  bool _fuzzyMatch(String query, String target) {
+    if ((query.length - target.length).abs() > 3) return false;
+
+    int matched = 0;
+    int targetIndex = 0;
+
+    for (int i = 0; i < query.length && targetIndex < target.length; i++) {
+      for (int j = targetIndex; j < target.length; j++) {
+        if (query[i] == target[j]) {
+          matched++;
+          targetIndex = j + 1;
+          break;
+        }
+      }
+    }
+
+    return matched >= (query.length * 0.6).ceil() && query.length >= 2;
+  }
+
+  void _onBrandChanged(String value) {
+    widget.onBrandChanged(value);
+
+    final suggestions = _searchBrands(value);
 
     setState(() {
       _brandSuggestions = suggestions;
-      _showSuggestions = suggestions.isNotEmpty && value.isNotEmpty;
+      _showSuggestions = suggestions.isNotEmpty && value.trim().isNotEmpty;
     });
   }
 
-  void _selectBrand(PickupFlowViewModel vm, String brand) {
+  void _selectBrand(String brand) {
     _brandController.text = brand;
-    vm.setBrand(brand);
+    widget.onBrandChanged(brand);
 
     setState(() {
       _showSuggestions = false;
@@ -51,14 +301,25 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
     _brandFocusNode.unfocus();
   }
 
+  String _conditionLabel(String value) {
+    return switch (value) {
+      'fully_working' => 'Sí',
+      'partially_working' => 'Sí, pero no en su totalidad',
+      'not_working' => 'No',
+      _ => value,
+    };
+  }
+
+  String _integrityLabel(String value) {
+    return switch (value) {
+      'single_piece' => 'Sí',
+      'multiple_pieces' => 'No, tiene piezas sueltas',
+      _ => value,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<PickupFlowViewModel>();
-
-    if (_brandController.text != vm.brand && !_brandFocusNode.hasFocus) {
-      _brandController.text = vm.brand;
-    }
-
     return Column(
       children: [
         Expanded(
@@ -102,26 +363,26 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
                   _buildLabel(AppStrings.electronicTypeLabel),
                   const SizedBox(height: 8),
                   _buildDropdown(
-                    value: vm.selectedSubcategory,
+                    value: widget.selectedSubcategory,
                     hint: 'Selecciona una opción',
-                    items: vm.subcategories,
-                    onChanged: vm.setSubcategory,
+                    items: widget.subcategories,
+                    onChanged: widget.onSubcategoryChanged,
                   ),
 
-                  if (vm.isNonRaee) ...[
+                  if (widget.isNonRaee) ...[
                     const SizedBox(height: 12),
                     _buildNonRaeeWarning(),
                   ],
 
-                  if (vm.dynamicExtraFieldLabel != null &&
-                      vm.dynamicExtraFieldOptions != null) ...[
+                  if (widget.dynamicExtraFieldLabel != null &&
+                      widget.dynamicExtraFieldOptions != null) ...[
                     const SizedBox(height: 20),
-                    _buildLabel(vm.dynamicExtraFieldLabel!),
+                    _buildLabel(widget.dynamicExtraFieldLabel!),
                     const SizedBox(height: 8),
                     _buildChipRow(
-                      options: vm.dynamicExtraFieldOptions!,
-                      selected: vm.selectedDynamicExtra,
-                      onSelected: vm.setDynamicExtra,
+                      options: widget.dynamicExtraFieldOptions!,
+                      selected: widget.selectedDynamicExtra,
+                      onSelected: widget.onDynamicExtraChanged,
                     ),
                   ],
 
@@ -129,7 +390,7 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
 
                   _buildLabel(AppStrings.brandLabel),
                   const SizedBox(height: 8),
-                  _buildBrandAutocomplete(vm),
+                  _buildBrandAutocomplete(),
 
                   const SizedBox(height: 20),
 
@@ -139,10 +400,10 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
                   ),
                   const SizedBox(height: 8),
                   _buildDropdown(
-                    value: vm.estimatedWeight,
+                    value: widget.estimatedWeight,
                     hint: AppStrings.selectPlaceholder,
-                    items: PickupFlowViewModel.weightOptions,
-                    onChanged: vm.setEstimatedWeight,
+                    items: Step2DeviceDetailsView.weightOptions,
+                    onChanged: widget.onEstimatedWeightChanged,
                   ),
 
                   const SizedBox(height: 20),
@@ -150,10 +411,10 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
                   _buildLabelWithIcon(AppStrings.ageLabel, Icons.access_time),
                   const SizedBox(height: 8),
                   _buildDropdown(
-                    value: vm.age,
+                    value: widget.age,
                     hint: AppStrings.selectPlaceholder,
-                    items: PickupFlowViewModel.ageOptions,
-                    onChanged: vm.setAge,
+                    items: Step2DeviceDetailsView.ageOptions,
+                    onChanged: widget.onAgeChanged,
                   ),
 
                   const SizedBox(height: 20),
@@ -161,17 +422,17 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
                   _buildLabel('¿Tiene pantalla?'),
                   const SizedBox(height: 8),
                   _buildYesNoChips(
-                    selected: vm.hasScreen,
-                    onSelected: vm.setHasScreen,
+                    selected: widget.hasScreen,
+                    onSelected: widget.onHasScreenChanged,
                   ),
 
-                  if (vm.hasScreen == true) ...[
+                  if (widget.hasScreen == true) ...[
                     const SizedBox(height: 20),
                     _buildLabel('¿La pantalla está rota?'),
                     const SizedBox(height: 8),
                     _buildYesNoChips(
-                      selected: vm.isScreenBroken,
-                      onSelected: vm.setIsScreenBroken,
+                      selected: widget.isScreenBroken,
+                      onSelected: widget.onScreenBrokenChanged,
                     ),
                   ],
 
@@ -179,13 +440,13 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
 
                   _buildLabel(AppStrings.stillWorksLabel),
                   const SizedBox(height: 8),
-                  _buildConditionChips(vm),
+                  _buildConditionChips(),
 
                   const SizedBox(height: 20),
 
                   _buildLabel(AppStrings.onePieceLabel),
                   const SizedBox(height: 8),
-                  _buildIntegrityChips(vm),
+                  _buildIntegrityChips(),
 
                   const SizedBox(height: 32),
                 ],
@@ -198,14 +459,14 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
           padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
           child: PrimaryButton(
             label: AppStrings.continueButton,
-            onPressed: vm.canContinueStep2 ? () => vm.nextStep() : null,
+            onPressed: widget.canContinue ? widget.onContinue : null,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildBrandAutocomplete(PickupFlowViewModel vm) {
+  Widget _buildBrandAutocomplete() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -218,7 +479,7 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
           child: TextField(
             controller: _brandController,
             focusNode: _brandFocusNode,
-            onChanged: (value) => _onBrandChanged(vm, value),
+            onChanged: _onBrandChanged,
             style: const TextStyle(fontSize: 14, color: AppColors.textMain),
             decoration: InputDecoration(
               hintText: AppStrings.brandHint,
@@ -237,7 +498,7 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
                       ),
                       onPressed: () {
                         _brandController.clear();
-                        _onBrandChanged(vm, '');
+                        _onBrandChanged('');
                       },
                     )
                   : null,
@@ -264,7 +525,7 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: _brandSuggestions.map((brand) {
                 return InkWell(
-                  onTap: () => _selectBrand(vm, brand),
+                  onTap: () => _selectBrand(brand),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -303,66 +564,18 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
     return Row(
       children: [
         Expanded(
-          child: GestureDetector(
+          child: _buildSelectableBox(
+            label: 'Sí',
+            isSelected: selected == true,
             onTap: () => onSelected(selected == true ? null : true),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: selected == true
-                      ? AppColors.teal
-                      : AppColors.lightTeal,
-                  width: selected == true ? 2 : 1.5,
-                ),
-              ),
-              child: Text(
-                'Sí',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: selected == true
-                      ? FontWeight.w600
-                      : FontWeight.w400,
-                  color: selected == true
-                      ? AppColors.darkTeal
-                      : AppColors.textMain,
-                ),
-              ),
-            ),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: GestureDetector(
+          child: _buildSelectableBox(
+            label: 'No',
+            isSelected: selected == false,
             onTap: () => onSelected(selected == false ? null : false),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: selected == false
-                      ? AppColors.teal
-                      : AppColors.lightTeal,
-                  width: selected == false ? 2 : 1.5,
-                ),
-              ),
-              child: Text(
-                'No',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: selected == false
-                      ? FontWeight.w600
-                      : FontWeight.w400,
-                  color: selected == false
-                      ? AppColors.darkTeal
-                      : AppColors.textMain,
-                ),
-              ),
-            ),
           ),
         ),
       ],
@@ -510,46 +723,23 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
     );
   }
 
-  Widget _buildConditionChips(PickupFlowViewModel vm) {
-    final options = DeviceCondition.values;
-
+  Widget _buildConditionChips() {
     return Row(
-      children: options.map((condition) {
-        final isSelected = vm.condition == condition;
-        final isMiddle = condition == DeviceCondition.partiallyWorking;
+      children: Step2DeviceDetailsView.conditionOptions.map((condition) {
+        final isSelected = widget.condition == condition;
+        final isMiddle = condition == 'partially_working';
 
         return Expanded(
           flex: isMiddle ? 3 : 1,
           child: Padding(
             padding: EdgeInsets.only(
-              right: condition == DeviceCondition.notWorking ? 0 : 8,
-              left: condition == DeviceCondition.fullyWorking ? 0 : 4,
+              right: condition == 'not_working' ? 0 : 8,
+              left: condition == 'fully_working' ? 0 : 4,
             ),
-            child: GestureDetector(
-              onTap: () => vm.setCondition(condition),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 14,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSelected ? AppColors.teal : AppColors.lightTeal,
-                    width: isSelected ? 2 : 1.5,
-                  ),
-                ),
-                child: Text(
-                  condition.displayName,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    color: isSelected ? AppColors.darkTeal : AppColors.textMain,
-                  ),
-                ),
-              ),
+            child: _buildSelectableBox(
+              label: _conditionLabel(condition),
+              isSelected: isSelected,
+              onTap: () => widget.onConditionChanged(condition),
             ),
           ),
         );
@@ -557,13 +747,11 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
     );
   }
 
-  Widget _buildIntegrityChips(PickupFlowViewModel vm) {
-    final options = DeviceIntegrity.values;
-
+  Widget _buildIntegrityChips() {
     return Row(
-      children: options.map((integrity) {
-        final isSelected = vm.integrity == integrity;
-        final isFirst = integrity == DeviceIntegrity.singlePiece;
+      children: Step2DeviceDetailsView.integrityOptions.map((integrity) {
+        final isSelected = widget.integrity == integrity;
+        final isFirst = integrity == 'single_piece';
 
         return Expanded(
           flex: isFirst ? 1 : 3,
@@ -572,35 +760,44 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
               right: isFirst ? 8 : 0,
               left: isFirst ? 0 : 4,
             ),
-            child: GestureDetector(
-              onTap: () => vm.setIntegrity(integrity),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 14,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSelected ? AppColors.teal : AppColors.lightTeal,
-                    width: isSelected ? 2 : 1.5,
-                  ),
-                ),
-                child: Text(
-                  integrity.displayName,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    color: isSelected ? AppColors.darkTeal : AppColors.textMain,
-                  ),
-                ),
-              ),
+            child: _buildSelectableBox(
+              label: _integrityLabel(integrity),
+              isSelected: isSelected,
+              onTap: () => widget.onIntegrityChanged(integrity),
             ),
           ),
         );
       }).toList(),
+    );
+  }
+
+  Widget _buildSelectableBox({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? AppColors.teal : AppColors.lightTeal,
+            width: isSelected ? 2 : 1.5,
+          ),
+        ),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            color: isSelected ? AppColors.darkTeal : AppColors.textMain,
+          ),
+        ),
+      ),
     );
   }
 }

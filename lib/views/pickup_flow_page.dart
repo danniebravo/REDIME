@@ -88,6 +88,76 @@ class _PickupFlowPageState extends State<PickupFlowPage> {
     vm.selectDeviceType(deviceType);
   }
 
+  String? _conditionToId(DeviceCondition? condition) {
+    if (condition == null) return null;
+
+    final name = condition.name.toLowerCase();
+    final label = condition.displayName.toLowerCase();
+
+    if (name.contains('partial') || label.contains('parcial')) {
+      return 'partially_working';
+    }
+
+    if (name.contains('not') || label == 'no') {
+      return 'not_working';
+    }
+
+    return 'fully_working';
+  }
+
+  DeviceCondition? _idToCondition(String? id) {
+    if (id == null) return null;
+
+    for (final condition in DeviceCondition.values) {
+      if (_conditionToId(condition) == id) {
+        return condition;
+      }
+    }
+
+    return null;
+  }
+
+  String? _integrityToId(DeviceIntegrity? integrity) {
+    if (integrity == null) return null;
+
+    final name = integrity.name.toLowerCase();
+    final label = integrity.displayName.toLowerCase();
+
+    if (name.contains('single') || label == 'sí' || label == 'si') {
+      return 'single_piece';
+    }
+
+    return 'multiple_pieces';
+  }
+
+  DeviceIntegrity? _idToIntegrity(String? id) {
+    if (id == null) return null;
+
+    for (final integrity in DeviceIntegrity.values) {
+      if (_integrityToId(integrity) == id) {
+        return integrity;
+      }
+    }
+
+    return null;
+  }
+
+  void _setCondition(PickupFlowViewModel vm, String? id) {
+    final condition = _idToCondition(id);
+
+    if (condition == null) return;
+
+    vm.setCondition(condition);
+  }
+
+  void _setIntegrity(PickupFlowViewModel vm, String? id) {
+    final integrity = _idToIntegrity(id);
+
+    if (integrity == null) return;
+
+    vm.setIntegrity(integrity);
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<PickupFlowViewModel>();
@@ -123,7 +193,32 @@ class _PickupFlowPageState extends State<PickupFlowPage> {
                     onSelectDeviceType: (id) => _selectDeviceType(vm, id),
                     onContinue: vm.canContinueStep1 ? vm.nextStep : () {},
                   ),
-                  const Step2DeviceDetailsView(),
+                  Step2DeviceDetailsView(
+                    selectedSubcategory: vm.selectedSubcategory,
+                    subcategories: vm.subcategories,
+                    isNonRaee: vm.isNonRaee,
+                    dynamicExtraFieldLabel: vm.dynamicExtraFieldLabel,
+                    dynamicExtraFieldOptions: vm.dynamicExtraFieldOptions,
+                    selectedDynamicExtra: vm.selectedDynamicExtra,
+                    brand: vm.brand,
+                    estimatedWeight: vm.estimatedWeight,
+                    age: vm.age,
+                    hasScreen: vm.hasScreen,
+                    isScreenBroken: vm.isScreenBroken,
+                    condition: _conditionToId(vm.condition),
+                    integrity: _integrityToId(vm.integrity),
+                    canContinue: vm.canContinueStep2,
+                    onSubcategoryChanged: vm.setSubcategory,
+                    onDynamicExtraChanged: vm.setDynamicExtra,
+                    onBrandChanged: vm.setBrand,
+                    onEstimatedWeightChanged: vm.setEstimatedWeight,
+                    onAgeChanged: vm.setAge,
+                    onHasScreenChanged: vm.setHasScreen,
+                    onScreenBrokenChanged: vm.setIsScreenBroken,
+                    onConditionChanged: (id) => _setCondition(vm, id),
+                    onIntegrityChanged: (id) => _setIntegrity(vm, id),
+                    onContinue: vm.nextStep,
+                  ),
                   const Step3AddressDateView(),
                   const Step4StoryView(),
                 ],
