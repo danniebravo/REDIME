@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
 
   // Bypass temporal solo para pruebas visuales.
   // Mantener en false antes de subir cambios finales.
-  static const bool bypassLogin = true;
+  static const bool bypassLogin = false;
 
   @override
   Widget build(BuildContext context) {
