@@ -49,6 +49,29 @@ class RegisterUserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future loginWithGoogle(BuildContext context) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _auth.loginWithGoogle();
+      if (response == null) return;
+
+      print("GOOGLE LOGIN OK: $response");
+
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      print("ERROR GOOGLE LOGIN: $e");
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future register(BuildContext context) async {
     isLoading = true;
     notifyListeners();

@@ -38,4 +38,25 @@ class LoginViewModel extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
   }
+
+  Future loginWithGoogle(BuildContext context) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _auth.loginWithGoogle();
+      if (response == null) return;
+
+      print("GOOGLE LOGIN OK: $response");
+
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 }

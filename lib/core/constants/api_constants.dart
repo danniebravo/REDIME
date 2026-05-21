@@ -3,9 +3,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class ApiConstants {
   static final String baseUrl = dotenv.env['BASE_URL'] ?? '';
 
+  static final String googleWebClientId = dotenv.env['GOOGLE_WEB_CLIENT_ID'] ?? '';
+
   static final String login = '$baseUrl/auth/login';
 
   static final String register = '$baseUrl/auth/register';
+
+  static final String google = '$baseUrl/auth/google';
 
   static final String profile = '$baseUrl/auth/profile';
 

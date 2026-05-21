@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +24,42 @@ class AuthService {
   Future<void> clearToken() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tokenKey);
+  }
+
+  // ---------- GOOGLE LOGIN ----------
+  Future loginWithGoogle() async {
+    final googleSignIn = GoogleSignIn(
+      serverClientId: ApiConstants.googleWebClientId,
+      scopes: const ['email', 'profile'],
+    );
+
+    await googleSignIn.signOut();
+    final account = await googleSignIn.signIn();
+    if (account == null) return null;
+
+    final auth = await account.authentication;
+    final idToken = auth.idToken;
+    if (idToken == null || idToken.isEmpty) {
+      throw Exception('No se pudo obtener el idToken de Google');
+    }
+
+    final response = await http.post(
+      Uri.parse(ApiConstants.google),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"idToken": idToken}),
+    );
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      final token = data['data']?['token'];
+      if (token is String && token.isNotEmpty) {
+        await saveToken(token);
+      }
+      return data;
+    } else {
+      throw Exception(data["message"]);
+    }
   }
 
   // ---------- LOGIN ----------

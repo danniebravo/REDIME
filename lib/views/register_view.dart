@@ -217,7 +217,7 @@ class RegisterView extends StatelessWidget {
 
             // GOOGLE BUTTON
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () => vm.loginWithGoogle(context),
 
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 232, 240, 245),

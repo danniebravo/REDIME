@@ -126,7 +126,7 @@ class LoginView extends StatelessWidget {
             vm.isLoading
                 ? CircularProgressIndicator()
                 : ElevatedButton(
-                    onPressed: () => vm.login(context),
+                    onPressed: () => vm.loginWithGoogle(context),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
