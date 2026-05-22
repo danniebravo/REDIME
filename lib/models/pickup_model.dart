@@ -119,4 +119,73 @@ class PickupModel {
     final yyyy = d.year.toString().padLeft(4, '0');
     return '$dd/$mm/$yyyy';
   }
+
+  List<Map<String, dynamic>> get trackingSteps {
+    final s = (status ?? '').toLowerCase().trim();
+    final isFullyDone = s.contains('complet') || s.contains('finaliz');
+
+    int currentIdx;
+    if (isFullyDone) {
+      currentIdx = -1;
+    } else if (s.contains('recib') && !s.contains('solicitud')) {
+      currentIdx = 2;
+    } else if (s.contains('transit') || s.contains('camino')) {
+      currentIdx = 1;
+    } else {
+      currentIdx = 0;
+    }
+
+    String fmt(DateTime? d) {
+      if (d == null) return '';
+      final dd = d.day.toString().padLeft(2, '0');
+      final mm = d.month.toString().padLeft(2, '0');
+      final yyyy = d.year.toString().padLeft(4, '0');
+      return '$dd/$mm/$yyyy';
+    }
+
+    bool completed(int i) =>
+        isFullyDone || (currentIdx >= 0 && i < currentIdx);
+    bool current(int i) => !isFullyDone && i == currentIdx;
+
+    final createdLabel = fmt(createdAt);
+
+    return [
+      {
+        'title': 'Solicitud recibida',
+        'subtitle': 'Hemos recibido tu solicitud',
+        'isCompleted': completed(0),
+        'isCurrent': current(0),
+        'completedAt': completed(0) ? createdLabel : null,
+      },
+      {
+        'title': 'Dispositivo en tránsito',
+        'subtitle': 'El dispositivo va en camino',
+        'isCompleted': completed(1),
+        'isCurrent': current(1),
+        'completedAt': null,
+      },
+      {
+        'title': 'Dispositivo recibido',
+        'subtitle': 'Ya llegó a nuestras instalaciones',
+        'isCompleted': completed(2),
+        'isCurrent': current(2),
+        'completedAt': null,
+      },
+      {
+        'title': 'Proceso completado',
+        'subtitle': 'Finalizado correctamente',
+        'isCompleted': completed(3),
+        'isCurrent': current(3),
+        'completedAt': null,
+      },
+    ];
+  }
+
+  String get sourceLabel {
+    final src = (source ?? '').toLowerCase();
+    if (src.contains('punto') || src.contains('reciclaje')) {
+      return 'Punto de reciclaje';
+    }
+    return 'Entrega a domicilio';
+  }
 }

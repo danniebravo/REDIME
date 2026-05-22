@@ -6,6 +6,9 @@ class UserModel {
   final String email;
   final String celular;
   final String cedula;
+  final String? googleId;
+  final String? photoUrl;
+  final bool hasPassword;
 
   UserModel({
     required this.id,
@@ -15,6 +18,9 @@ class UserModel {
     required this.email,
     required this.celular,
     required this.cedula,
+    this.googleId,
+    this.photoUrl,
+    this.hasPassword = false,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +32,9 @@ class UserModel {
       email: (json['email'] ?? '') as String,
       celular: (json['celular'] ?? '') as String,
       cedula: (json['cedula'] ?? '') as String,
+      googleId: json['google_id'] as String?,
+      photoUrl: json['photo_url'] as String?,
+      hasPassword: (json['has_password'] as bool?) ?? false,
     );
   }
 
@@ -42,4 +51,6 @@ class UserModel {
   }
 
   String get nombreCompleto => '$nombre $apellido'.trim();
+
+  bool get isGoogleUser => googleId != null && googleId!.isNotEmpty;
 }

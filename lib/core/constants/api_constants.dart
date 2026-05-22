@@ -11,6 +11,8 @@ class ApiConstants {
 
   static final String google = '$baseUrl/auth/google';
 
+  static final String changePassword = '$baseUrl/auth/change-password';
+
   static final String profile = '$baseUrl/auth/profile';
 
   static final String deleteAccount = '$baseUrl/auth/account';

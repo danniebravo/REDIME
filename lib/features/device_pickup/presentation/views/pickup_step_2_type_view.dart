@@ -43,64 +43,79 @@ class _PickupStep2TypeViewState extends State<PickupStep2TypeView> {
       ),
       body: SafeArea(
         top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 32),
-              const Text(
-                'Empecemos\ncon la redención',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textMain,
-                  height: 1.2,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 32),
+                      const Text(
+                        'Empecemos\ncon la redención',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textMain,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        '¿Selecciona qué tipo de dispositivo deseas\nreciclar hoy?',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.darkTeal,
+                        ),
+                      ),
+                      const SizedBox(height: 48),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildCategoryCard(
+                              category: DeviceCategory.telecom,
+                              title: 'Equipos de\ntelecomunicaciones',
+                              imageSelected:
+                                  'assets/images/Equipos-de-telecom-seleccionados.webp',
+                              imageUnselected:
+                                  'assets/images/Equipos-de-telecom-deseleccionado_1.webp',
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildCategoryCard(
+                              category: DeviceCategory.others,
+                              title: '\nOtros',
+                              imageSelected:
+                                  'assets/images/Otros-celeccionado_-blanco_1.webp',
+                              imageUnselected:
+                                  'assets/images/Otros-deseleccionados_-negro.webp',
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      PrimaryButton(
+                        text: 'Continuar',
+                        isEnabled: _viewModel.selectedCategory !=
+                            DeviceCategory.none,
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoutes.pickupStep3,
+                              arguments: _viewModel);
+                        },
+                      ),
+                      const SizedBox(height: 32),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 12),
-              const Text(
-                '¿Selecciona qué tipo de dispositivo deseas\nreciclar hoy?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.darkTeal,
-                ),
-              ),
-              const SizedBox(height: 48),
-              Row(
-                children: [
-                  Expanded(
-                     child: _buildCategoryCard(
-                         category: DeviceCategory.telecom,
-                         title: 'Equipos de\ntelecomunicaciones',
-                         imageSelected: 'assets/images/Equipos-de-telecom-seleccionados.webp',
-                         imageUnselected: 'assets/images/Equipos-de-telecom-deseleccionado_1.webp',
-                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                     child: _buildCategoryCard(
-                         category: DeviceCategory.others,
-                         title: '\nOtros',
-                         imageSelected: 'assets/images/Otros-celeccionado_-blanco_1.webp',
-                         imageUnselected: 'assets/images/Otros-deseleccionados_-negro.webp',
-                     ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              PrimaryButton(
-                text: 'Continuar',
-                isEnabled: _viewModel.selectedCategory != DeviceCategory.none,
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.pickupStep3, arguments: _viewModel);
-                },
-              ),
-              const SizedBox(height: 32),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -118,10 +133,10 @@ class _PickupStep2TypeViewState extends State<PickupStep2TypeView> {
     Color textColor;
     if (!isSelected) {
        bgColor = category == DeviceCategory.telecom ? AppColors.lightTeal : AppColors.white;
-       textColor = category == DeviceCategory.telecom ? AppColors.darkTeal : AppColors.textMain;
+       textColor = category == DeviceCategory.telecom ? Colors.black : AppColors.textMain;
     } else {
        bgColor = category == DeviceCategory.telecom ? AppColors.darkTeal : AppColors.otherSelectedBg;
-       textColor = category == DeviceCategory.telecom ? AppColors.lightTeal : AppColors.white;
+       textColor = category == DeviceCategory.telecom ? Colors.white : AppColors.white;
     }
 
     return GestureDetector(
@@ -130,14 +145,14 @@ class _PickupStep2TypeViewState extends State<PickupStep2TypeView> {
         clipBehavior: Clip.none,
         children: [
           Container(
-            height: 160,
+            height: 180,
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: bgColor,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
-                if (!isSelected) 
+                if (!isSelected)
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
                     blurRadius: 10,
@@ -150,17 +165,20 @@ class _PickupStep2TypeViewState extends State<PickupStep2TypeView> {
               children: [
                 Image.asset(
                   isSelected ? imageSelected : imageUnselected,
-                  height: 64,
+                  height: 60,
                   fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: textColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: textColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ],

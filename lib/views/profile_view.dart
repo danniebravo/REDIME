@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants/app_routes.dart';
 import '../core/widgets/help_button.dart';
@@ -50,6 +54,12 @@ class _ProfileViewState extends State<ProfileView> {
   static const Color _backgroundColor = Color(0xFFF5F5F0);
   static const Color _softGreen = Color(0xFFE7F0EE);
 
+  String? _localPhotoPath;
+  int? _photoLoadedForUserId;
+  final ImagePicker _picker = ImagePicker();
+
+  static String _photoPrefKey(int userId) => 'profile_photo_path_$userId';
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +67,38 @@ class _ProfileViewState extends State<ProfileView> {
       if (!mounted) return;
       context.read<PickupListViewModel>().loadMine();
     });
+  }
+
+  Future<void> _loadLocalPhotoFor(int userId) async {
+    _photoLoadedForUserId = userId;
+    final prefs = await SharedPreferences.getInstance();
+    final path = prefs.getString(_photoPrefKey(userId));
+    final valid =
+        path != null && path.isNotEmpty && File(path).existsSync();
+    if (!mounted) return;
+    setState(() => _localPhotoPath = valid ? path : null);
+  }
+
+  Future<void> _pickProfilePhoto() async {
+    final user = context.read<ProfileViewModel>().user;
+    if (user == null) return;
+    try {
+      final XFile? picked = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 800,
+        imageQuality: 85,
+      );
+      if (picked == null) return;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_photoPrefKey(user.id), picked.path);
+      if (!mounted) return;
+      setState(() => _localPhotoPath = picked.path);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No se pudo seleccionar la foto: $e')),
+      );
+    }
   }
 
   final TextEditingController nombresController = TextEditingController();
@@ -146,7 +188,7 @@ class _ProfileViewState extends State<ProfileView> {
               Navigator.pop(ctx);
               Navigator.pushNamed(context, AppRoutes.deleteAccount);
             },
-            child: const Text('Eliminar cuenta'),
+            child: const Text('Eliminar'),
           ),
           OutlinedButton(
             onPressed: () => Navigator.pop(ctx),
@@ -161,6 +203,14 @@ class _ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     final vm = context.watch<ProfileViewModel>();
     _hydrateControllersIfNeeded(vm.user);
+
+    final user = vm.user;
+    if (user != null && user.id != _photoLoadedForUserId) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _loadLocalPhotoFor(user.id);
+      });
+    }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
@@ -340,30 +390,30 @@ class _ProfileViewState extends State<ProfileView> {
                             color: _softGreen,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
-                            Icons.person,
-                            size: 54,
-                            color: _primaryTeal,
-                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: _buildAvatarContent(user),
                         ),
                         Positioned(
                           bottom: 2,
                           right: 2,
-                          child: Container(
-                            width: 26,
-                            height: 26,
-                            decoration: BoxDecoration(
-                              color: _darkTeal,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 1.5,
+                          child: GestureDetector(
+                            onTap: _pickProfilePhoto,
+                            child: Container(
+                              width: 28,
+                              height: 28,
+                              decoration: BoxDecoration(
+                                color: _darkTeal,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 1.5,
+                                ),
                               ),
-                            ),
-                            child: const Icon(
-                              Icons.edit,
-                              size: 14,
-                              color: Colors.white,
+                              child: const Icon(
+                                Icons.edit,
+                                size: 14,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -389,6 +439,32 @@ class _ProfileViewState extends State<ProfileView> {
         ),
       ),
     );
+  }
+
+  Widget _buildAvatarContent(UserModel? user) {
+    if (_localPhotoPath != null && File(_localPhotoPath!).existsSync()) {
+      return Image.file(
+        File(_localPhotoPath!),
+        fit: BoxFit.cover,
+        width: 92,
+        height: 92,
+      );
+    }
+    final url = user?.photoUrl;
+    if (url != null && url.isNotEmpty) {
+      return Image.network(
+        url,
+        fit: BoxFit.cover,
+        width: 92,
+        height: 92,
+        errorBuilder: (_, __, ___) => const Icon(
+          Icons.person,
+          size: 54,
+          color: _primaryTeal,
+        ),
+      );
+    }
+    return const Icon(Icons.person, size: 54, color: _primaryTeal);
   }
 
   Widget _buildAccordion({
@@ -616,19 +692,21 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Widget _buildAccountContent(BuildContext context) {
+    final user = context.watch<ProfileViewModel>().user;
+    final hasPassword = user?.hasPassword ?? false;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Column(
         children: [
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Cambiar contraseña'),
+            title: Text(hasPassword ? 'Cambiar contraseña' : 'Crear contraseña'),
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Funcionalidad pendiente de implementar'),
-                ),
-              );
+              Navigator.pushNamed(context, AppRoutes.changePassword).then((_) {
+                if (!mounted) return;
+                context.read<ProfileViewModel>().loadProfile();
+              });
             },
           ),
           const Divider(height: 1),

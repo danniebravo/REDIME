@@ -176,12 +176,51 @@ class AuthService {
     throw Exception(data['message'] ?? 'Error actualizando el perfil');
   }
 
+  // ---------- CHANGE PASSWORD ----------
+  Future<void> changePassword({
+    String? currentPassword,
+    required String newPassword,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('No hay sesión activa');
+    }
+
+    final body = <String, dynamic>{'newPassword': newPassword};
+    if (currentPassword != null && currentPassword.isNotEmpty) {
+      body['currentPassword'] = currentPassword;
+    }
+
+    final response = await http.post(
+      Uri.parse(ApiConstants.changePassword),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+
+    if (response.statusCode == 200 && data['success'] == true) {
+      return;
+    }
+
+    throw Exception(data['message'] ?? 'Error cambiando la contraseña');
+  }
+
   // ---------- DELETE ACCOUNT ----------
-  Future<bool> deleteAccount(String email, String password) async {
+  Future<bool> deleteAccount(String? email, String? password) async {
     final token = await getToken();
 
     if (token == null || token.isEmpty) {
       throw Exception('No hay sesión activa');
+    }
+
+    final body = <String, dynamic>{};
+    if (email != null && email.isNotEmpty && password != null && password.isNotEmpty) {
+      body['email'] = email;
+      body['password'] = password;
     }
 
     final response = await http.delete(
@@ -190,7 +229,7 @@ class AuthService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode({'email': email, 'password': password}),
+      body: jsonEncode(body),
     );
 
     final data = jsonDecode(response.body) as Map<String, dynamic>;

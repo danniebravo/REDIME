@@ -23,11 +23,15 @@ import 'viewmodels/login_viewmodel.dart';
 import 'viewmodels/pickup_list_viewmodel.dart';
 import 'viewmodels/profile_viewmodel.dart';
 
+import 'models/pickup_model.dart';
+
+import 'views/change_password_view.dart';
 import 'views/chat_view.dart';
 import 'views/delete_account_view.dart';
 import 'views/device_status_view.dart';
 import 'views/home_view.dart';
 import 'views/login_view.dart';
+import 'views/pickup_status_detail_view.dart';
 import 'views/profile_view.dart';
 import 'views/qr_content_view.dart';
 import 'views/qr_scan_view.dart';
@@ -72,6 +76,7 @@ class MyApp extends StatelessWidget {
           child: const ProfileView(),
         ),
         AppRoutes.deleteAccount: (context) => const DeleteAccountView(),
+        AppRoutes.changePassword: (context) => const ChangePasswordView(),
         AppRoutes.chat: (context) => const ChatView(),
 
         AppRoutes.qrScan: (context) => ChangeNotifierProvider(
@@ -81,6 +86,11 @@ class MyApp extends StatelessWidget {
         AppRoutes.qrContent: (context) => const QrContentView(),
 
         AppRoutes.deviceStatus: (context) => const DeviceStatusView(),
+        AppRoutes.pickupStatusDetail: (context) {
+          final pickup =
+              ModalRoute.of(context)!.settings.arguments as PickupModel;
+          return PickupStatusDetailView(pickup: pickup);
+        },
 
         AppRoutes.pickupStep1: (context) => const PickupStep1MapView(),
         AppRoutes.pickupStep2: (context) => const PickupStep2TypeView(),

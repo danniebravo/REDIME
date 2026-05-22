@@ -15,9 +15,11 @@ class AppRoutes {
   static const String pickupConfirm = '/pickup-confirm';
 
   static const String deviceStatus = '/device-status';
+  static const String pickupStatusDetail = '/pickup-status-detail';
   static const String qrScan = '/qr-scan';
   static const String qrContent = '/qr-content';
   static const String chat = '/chat';
   static const String profile = '/profile';
   static const String deleteAccount = '/delete-account';
+  static const String changePassword = '/change-password';
 }

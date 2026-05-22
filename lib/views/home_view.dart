@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants/app_routes.dart';
 import '../core/widgets/help_button.dart';
+import '../models/user_model.dart';
 import '../viewmodels/home_viewmodel.dart';
 
 class HomeView extends StatefulWidget {
@@ -17,6 +21,11 @@ class _HomeViewState extends State<HomeView> {
   static const Color _primaryColor = Color(0xFF3A8F7D);
   static const Color _backgroundColor = Color(0xFFF5F5F0);
 
+  static String _photoPrefKey(int userId) => 'profile_photo_path_$userId';
+
+  String? _localPhotoPath;
+  int? _photoLoadedForUserId;
+
   @override
   void initState() {
     super.initState();
@@ -25,8 +34,26 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  Future<void> _loadLocalPhotoFor(int userId) async {
+    _photoLoadedForUserId = userId;
+    final prefs = await SharedPreferences.getInstance();
+    final path = prefs.getString(_photoPrefKey(userId));
+    if (!mounted) return;
+    setState(() {
+      _localPhotoPath = (path != null && File(path).existsSync()) ? path : null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<HomeViewModel>().user;
+    if (user != null && user.id != _photoLoadedForUserId) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _loadLocalPhotoFor(user.id);
+      });
+    }
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
         statusBarColor: _primaryColor,
@@ -43,6 +70,7 @@ class _HomeViewState extends State<HomeView> {
                   padding: EdgeInsets.zero,
                   children: [
                     _HomeHeader(
+                      localPhotoPath: _localPhotoPath,
                       onSupportTap: () {
                         Navigator.pushNamed(context, AppRoutes.chat);
                       },
@@ -50,6 +78,7 @@ class _HomeViewState extends State<HomeView> {
                         Navigator.pushNamed(context, AppRoutes.profile).then((_) {
                           if (!mounted) return;
                           context.read<HomeViewModel>().loadUser();
+                          _photoLoadedForUserId = null;
                         });
                       },
                     ),
@@ -155,6 +184,7 @@ class _HomeViewState extends State<HomeView> {
             Navigator.pushNamed(context, AppRoutes.profile).then((_) {
               if (!mounted) return;
               context.read<HomeViewModel>().loadUser();
+              _photoLoadedForUserId = null;
             });
           },
         ),
@@ -190,11 +220,42 @@ class _HomeHeaderClipper extends CustomClipper<Path> {
 class _HomeHeader extends StatelessWidget {
   final VoidCallback onSupportTap;
   final VoidCallback onProfileTap;
+  final String? localPhotoPath;
 
-  const _HomeHeader({required this.onSupportTap, required this.onProfileTap});
+  const _HomeHeader({
+    required this.onSupportTap,
+    required this.onProfileTap,
+    this.localPhotoPath,
+  });
 
   static const Color _primaryColor = Color(0xFF3A8F7D);
   static const Color _softGreen = Color(0xFFE7F0EE);
+
+  Widget _buildAvatar(UserModel? user) {
+    if (localPhotoPath != null && File(localPhotoPath!).existsSync()) {
+      return Image.file(
+        File(localPhotoPath!),
+        fit: BoxFit.cover,
+        width: 82,
+        height: 82,
+      );
+    }
+    final url = user?.photoUrl;
+    if (url != null && url.isNotEmpty) {
+      return Image.network(
+        url,
+        fit: BoxFit.cover,
+        width: 82,
+        height: 82,
+        errorBuilder: (_, __, ___) => const Icon(
+          Icons.person,
+          size: 46,
+          color: _primaryColor,
+        ),
+      );
+    }
+    return const Icon(Icons.person, size: 46, color: _primaryColor);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -258,10 +319,13 @@ class _HomeHeader extends StatelessWidget {
                             color: _softGreen,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
-                            Icons.person,
-                            size: 46,
-                            color: _primaryColor,
+                          clipBehavior: Clip.antiAlias,
+                          child: Builder(
+                            builder: (context) {
+                              final user =
+                                  context.watch<HomeViewModel>().user;
+                              return _buildAvatar(user);
+                            },
                           ),
                         ),
                         const SizedBox(width: 18),
