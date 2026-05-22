@@ -108,6 +108,15 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
                     onChanged: vm.setSubcategory,
                   ),
 
+                  if (vm.selectedSubcategory == 'Otro') ...[
+                    const SizedBox(height: 8),
+                    _buildOtherTextField(
+                      hint: '¿Cuál? Escribe el tipo de electrónico',
+                      value: vm.otherSubcategorySpecific,
+                      onChanged: vm.setOtherSubcategorySpecific,
+                    ),
+                  ],
+
                   if (vm.isNonRaee) ...[
                     const SizedBox(height: 12),
                     _buildNonRaeeWarning(),
@@ -123,6 +132,14 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
                       selected: vm.selectedDynamicExtra,
                       onSelected: vm.setDynamicExtra,
                     ),
+                    if (vm.selectedDynamicExtra == 'Otra') ...[
+                      const SizedBox(height: 8),
+                      _buildOtherTextField(
+                        hint: '¿Cuál? Especifica',
+                        value: vm.otherDynamicExtraSpecific,
+                        onChanged: vm.setOtherDynamicExtraSpecific,
+                      ),
+                    ],
                   ],
 
                   const SizedBox(height: 20),
@@ -399,6 +416,31 @@ class _Step2DeviceDetailsViewState extends State<Step2DeviceDetailsView> {
             style: TextStyle(fontSize: 13, color: Colors.black87),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildOtherTextField({
+    required String hint,
+    required String value,
+    required ValueChanged<String> onChanged,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.lightTeal, width: 1.5),
+      ),
+      child: TextFormField(
+        initialValue: value,
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          border: InputBorder.none,
+        ),
       ),
     );
   }

@@ -62,12 +62,12 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
       _showError('Debes ingresar tu contraseña actual');
       return;
     }
-    if (newPwd.length < 6) {
-      _showError('La nueva contraseña debe tener al menos 6 caracteres');
-      return;
-    }
     if (newPwd != confirm) {
       _showError('La nueva contraseña y la confirmación no coinciden');
+      return;
+    }
+    if (newPwd.length < 6) {
+      _showError('La nueva contraseña debe tener al menos 6 caracteres');
       return;
     }
 

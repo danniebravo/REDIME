@@ -111,6 +111,16 @@ class _PickupStep3DetailsViewState extends State<PickupStep3DetailsView> {
                         onChanged: (val) => _viewModel.setSubcategory(val),
                       ),
 
+                      if (_viewModel.selectedSubcategory == 'Otro') ...[
+                        const SizedBox(height: 8),
+                        _buildOtherTextField(
+                          hint: '¿Cuál? Escribe el tipo de electrónico',
+                          value: _viewModel.otherSubcategorySpecific,
+                          onChanged:
+                              _viewModel.setOtherSubcategorySpecific,
+                        ),
+                      ],
+
                       // Non-RAEE warning
                       if (_viewModel.isNonRaee) ...[
                         const SizedBox(height: 12),
@@ -127,6 +137,15 @@ class _PickupStep3DetailsViewState extends State<PickupStep3DetailsView> {
                           selected: _viewModel.selectedDynamicExtra,
                           onSelected: (val) => _viewModel.setDynamicExtra(val),
                         ),
+                        if (_viewModel.selectedDynamicExtra == 'Otra') ...[
+                          const SizedBox(height: 8),
+                          _buildOtherTextField(
+                            hint: '¿Cuál? Especifica',
+                            value: _viewModel.otherDynamicExtraSpecific,
+                            onChanged:
+                                _viewModel.setOtherDynamicExtraSpecific,
+                          ),
+                        ],
                       ],
 
                       const SizedBox(height: 20),
@@ -386,6 +405,31 @@ class _PickupStep3DetailsViewState extends State<PickupStep3DetailsView> {
   }
 
   // ---- Reusable form building widgets ----
+
+  Widget _buildOtherTextField({
+    required String hint,
+    required String value,
+    required ValueChanged<String> onChanged,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.lightTeal, width: 1.5),
+      ),
+      child: TextFormField(
+        initialValue: value,
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
 
   Widget _buildLabel(String text) {
     return Text(

@@ -55,6 +55,22 @@ class PickupFlowViewModel extends ChangeNotifier {
   String? _selectedDynamicExtra;
   String? get selectedDynamicExtra => _selectedDynamicExtra;
 
+  String _otherSubcategorySpecific = '';
+  String get otherSubcategorySpecific => _otherSubcategorySpecific;
+
+  String _otherDynamicExtraSpecific = '';
+  String get otherDynamicExtraSpecific => _otherDynamicExtraSpecific;
+
+  void setOtherSubcategorySpecific(String value) {
+    _otherSubcategorySpecific = value;
+    notifyListeners();
+  }
+
+  void setOtherDynamicExtraSpecific(String value) {
+    _otherDynamicExtraSpecific = value;
+    notifyListeners();
+  }
+
   // ─── Step 3: Address & Date ───
   String _address = '';
   String get address => _address;
@@ -377,6 +393,8 @@ class PickupFlowViewModel extends ChangeNotifier {
     _selectedSubcategory = value;
     _deviceDescription = value ?? '';
     _selectedDynamicExtra = null;
+    _otherSubcategorySpecific = '';
+    _otherDynamicExtraSpecific = '';
     _hasScreen = null;
     _isScreenBroken = null;
     notifyListeners();
@@ -409,6 +427,7 @@ class PickupFlowViewModel extends ChangeNotifier {
 
   void setDynamicExtra(String? value) {
     _selectedDynamicExtra = value;
+    if (value != 'Otra') _otherDynamicExtraSpecific = '';
     notifyListeners();
   }
 
@@ -502,9 +521,19 @@ class PickupFlowViewModel extends ChangeNotifier {
 
       _lastRequest = await _submitUseCase.call(request);
 
+      final subValue = (_selectedSubcategory == 'Otro' &&
+              _otherSubcategorySpecific.trim().isNotEmpty)
+          ? 'Otro: ${_otherSubcategorySpecific.trim()}'
+          : _selectedSubcategory;
+
+      final dynValue = (_selectedDynamicExtra == 'Otra' &&
+              _otherDynamicExtraSpecific.trim().isNotEmpty)
+          ? 'Otra: ${_otherDynamicExtraSpecific.trim()}'
+          : _selectedDynamicExtra;
+
       final pickup = PickupModel(
         deviceType: _selectedDeviceType?.name,
-        subcategory: _selectedSubcategory,
+        subcategory: subValue,
         brand: _brand,
         estimatedWeight: _estimatedWeight,
         age: _age,
@@ -512,7 +541,7 @@ class PickupFlowViewModel extends ChangeNotifier {
         integrity: _integrity?.displayName,
         hasScreen: _hasScreen,
         isScreenBroken: _isScreenBroken,
-        dynamicExtra: _selectedDynamicExtra,
+        dynamicExtra: dynValue,
         address: _address,
         pickupDate: _pickupDate,
         story: hasUserStory ? _story : null,

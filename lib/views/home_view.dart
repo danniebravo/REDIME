@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../core/constants/app_routes.dart';
 import '../core/widgets/help_button.dart';
@@ -82,7 +83,7 @@ class _HomeViewState extends State<HomeView> {
                         });
                       },
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
@@ -97,7 +98,7 @@ class _HomeViewState extends State<HomeView> {
                               );
                             },
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
                           _HomeActionButton(
                             icon: Icons.location_on,
                             label: 'Ver puntos de reciclaje',
@@ -108,7 +109,7 @@ class _HomeViewState extends State<HomeView> {
                               );
                             },
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
                           _HomeActionButton(
                             icon: Icons.monitor_heart,
                             label: 'Estado del dispositivo',
@@ -122,7 +123,7 @@ class _HomeViewState extends State<HomeView> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 26),
+                    const SizedBox(height: 18),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
@@ -143,9 +144,9 @@ class _HomeViewState extends State<HomeView> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
                     SizedBox(
-                      height: 200,
+                      height: 170,
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.only(left: 20, right: 6),
@@ -154,21 +155,27 @@ class _HomeViewState extends State<HomeView> {
                             title: 'Museo ITM',
                             subtitle: 'Nueva exposición de memorias RAEE',
                             icon: Icons.museum,
+                            url:
+                                'https://redime.elsalseo.site/blog/yp4Nf4HmT8ZbAx0umdCO',
                           ),
                           _NewsCard(
                             title: 'Meta Medellín',
                             subtitle: 'Seguimos recuperando tecnología',
                             icon: Icons.eco,
+                            url:
+                                'https://redime.elsalseo.site/blog/Yt45MlK7Bu6envr21LSM',
                           ),
                           _NewsCard(
                             title: 'Trazabilidad',
                             subtitle: 'Consulta el estado de tus dispositivos',
                             icon: Icons.timeline,
+                            url:
+                                'https://redime.elsalseo.site/blog/jGHLOlf8W3o87t5EIYI1',
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 18),
                   ],
                 ),
               ),
@@ -418,11 +425,11 @@ class _HomeActionButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           child: Row(
             children: [
               CircleAvatar(
-                radius: 24,
+                radius: 22,
                 backgroundColor: _softGreen,
                 child: Icon(icon, color: _primaryColor),
               ),
@@ -450,62 +457,90 @@ class _NewsCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final IconData icon;
+  final String? url;
 
   const _NewsCard({
     required this.title,
     required this.subtitle,
     required this.icon,
+    this.url,
   });
+
+  Future<void> _open(BuildContext context) async {
+    final raw = url;
+    if (raw == null || raw.isEmpty) return;
+    final uri = Uri.parse(raw);
+    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!ok && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo abrir el enlace')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 230,
-      margin: const EdgeInsets.only(right: 14),
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2F7168), Color(0xFF1F4D48)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return Padding(
+      padding: const EdgeInsets.only(right: 12),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(22),
+          onTap: () => _open(context),
+          child: Ink(
+            width: 200,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(22),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF2F7168), Color(0xFF1F4D48)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 14,
+                  offset: Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, color: Colors.white, size: 56),
+                const SizedBox(height: 12),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 13,
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 14,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Icon(icon, color: Colors.white, size: 44),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 19,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                  height: 1.35,
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

@@ -141,6 +141,18 @@ class PickupViewModel extends ChangeNotifier {
   }
 
   String? selectedDynamicExtra;
+  String otherSubcategorySpecific = '';
+  String otherDynamicExtraSpecific = '';
+
+  void setOtherSubcategorySpecific(String value) {
+    otherSubcategorySpecific = value;
+    notifyListeners();
+  }
+
+  void setOtherDynamicExtraSpecific(String value) {
+    otherDynamicExtraSpecific = value;
+    notifyListeners();
+  }
 
   // Non-RAEE validation list (HU-18: object not allowed)
   static const List<String> nonRaeeItems = [
@@ -259,6 +271,8 @@ class PickupViewModel extends ChangeNotifier {
   void setSubcategory(String? value) {
     selectedSubcategory = value;
     selectedDynamicExtra = null;
+    otherSubcategorySpecific = '';
+    otherDynamicExtraSpecific = '';
     hasScreen = null;
     isScreenBroken = null;
     notifyListeners();
@@ -291,6 +305,7 @@ class PickupViewModel extends ChangeNotifier {
 
   void setDynamicExtra(String? value) {
     selectedDynamicExtra = value;
+    if (value != 'Otra') otherDynamicExtraSpecific = '';
     notifyListeners();
   }
 
@@ -407,9 +422,19 @@ class PickupViewModel extends ChangeNotifier {
           ? userAddress.trim()
           : selectedPoint?.address;
 
+      final subValue = (selectedSubcategory == 'Otro' &&
+              otherSubcategorySpecific.trim().isNotEmpty)
+          ? 'Otro: ${otherSubcategorySpecific.trim()}'
+          : selectedSubcategory;
+
+      final dynValue = (selectedDynamicExtra == 'Otra' &&
+              otherDynamicExtraSpecific.trim().isNotEmpty)
+          ? 'Otra: ${otherDynamicExtraSpecific.trim()}'
+          : selectedDynamicExtra;
+
       final pickup = PickupModel(
         deviceType: _deviceTypeLabel(),
-        subcategory: selectedSubcategory,
+        subcategory: subValue,
         brand: brand.trim().isEmpty ? null : brand.trim(),
         estimatedWeight: selectedWeight,
         age: selectedAge,
@@ -417,7 +442,7 @@ class PickupViewModel extends ChangeNotifier {
         integrity: _integrityLabel(),
         hasScreen: hasScreen,
         isScreenBroken: isScreenBroken,
-        dynamicExtra: selectedDynamicExtra,
+        dynamicExtra: dynValue,
         address: addr,
         story: storySkipped || storyText.trim().isEmpty ? null : storyText.trim(),
         photoPath: storyImagePath,

@@ -26,6 +26,7 @@ import 'viewmodels/profile_viewmodel.dart';
 
 import 'models/pickup_model.dart';
 
+import 'views/auth_gate.dart';
 import 'views/change_password_view.dart';
 import 'views/chat_view.dart';
 import 'views/delete_account_view.dart';
@@ -63,7 +64,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: AppRoutes.welcome,
+      home: const AuthGate(),
       debugShowCheckedModeBanner: false,
       title: 'APP REDIME',
       theme: AppTheme.lightTheme,
