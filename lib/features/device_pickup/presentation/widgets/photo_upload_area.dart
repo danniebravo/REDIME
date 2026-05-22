@@ -7,15 +7,18 @@ import '../../../../core/theme/app_text_styles.dart';
 class PhotoUploadArea extends StatelessWidget {
   final String? photoPath;
   final VoidCallback onTap;
+  final VoidCallback? onRemove;
 
   const PhotoUploadArea({
     super.key,
     this.photoPath,
     required this.onTap,
+    this.onRemove,
   });
 
   @override
   Widget build(BuildContext context) {
+    final hasPhoto = photoPath != null;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -30,15 +33,57 @@ class PhotoUploadArea extends StatelessWidget {
             width: 1.5,
           ),
         ),
-        child: photoPath != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(11),
-                child: Image.file(
-                  File(photoPath!),
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
+        child: hasPhoto
+            ? Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(11),
+                    child: Image.file(
+                      File(photoPath!),
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  ),
+                  if (onRemove != null)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: onRemove,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.black54,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ),
+                      ),
+                    ),
+                  Positioned(
+                    bottom: 8,
+                    left: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'Toca para cambiar',
+                        style: TextStyle(color: Colors.white, fontSize: 11),
+                      ),
+                    ),
+                  ),
+                ],
               )
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,

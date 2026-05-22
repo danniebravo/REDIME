@@ -1,12 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../core/widgets/error_banner.dart';
 import '../viewmodels/login_viewmodel.dart';
 import 'package:flutter/gestures.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<LoginViewModel>().clearError();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Obtenemos el ViewModel usando Provider
     final vm = context.watch<LoginViewModel>();
 
     return Scaffold(
@@ -79,6 +95,11 @@ class LoginView extends StatelessWidget {
               obscureText: true,
               onChanged: vm.setPassword,
             ),
+
+            if (vm.errorMessage != null) ...[
+              SizedBox(height: 12),
+              ErrorBanner(message: vm.errorMessage!),
+            ],
 
             SizedBox(height: 24),
 

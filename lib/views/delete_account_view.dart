@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/constants/app_routes.dart';
+import '../core/widgets/error_banner.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 
@@ -19,6 +20,7 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
   bool _isLoading = false;
   bool _isLoadingProfile = true;
   UserModel? _user;
+  String? _errorMessage;
 
   static const Color _primaryTeal = Color(0xFF3D8B85);
 
@@ -50,13 +52,12 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
   }
 
   Future<void> _deleteAccount({required bool requiresPassword}) async {
+    setState(() => _errorMessage = null);
     if (requiresPassword) {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
       if (email.isEmpty || password.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Debes completar todos los campos')),
-        );
+        setState(() => _errorMessage = 'Debes completar todos los campos');
         return;
       }
       setState(() => _isLoading = true);
@@ -64,11 +65,10 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
         await AuthService().deleteAccount(email, password);
       } catch (e) {
         if (!mounted) return;
-        setState(() => _isLoading = false);
-        final message = e.toString().replaceFirst('Exception: ', '');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
-        );
+        setState(() {
+          _isLoading = false;
+          _errorMessage = e.toString().replaceFirst('Exception: ', '');
+        });
         return;
       }
     } else {
@@ -77,11 +77,10 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
         await AuthService().deleteAccount(null, null);
       } catch (e) {
         if (!mounted) return;
-        setState(() => _isLoading = false);
-        final message = e.toString().replaceFirst('Exception: ', '');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
-        );
+        setState(() {
+          _isLoading = false;
+          _errorMessage = e.toString().replaceFirst('Exception: ', '');
+        });
         return;
       }
     }
@@ -306,6 +305,10 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
               ),
             ),
           ),
+          if (_errorMessage != null) ...[
+            const SizedBox(height: 16),
+            ErrorBanner(message: _errorMessage!),
+          ],
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,

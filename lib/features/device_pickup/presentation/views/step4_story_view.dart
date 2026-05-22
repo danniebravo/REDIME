@@ -15,23 +15,94 @@ import 'pickup_story_thanks_view.dart';
 class Step4StoryView extends StatelessWidget {
   const Step4StoryView({super.key});
 
-  Future<void> _pickPhoto(BuildContext context) async {
+  Future<void> _pickFromSource(BuildContext context, ImageSource source) async {
     try {
       final picker = ImagePicker();
-
       final image = await picker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         maxWidth: 1024,
         maxHeight: 1024,
         imageQuality: 80,
       );
-
       if (image != null && context.mounted) {
         context.read<PickupFlowViewModel>().setPhotoPath(image.path);
       }
     } catch (_) {
-      // Si el usuario cancela o falla la carga de imagen, no hacemos nada.
+      // ignorar cancelación
     }
+  }
+
+  void _showImageSourceDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Seleccionar imagen',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textMain,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.teal.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.camera_alt,
+                      color: AppColors.darkTeal),
+                ),
+                title: const Text('Tomar foto'),
+                subtitle: const Text('Usa la cámara de tu dispositivo'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _pickFromSource(context, ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.teal.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.photo_library,
+                      color: AppColors.darkTeal),
+                ),
+                title: const Text('Elegir de galería'),
+                subtitle: const Text('Selecciona una imagen existente'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _pickFromSource(context, ImageSource.gallery);
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _finishWithoutStory(
@@ -125,7 +196,8 @@ class Step4StoryView extends StatelessWidget {
 
           PhotoUploadArea(
             photoPath: vm.photoPath,
-            onTap: () => _pickPhoto(context),
+            onTap: () => _showImageSourceDialog(context),
+            onRemove: () => vm.setPhotoPath(null),
           ),
 
           const SizedBox(height: 32),

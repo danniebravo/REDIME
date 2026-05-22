@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../core/widgets/error_banner.dart';
 import '../viewmodels/RegisterUser_viewmodel.dart';
 import 'package:flutter/gestures.dart';
 
@@ -18,7 +19,7 @@ class RegisterView extends StatelessWidget {
         titleTextStyle: const TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-          color: Colors.black,
+          color: Colors.white,
         ),
       ),
 
@@ -151,6 +152,11 @@ class RegisterView extends StatelessWidget {
               obscureText: true,
               onChanged: vm.setPassword,
             ),
+
+            if (vm.errorMessage != null) ...[
+              const SizedBox(height: 12),
+              ErrorBanner(message: vm.errorMessage!),
+            ],
 
             const SizedBox(height: 24),
 

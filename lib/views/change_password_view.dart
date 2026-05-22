@@ -21,6 +21,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   bool _isLoadingProfile = true;
   bool _isSubmitting = false;
   UserModel? _user;
+  String? _errorMessage;
 
   static const Color _primaryTeal = Color(0xFF3D8B85);
 
@@ -58,16 +59,20 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
     final newPwd = _newController.text;
     final confirm = _confirmController.text;
 
+    setState(() => _errorMessage = null);
+
     if (hasPassword && current.isEmpty) {
-      _showError('Debes ingresar tu contraseña actual');
+      setState(() => _errorMessage = 'Debes ingresar tu contraseña actual');
       return;
     }
     if (newPwd != confirm) {
-      _showError('La nueva contraseña y la confirmación no coinciden');
+      setState(() =>
+          _errorMessage = 'La nueva contraseña y la confirmación no coinciden');
       return;
     }
     if (newPwd.length < 6) {
-      _showError('La nueva contraseña debe tener al menos 6 caracteres');
+      setState(() =>
+          _errorMessage = 'La nueva contraseña debe tener al menos 6 caracteres');
       return;
     }
 
@@ -118,14 +123,12 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
       if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
-      _showError(e.toString().replaceFirst('Exception: ', ''));
+      setState(
+        () => _errorMessage = e.toString().replaceFirst('Exception: ', ''),
+      );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
-  }
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -191,6 +194,43 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                       onToggle: () =>
                           setState(() => _obscureConfirm = !_obscureConfirm),
                     ),
+                    if (_errorMessage != null) ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFEE2E2),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: const Color(0xFFFCA5A5),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.error_outline,
+                              color: Color(0xFFB91C1C),
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _errorMessage!,
+                                style: const TextStyle(
+                                  color: Color(0xFFB91C1C),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: _isSubmitting ? null : _submit,

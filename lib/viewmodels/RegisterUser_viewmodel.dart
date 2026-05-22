@@ -13,6 +13,13 @@ class RegisterUserViewModel extends ChangeNotifier {
   String nombreUsuario = '';
 
   bool isLoading = false;
+  String? errorMessage;
+
+  void clearError() {
+    if (errorMessage == null) return;
+    errorMessage = null;
+    notifyListeners();
+  }
 
   void setEmail(String value) {
     email = value;
@@ -51,21 +58,16 @@ class RegisterUserViewModel extends ChangeNotifier {
 
   Future loginWithGoogle(BuildContext context) async {
     isLoading = true;
+    errorMessage = null;
     notifyListeners();
 
     try {
       final response = await _auth.loginWithGoogle();
       if (response == null) return;
-
       print("GOOGLE LOGIN OK: $response");
-
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
-      print("ERROR GOOGLE LOGIN: $e");
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      errorMessage = e.toString().replaceFirst('Exception: ', '');
     } finally {
       isLoading = false;
       notifyListeners();
@@ -73,6 +75,14 @@ class RegisterUserViewModel extends ChangeNotifier {
   }
 
   Future register(BuildContext context) async {
+    errorMessage = null;
+
+    if (password.length < 6) {
+      errorMessage = 'La contraseña debe tener al menos 6 caracteres';
+      notifyListeners();
+      return;
+    }
+
     isLoading = true;
     notifyListeners();
 
@@ -86,16 +96,10 @@ class RegisterUserViewModel extends ChangeNotifier {
         celular,
         nombreUsuario,
       );
-
       print("REGISTER OK: $response");
-
       Navigator.pushReplacementNamed(context, '/login');
     } catch (e) {
-      print("ERROR REGISTER: $e");
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      errorMessage = e.toString().replaceFirst('Exception: ', '');
     } finally {
       isLoading = false;
       notifyListeners();
