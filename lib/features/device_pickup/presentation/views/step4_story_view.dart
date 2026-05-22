@@ -10,6 +10,7 @@ import '../../../../core/widgets/redime_outline_button.dart';
 import '../../../../core/widgets/section_header.dart';
 import '../viewmodels/pickup_flow_viewmodel.dart';
 import '../widgets/photo_upload_area.dart';
+import 'pickup_story_thanks_view.dart';
 
 class Step4StoryView extends StatelessWidget {
   const Step4StoryView({super.key});
@@ -42,7 +43,15 @@ class Step4StoryView extends StatelessWidget {
     if (!context.mounted) return;
 
     if (vm.isCompleted) {
-      Navigator.pushNamed(context, AppRoutes.pickupConfirmation, arguments: vm);
+      Navigator.pushNamed(
+        context,
+        AppRoutes.pickupStoryThanks,
+        arguments: StoryThanksData(
+          subcategory: vm.selectedSubcategory,
+          brand: vm.brand,
+          age: vm.age,
+        ),
+      );
     }
   }
 
@@ -55,7 +64,17 @@ class Step4StoryView extends StatelessWidget {
     if (!context.mounted) return;
 
     if (vm.isCompleted) {
-      Navigator.pushNamed(context, AppRoutes.pickupConfirmation, arguments: vm);
+      Navigator.pushNamed(
+        context,
+        AppRoutes.pickupStoryThanks,
+        arguments: StoryThanksData(
+          story: vm.story,
+          imagePath: vm.photoPath,
+          subcategory: vm.selectedSubcategory,
+          brand: vm.brand,
+          age: vm.age,
+        ),
+      );
     }
   }
 

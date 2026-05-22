@@ -14,6 +14,7 @@ import 'features/device_pickup/presentation/views/pickup_step_1_map_view.dart';
 import 'features/device_pickup/presentation/views/pickup_step_2_type_view.dart';
 import 'features/device_pickup/presentation/views/pickup_step_3_details_view.dart';
 import 'features/device_pickup/presentation/views/pickup_step_4_story_view.dart';
+import 'features/device_pickup/presentation/views/pickup_story_thanks_view.dart';
 
 import 'features/qr/presentation/viewmodels/qr_scan_viewmodel.dart';
 
@@ -99,6 +100,8 @@ class MyApp extends StatelessWidget {
         AppRoutes.pickupConfirm: (context) => const PickupConfirmView(),
         AppRoutes.pickupConfirmation: (context) =>
             const PickupConfirmationView(),
+        AppRoutes.pickupStoryThanks: (context) =>
+            const PickupStoryThanksView(),
 
         AppRoutes.pickupFlow: (context) => ChangeNotifierProvider(
           create: (_) =>

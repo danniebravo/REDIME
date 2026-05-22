@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_routes.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../viewmodels/pickup_viewmodel.dart';
+import 'pickup_story_thanks_view.dart';
 
 class PickupStep4StoryView extends StatefulWidget {
   const PickupStep4StoryView({super.key});
@@ -142,6 +143,16 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
     );
   }
 
+  StoryThanksData _buildThanksData({required bool includeStory}) {
+    return StoryThanksData(
+      story: includeStory ? _viewModel.storyText : null,
+      imagePath: includeStory ? _viewModel.storyImagePath : null,
+      subcategory: _viewModel.selectedSubcategory,
+      brand: _viewModel.brand,
+      age: _viewModel.selectedAge,
+    );
+  }
+
   Future<void> _onSkip() async {
     if (_viewModel.isSubmitting) return;
     _viewModel.skipStory();
@@ -153,7 +164,11 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
       );
       return;
     }
-    Navigator.pushNamed(context, AppRoutes.pickupConfirm, arguments: _viewModel);
+    Navigator.pushNamed(
+      context,
+      AppRoutes.pickupStoryThanks,
+      arguments: _buildThanksData(includeStory: false),
+    );
   }
 
   Future<void> _onSubmitStory() async {
@@ -168,7 +183,11 @@ class _PickupStep4StoryViewState extends State<PickupStep4StoryView> {
       );
       return;
     }
-    Navigator.pushNamed(context, AppRoutes.pickupConfirm, arguments: _viewModel);
+    Navigator.pushNamed(
+      context,
+      AppRoutes.pickupStoryThanks,
+      arguments: _buildThanksData(includeStory: true),
+    );
   }
 
   @override

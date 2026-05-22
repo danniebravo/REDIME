@@ -13,6 +13,7 @@ class AppRoutes {
   static const String pickupStep3 = '/pickup-step-3';
   static const String pickupStep4 = '/pickup-step-4';
   static const String pickupConfirm = '/pickup-confirm';
+  static const String pickupStoryThanks = '/pickup-story-thanks';
 
   static const String deviceStatus = '/device-status';
   static const String pickupStatusDetail = '/pickup-status-detail';
