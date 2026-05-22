@@ -10,6 +10,7 @@ class LoginView extends StatelessWidget {
     final vm = context.watch<LoginViewModel>();
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text('REDIME'),
         automaticallyImplyLeading: false,
@@ -20,12 +21,23 @@ class LoginView extends StatelessWidget {
           color: Colors.white,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(height: 90),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                16,
+                16,
+                16,
+                16 + MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 90),
             const Text(
               'Iniciar sesión',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -172,7 +184,12 @@ class LoginView extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-          ],
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

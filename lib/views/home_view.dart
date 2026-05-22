@@ -145,7 +145,7 @@ class _HomeViewState extends State<HomeView> {
                     ),
                     const SizedBox(height: 12),
                     SizedBox(
-                      height: 170,
+                      height: 200,
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.only(left: 20, right: 6),
@@ -460,9 +460,9 @@ class _NewsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 205,
+      width: 230,
       margin: const EdgeInsets.only(right: 14),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         gradient: const LinearGradient(
@@ -482,7 +482,7 @@ class _NewsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(icon, color: Colors.white, size: 30),
+          Icon(icon, color: Colors.white, size: 44),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -490,16 +490,16 @@ class _NewsCard extends StatelessWidget {
                 title,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 19,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
               Text(
                 subtitle,
                 style: const TextStyle(
                   color: Colors.white70,
-                  fontSize: 12,
+                  fontSize: 14,
                   height: 1.35,
                 ),
               ),
