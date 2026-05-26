@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../core/constants/app_routes.dart';
+import '../core/widgets/help_button.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -10,14 +11,39 @@ class ProfileView extends StatefulWidget {
   State<ProfileView> createState() => _ProfileViewState();
 }
 
+class _ProfileHeaderClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+
+    path.lineTo(0, size.height - 46);
+
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height - 4,
+      size.width,
+      size.height - 46,
+    );
+
+    path.lineTo(size.width, 0);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
 class _ProfileViewState extends State<ProfileView> {
   bool _devicesExpanded = false;
   bool _infoExpanded = false;
   bool _accountExpanded = false;
 
-  static const Color _primaryTeal = Color(0xFF3D8B85);
+  static const Color _primaryTeal = Color(0xFF3A8F7D);
   static const Color _darkTeal = Color(0xFF2E6B66);
   static const Color _backgroundColor = Color(0xFFF5F5F0);
+  static const Color _softGreen = Color(0xFFE7F0EE);
 
   final List<Map<String, String>> _devices = [
     {
@@ -52,11 +78,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   void editarCampo(String field) {
     setState(() {
-      if (campoEditando == field) {
-        campoEditando = '';
-      } else {
-        campoEditando = field;
-      }
+      campoEditando = campoEditando == field ? '' : field;
     });
   }
 
@@ -75,7 +97,6 @@ class _ProfileViewState extends State<ProfileView> {
           OutlinedButton(
             onPressed: () {
               Navigator.pop(ctx);
-
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.login,
@@ -112,7 +133,6 @@ class _ProfileViewState extends State<ProfileView> {
           OutlinedButton(
             onPressed: () {
               Navigator.pop(ctx);
-
               Navigator.pushNamed(context, AppRoutes.deleteAccount);
             },
             child: const Text('Eliminar cuenta'),
@@ -138,7 +158,6 @@ class _ProfileViewState extends State<ProfileView> {
         body: Column(
           children: [
             _buildHeader(),
-
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
@@ -158,9 +177,7 @@ class _ProfileViewState extends State<ProfileView> {
                       },
                       expandedContent: _buildDevicesTable(),
                     ),
-
                     const SizedBox(height: 12),
-
                     _buildAccordion(
                       title: 'Tu información',
                       subtitle: 'Edita tu información básica',
@@ -173,9 +190,7 @@ class _ProfileViewState extends State<ProfileView> {
                       },
                       expandedContent: _buildInfoContent(),
                     ),
-
                     const SizedBox(height: 12),
-
                     _buildAccordion(
                       title: 'Cuenta',
                       subtitle: 'Configuración y seguridad',
@@ -187,13 +202,11 @@ class _ProfileViewState extends State<ProfileView> {
                       },
                       expandedContent: _buildAccountContent(context),
                     ),
-
                     const SizedBox(height: 40),
                   ],
                 ),
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: OutlinedButton(
@@ -218,103 +231,120 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Widget _buildHeader() {
-    return Container(
-      color: _primaryTeal,
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            bottom: 24,
-            top: 4,
-          ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  ),
-
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        'REDIME',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  IconButton(
-                    tooltip: 'Soporte',
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.chat);
-                    },
-                    icon: const Icon(Icons.help_outline, color: Colors.white),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              Row(
-                children: [
-                  Stack(
+    return ClipPath(
+      clipper: _ProfileHeaderClipper(),
+      child: Container(
+        width: double.infinity,
+        color: _primaryTeal,
+        child: SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 64),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 44,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.center,
                     children: [
-                      CircleAvatar(
-                        radius: 36,
-                        backgroundColor: Colors.teal,
-                        child: const Icon(
-                          Icons.person,
-                          size: 40,
-                          color: Colors.white,
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 28,
+                          ),
                         ),
                       ),
-
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          width: 22,
-                          height: 22,
-                          decoration: BoxDecoration(
-                            color: _darkTeal,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 1.5),
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            size: 12,
+                      const Center(
+                        child: Text(
+                          'REDIME',
+                          style: TextStyle(
                             color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 19,
+                            letterSpacing: 2,
                           ),
+                        ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        top: 2,
+                        child: HelpButton(
+                          size: 40,
+                          iconSize: 20,
+                          borderWidth: 2,
+                          color: Colors.white,
+                          onPressed: () {
+                            Navigator.pushNamed(context, AppRoutes.chat);
+                          },
                         ),
                       ),
                     ],
                   ),
-
-                  const SizedBox(width: 16),
-
-                  const Expanded(
-                    child: Text(
-                      'Juan\nPérez',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        height: 1.2,
+                ),
+                const SizedBox(height: 22),
+                Row(
+                  children: [
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          width: 92,
+                          height: 92,
+                          decoration: const BoxDecoration(
+                            color: _softGreen,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.person,
+                            size: 54,
+                            color: _primaryTeal,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 2,
+                          right: 2,
+                          child: Container(
+                            width: 26,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              color: _darkTeal,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.edit,
+                              size: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 20),
+                    const Expanded(
+                      child: Text(
+                        'Nombre De\nUsuario',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          height: 1.15,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -334,11 +364,15 @@ class _ProfileViewState extends State<ProfileView> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.shade300),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 3)),
+        ],
       ),
       child: Column(
         children: [
           InkWell(
             onTap: onTap,
+            borderRadius: BorderRadius.circular(8),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
@@ -353,12 +387,11 @@ class _ProfileViewState extends State<ProfileView> {
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15,
+                            color: Colors.black87,
                           ),
                         ),
-
                         if (subtitle != null) ...[
                           const SizedBox(height: 2),
-
                           Text(
                             subtitle,
                             style: TextStyle(
@@ -370,17 +403,16 @@ class _ProfileViewState extends State<ProfileView> {
                       ],
                     ),
                   ),
-
                   Icon(
                     isExpanded
                         ? Icons.keyboard_arrow_up
                         : Icons.keyboard_arrow_down,
+                    color: Colors.black54,
                   ),
                 ],
               ),
             ),
           ),
-
           if (isExpanded)
             Container(
               decoration: const BoxDecoration(
@@ -407,7 +439,6 @@ class _ProfileViewState extends State<ProfileView> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
-
               Expanded(
                 flex: 4,
                 child: Text(
@@ -415,7 +446,6 @@ class _ProfileViewState extends State<ProfileView> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
-
               Expanded(
                 flex: 3,
                 child: Text(
@@ -425,9 +455,7 @@ class _ProfileViewState extends State<ProfileView> {
               ),
             ],
           ),
-
           const Divider(),
-
           ..._devices.map(
             (device) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
@@ -435,9 +463,7 @@ class _ProfileViewState extends State<ProfileView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(flex: 3, child: Text(device['dispositivo']!)),
-
                   Expanded(flex: 4, child: Text(device['estado']!)),
-
                   Expanded(flex: 3, child: Text(device['fecha']!)),
                 ],
               ),
@@ -458,27 +484,22 @@ class _ProfileViewState extends State<ProfileView> {
             controller: nombresController,
             field: 'nombres',
           ),
-
           _buildEditableField(
             label: 'Apellidos',
             controller: apellidosController,
             field: 'apellidos',
           ),
-
           _buildEditableField(
             label: 'Celular',
             controller: celularController,
             field: 'celular',
           ),
-
           _buildEditableField(
             label: 'Correo',
             controller: correoController,
             field: 'correo',
           ),
-
           const SizedBox(height: 10),
-
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
@@ -515,7 +536,6 @@ class _ProfileViewState extends State<ProfileView> {
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
             ),
           ),
-
           Expanded(
             child: isEditing
                 ? TextField(
@@ -528,7 +548,6 @@ class _ProfileViewState extends State<ProfileView> {
                   )
                 : Text(controller.text),
           ),
-
           IconButton(
             onPressed: () => editarCampo(field),
             icon: Icon(
@@ -558,9 +577,7 @@ class _ProfileViewState extends State<ProfileView> {
               );
             },
           ),
-
           const Divider(height: 1),
-
           ListTile(
             contentPadding: EdgeInsets.zero,
             title: const Text('Eliminar cuenta'),
